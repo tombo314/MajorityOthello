@@ -47,7 +47,6 @@ io.on("connection", (socket)=>{
     });
     socket.on("name", (data)=>{
         users.push(data.value);
-        console.log(users);
     });
     socket.on("waiting-started", (data)=>{
         if (users.length==1){
@@ -57,11 +56,9 @@ io.on("connection", (socket)=>{
     socket.on("battle-ready", (data)=>{
         io.sockets.emit("battle-ready", {value: ""});
         usersNum = users.length;
-        console.log("userNum: " + usersNum);
     });
     socket.on("battle-start", (data)=>{
         cntUsers++;
-        console.log("cntUsers: " + cntUsers);
         if (cntUsers>=usersNum){
             io.sockets.emit("battle-start", {value: ""});
         }
