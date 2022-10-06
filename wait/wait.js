@@ -3,7 +3,7 @@ const socket = io();
 socket.emit("waiting-started", {value: ""});
 socket.on("waiting-started", (data)=>{
     alert(1);
-    const waitForSeconds = 10;
+    const waitForSeconds = 3;
     const waitFor = waitForSeconds*1000;
     let now;
     const func=()=>{

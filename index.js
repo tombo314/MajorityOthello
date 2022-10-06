@@ -39,7 +39,8 @@ const server = http.createServer((req, res)=>{
 const io = socket(server);
 
 let users = [];
-let cntUsers;
+let usersNum;
+let cntUsers = 0;
 io.on("connection", (socket)=>{
     socket.on("need-users", (data)=>{
         io.sockets.emit("need-users", {value: users});
@@ -55,6 +56,15 @@ io.on("connection", (socket)=>{
     });
     socket.on("battle-ready", (data)=>{
         io.sockets.emit("battle-ready", {value: ""});
+        usersNum = users.length;
+        console.log("userNum: " + usersNum);
+    });
+    socket.on("battle-start", (data)=>{
+        cntUsers++;
+        console.log("cntUsers: " + cntUsers);
+        if (cntUsers>=usersNum){
+            io.sockets.emit("battle-start", {value: ""});
+        }
     });
 });
 

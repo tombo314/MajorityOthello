@@ -1,3 +1,6 @@
 const socket = io();
 
-socket.emit("battle-ready", {value: ""});
+socket.emit("battle-start", {value: ""});
+socket.on("battle-start", (data)=>{
+    alert("OK!");
+});
