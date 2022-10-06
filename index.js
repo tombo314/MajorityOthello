@@ -35,7 +35,7 @@ const server = http.createServer((req, res)=>{
         res.writeHead(200, {"Content-Type": "application/javascript"});
         res.end(fs.readFileSync("battle/battle.js"));
     }
-}).listen(8000);
+}).listen(process.env.PORT || 8000);
 const io = socket(server);
 
 let users = [];
