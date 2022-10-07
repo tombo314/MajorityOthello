@@ -1,14 +1,15 @@
-@media screen and (min-width: 0px) {
+html {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(#6fb, #ddd, #5fe);
+}
+
+@media screen and (min-width: 1300px) {
   * {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-  }
-  html {
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    background: linear-gradient(#6fb, #ddd, #5fe);
   }
   h1 {
     text-align: center;
@@ -19,6 +20,9 @@
   #nodes {
     width: 100vw;
     height: 100vh;
+  }
+  h2 {
+    display: none;
   }
 }
 @media screen and (max-width: 1300px) {
