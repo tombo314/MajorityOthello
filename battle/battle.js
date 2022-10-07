@@ -4,8 +4,8 @@ const nodes = document.getElementById("nodes");
 socket.emit("battle-start", {value: ""});
 socket.on("battle-start", (data)=>{
     let users = data.value;
-    initX = 100;
-    initY = 200;
+    initX = 160;
+    initY = 240;
     radius = 20;
     let elem = document.createElement("canvas");
     nodes.appendChild(elem);
@@ -40,15 +40,14 @@ onkeydown=(e)=>{
         }
     }
     if (e.key=="s"){
-        if (initY+y-radius<=innerHeight){
+        if (initY+y+radius*2<=innerHeight-5){
             y += 10;
         }
     }
     if (e.key=="d"){
-        if (initX+x-radius<=innerWidth){
+        if (initX+x-radius*2<=innerWidth-90){
             x += 10;
         }
     }
     own.style.transform = `translate(${x}px, ${y}px)`;
-    // console.log(own.getBoundingClientRect().x+firstX, own.getBoundingClientRect().y+firstY);
 }
