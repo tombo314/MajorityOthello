@@ -1,3 +1,10 @@
+$release: false;
+$num: 0;
+
+@if $release {
+    $num: 1300;
+}
+
 html{
     width: 100vw;
     height: 100vh;
@@ -5,7 +12,7 @@ html{
     background: linear-gradient(#6fb, #ddd, #5fe);
 }
 
-@media screen and (min-width: 1300px){
+@media screen and (min-width: ($num+"px")){
     *{
         padding: 0;
         margin: 0;
@@ -15,13 +22,18 @@ html{
     h1{
         text-align: center;
         margin-top: 40px;
-        background-color: #a3c;
+        background-color: rgb(201, 46, 203);
         color: rgb(87, 251, 136);
     }
 
-    #nodes{
-        width: 100vw;
-        height: 100vh;
+    #nodes-ally, #nodes-enemy{
+        position: absolute;
+        width: 270px;
+        height: 670px;
+        background-color: rgb(196, 141, 250);
+    }
+    #nodes-enemy{
+        right: 0%;
     }
 
     h2{
@@ -29,7 +41,7 @@ html{
     }
 }
 
-@media screen and (max-width: 1300px) {
+@media screen and (max-width: ($num+"px")) {
     .wrapper{
         display: none;
     }
