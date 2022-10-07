@@ -11,8 +11,8 @@ socket.on("battle-start", (data)=>{
     nodes.appendChild(elem);
     elem.setAttribute("id", "own");
     elem.setAttribute("class", "node");
-    elem.setAttribute("width", innerWidth);
-    elem.setAttribute("height", innerHeight);
+    elem.setAttribute("width", 300);
+    elem.setAttribute("height", 300);
     own = document.getElementById("own");
     let context = elem.getContext("2d");
     context.beginPath();
@@ -20,6 +20,7 @@ socket.on("battle-start", (data)=>{
     context.fillStyle = "rgba(255, 172, 32, 1)";
     context.fill();
     context.stroke();
+    updateStarted = true;
 });
 
 let initX;
@@ -28,26 +29,52 @@ let radius;
 let x = 0;
 let y = 0;
 let own;
+let wDown;
+let aDown;
+let sDown;
+let dDown;
+let updateStarted;
 onkeydown=(e)=>{
     if (e.key=="w"){
-        if (initY+y-radius*3/2>=0){
+        wDown = true;
+    } else if (e.key=="a"){
+        aDown = true;
+    } else if (e.key=="s"){
+        sDown = true;
+    } else if (e.key=="d"){
+        dDown = true;
+    }
+    if (wDown){
+        if (initY+y>=-55){
             y -= 10;
         }
     }
-    if (e.key=="a"){
-        if (initX+x-radius*3/2>=0){
+    if (aDown){
+        if (initX+x>=35){
             x -= 10;
         }
     }
-    if (e.key=="s"){
-        if (initY+y+radius*2<=innerHeight-5){
+    if (sDown){
+        if (initY+y<=innerHeight-120){
             y += 10;
         }
     }
-    if (e.key=="d"){
-        if (initX+x-radius*2<=innerWidth-90){
+    if (dDown){
+        if (initX+x<=innerWidth-35){
             x += 10;
         }
     }
     own.style.transform = `translate(${x}px, ${y}px)`;
+}
+
+onkeyup=(e)=>{
+    if (e.key=="w"){
+        wDown = false;
+    } else if (e.key=="a"){
+        aDown = false;
+    } else if (e.key=="s"){
+        sDown = false;
+    } else if (e.key=="d"){
+        dDown = false;
+    }
 }
