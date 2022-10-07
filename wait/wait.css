@@ -109,4 +109,15 @@ html {
       color: #f58;
     }
   }
+  h2 {
+    display: none;
+  }
+}
+@media screen and (max-width: 1300px) {
+  .wapper {
+    display: none;
+  }
+  h2 {
+    margin: 20px;
+  }
 }/*# sourceMappingURL=wait.css.map */

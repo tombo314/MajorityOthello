@@ -5,7 +5,7 @@ html {
   background: linear-gradient(#6fb, #ddd, #5fe);
 }
 
-@media screen and (min-width: 1300px) {
+@media screen and (min-width: 0px) {
   * {
     padding: 0;
     margin: 0;
@@ -15,7 +15,7 @@ html {
     text-align: center;
     margin-top: 40px;
     background-color: #a3c;
-    color: #2f4;
+    color: rgb(160, 255, 72);
   }
   #nodes {
     width: 100vw;
@@ -26,9 +26,6 @@ html {
   }
 }
 @media screen and (max-width: 1300px) {
-  .wrapper {
-    display: none;
-  }
   h2 {
     margin: 20px;
   }
