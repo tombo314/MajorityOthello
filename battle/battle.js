@@ -3,7 +3,7 @@ const socket = io();
 const nodesAlly = document.getElementById("nodes-ally");
 socket.emit("battle-start", {value: ""});
 socket.on("battle-start", (data)=>{
-    let users = data.value;
+    users = data.value;
     initX = 160;
     initY = 240;
     radius = 20;
@@ -21,6 +21,7 @@ socket.on("battle-start", (data)=>{
     context.stroke();
 });
 
+let users;
 let initX;
 let initY;
 let radius;
