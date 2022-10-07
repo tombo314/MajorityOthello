@@ -17,13 +17,24 @@ html {
     background-color: rgb(201, 46, 203);
     color: rgb(87, 251, 136);
   }
-  #nodes-ally, #nodes-enemy {
-    position: absolute;
-    width: 270px;
+  .flex {
+    display: flex;
+  }
+  .flex #nodes-ally, .flex #nodes-enemy {
+    width: 420px;
     height: 670px;
     background-color: rgb(196, 141, 250);
   }
-  #nodes-enemy {
+  .flex .othello {
+    width: 530px;
+    height: 470px;
+    margin: 20px;
+    background-color: rgb(254, 202, 237);
+  }
+  .flex .othello tr td {
+    border: solid #777 2px;
+  }
+  .flex #nodes-enemy {
     right: 0%;
   }
   h2 {

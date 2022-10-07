@@ -26,14 +26,27 @@ html{
         color: rgb(87, 251, 136);
     }
 
-    #nodes-ally, #nodes-enemy{
-        position: absolute;
-        width: 270px;
-        height: 670px;
-        background-color: rgb(196, 141, 250);
-    }
-    #nodes-enemy{
-        right: 0%;
+    .flex{
+        display: flex;
+        #nodes-ally, #nodes-enemy{
+            width: 420px;
+            height: 670px;
+            background-color: rgb(196, 141, 250);
+        }
+        .othello{
+            width: 530px;
+            height: 470px;
+            margin: 20px;
+            background-color: rgb(254, 202, 237);
+            tr {
+                td{
+                    border: solid #777 2px;
+                }
+            }
+        }
+        #nodes-enemy{
+            right: 0%;
+        }
     }
 
     h2{
