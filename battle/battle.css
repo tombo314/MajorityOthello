@@ -11,6 +11,10 @@ html body {
 }
 
 h1 {
+  width: 400px;
+  margin: 0 auto;
   text-align: center;
   margin-top: 40px;
+  background-color: #a3c;
+  color: #2f9;
 }/*# sourceMappingURL=battle.css.map */

@@ -38,7 +38,7 @@ const server = http.createServer((req, res)=>{
 }).listen(process.env.PORT || 8000);
 const io = socket(server);
 
-let users = [];
+let users = ["dummy1", "dummy2", "dummy3"];
 let usersNum;
 let cntUsers = 0;
 io.on("connection", (socket)=>{
@@ -49,7 +49,7 @@ io.on("connection", (socket)=>{
         users.push(data.value);
     });
     socket.on("waiting-started", (data)=>{
-        if (users.length==1){
+        if (users.length==1 || true){
             io.sockets.emit("waiting-started", {value: "a"});
         }
     });
@@ -59,12 +59,8 @@ io.on("connection", (socket)=>{
     });
     socket.on("battle-start", (data)=>{
         cntUsers++;
-        if (cntUsers>=usersNum){
-            io.sockets.emit("battle-start", {value: ""});
+        if (cntUsers>=usersNum || true){
+            io.sockets.emit("battle-start", {value: users});
         }
     });
 });
-
-/*
-最初にマッチング待機状態になった人を基準として、ｎ分経過時点でゲームを開始する。ここで最初の人がサーバーに通知する。サーバーはユーザー数を確認する。バトル画面への遷移後、各ユーザーからサーバーに通知する。サーバーは、前もって確認したユーザー数と遷移後の通知数が一致していれば全ユーザーに通知する。カウントダウンが始まり、ゲームスタートとする。
-*/
