@@ -1,6 +1,8 @@
 let users;
 let initX;
 let initY;
+let ownX;
+let ownY;
 let x = 0;
 let y = 0;
 let wDown;
@@ -14,11 +16,9 @@ let socket = io();
 let nodesAlly = document.getElementById("nodes-ally");
 let nodesOpponent = document.getElementById("nodes-opponent");
 const RADIUS = 20;
-const LOWER_BOUND_X_ALLY = RADIUS+10;
-const UPPER_BOUND_X_ALLY = 390+1;
-const LOWER_BOUND_X_OPPONENT = screen.width-UPPER_BOUND_X_ALLY;
-const UPPER_BOUND_X_OPPONENT = screen.width-LOWER_BOUND_X_ALLY;
+const LOWER_BOUND_X = RADIUS+10;
 const LOWER_BOUND_Y = RADIUS+10;
+const UPPER_BOUND_X = 390+1;
 const UPPER_BOUND_Y = 505+1;
 const ALLY_COLOR = "rgb(255, 100, 100)";
 const OPPONENT_COLOR = "rgb(100, 100, 255)";
@@ -41,17 +41,17 @@ socket.on("battle-start", (data)=>{
         if (i==0){
             canvas.setAttribute("id", "own");
             context.fillStyle = ALLY_COLOR;
-            initX = getRandomInt(LOWER_BOUND_X_ALLY, UPPER_BOUND_X_ALLY);
+            initX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
             nodesAlly.appendChild(canvas);
         } else if (i%2==1){
             canvas.setAttribute("id", `opponent${parseInt(i/2)+1}`);
             context.fillStyle = OPPONENT_COLOR;
-            initX = getRandomInt(LOWER_BOUND_X_OPPONENT, UPPER_BOUND_X_OPPONENT);
+            initX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
             nodesOpponent.appendChild(canvas);
         } else if (i%2==0){
             canvas.setAttribute("id", `ally${i/2}`);
             context.fillStyle = ALLY_COLOR;
-            initX = getRandomInt(LOWER_BOUND_X_ALLY, UPPER_BOUND_X_ALLY);
+            initX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
             nodesAlly.appendChild(canvas);
         }
         canvas.setAttribute("style", "position: absolute;");
@@ -59,6 +59,10 @@ socket.on("battle-start", (data)=>{
         context.beginPath();
         initY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
         context.arc(initX, initY, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
+        if (i==0){
+            ownX = initX;
+            ownY = initY;
+        }
         context.fill();
         context.stroke();
     }
@@ -75,22 +79,22 @@ onkeydown=(e)=>{
         dDown = true;
     }
     if (wDown){
-        if (initY+y>=-55){
+        if (ownY+y>=-55){
             y -= 10;
         }
     }
     if (aDown){
-        if (initX+x>=35){
+        if (ownX+x>=35){
             x -= 10;
         }
     }
     if (sDown){
-        if (initY+y<=innerHeight-120){
+        if (ownY+y<=innerHeight-120){
             y += 10;
         }
     }
     if (dDown){
-        if (initX+x<=innerWidth-35){
+        if (ownX+x<=innerWidth-35){
             x += 10;
         }
     }

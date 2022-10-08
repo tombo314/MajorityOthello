@@ -20,13 +20,16 @@ html {
   .flex {
     display: flex;
   }
+  .flex .othello {
+    width: 530px;
+  }
   .flex #nodes-ally, .flex #nodes-opponent {
     width: 430px;
     height: 670px;
     background-color: rgb(220, 184, 255);
   }
-  .flex .othello {
-    width: 530px;
+  .flex #nodes-ally #own, .flex #nodes-opponent #own {
+    z-index: 999;
   }
   .flex #nodes-opponent {
     right: 0%;

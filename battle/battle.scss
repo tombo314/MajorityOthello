@@ -28,16 +28,16 @@ html{
 
     .flex{
         display: flex;
+        .othello{
+            width: 530px;
+        }
         #nodes-ally, #nodes-opponent{
             width: 430px;
             height: 670px;
             background-color: rgb(220, 184, 255);
-        }
-        .othello{
-            width: 530px;
-        }
-        #nodes-ally{
-            
+            #own{
+                z-index: 999;
+            }
         }
         #nodes-opponent{
             right: 0%;
