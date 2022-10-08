@@ -20,7 +20,7 @@ html {
   .flex {
     display: flex;
   }
-  .flex #nodes-ally, .flex #nodes-enemy {
+  .flex #nodes-ally, .flex #nodes-opponent {
     width: 430px;
     height: 670px;
     background-color: rgb(220, 184, 255);
@@ -28,7 +28,7 @@ html {
   .flex .othello {
     width: 530px;
   }
-  .flex #nodes-enemy {
+  .flex #nodes-opponent {
     right: 0%;
   }
   h2 {

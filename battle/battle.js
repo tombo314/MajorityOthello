@@ -1,7 +1,6 @@
 let users;
 let initX;
 let initY;
-let radius;
 let x = 0;
 let y = 0;
 let wDown;
@@ -9,59 +8,51 @@ let aDown;
 let sDown;
 let dDown;
 let own;
-let elem;
+let canvas;
 let context;
-let upperBoundX;
-let upperBoundY;
-const socket = io();
-const nodesAlly = document.getElementById("nodes-ally");
-const nodesEnemy = document.getElementById("nodes-enemy");
-
+let socket = io();
+let nodesAlly = document.getElementById("nodes-ally");
+let nodesopponent = document.getElementById("nodes-opponent");
+const RADIUS = 20;
+const LOWER_BOUND_X = RADIUS+10;
+const LOWER_BOUND_Y = RADIUS+10;
+const UPPER_BOUND_X = 390+1;
+const UPPER_BOUND_Y = 505+1;
+const ALLY_COLOR = "rgb(255, 30, 30)";
+const OPPONENT_COLOR = "rgb(30, 255, 30)";
 
 const getRandomInt=(min, max)=> {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min);
-    }
+}
 
 socket.emit("battle-start", {value: ""});
 socket.on("battle-start", (data)=>{
-    users = data.value;
-    radius = 20;
     // プレイヤーの円を描画
-    // const lowerBoundX = radius+5;
-    // const lowerBoundY = radius+5;
-        // const lowerBoundX = 400;
-        // const lowerBoundY = 515;
-        // const upperBoundX = 400+1;
-        // const upperBoundY = 515+1;
+    users = data.value;
+    canvas = document.createElement("canvas");
+    canvas.setAttribute("width", 430);
+    canvas.setAttribute("height", 670);
+    context = canvas.getContext("2d");
     for (let i=0; i<users.length; i++){
         if (i==0){
-            lowerBoundX = 390;
-            lowerBoundY = 500;
-            upperBoundX = lowerBoundX+1;
-            upperBoundY = lowerBoundY+1;
-        } else {
-            lowerBoundX = radius+5;
-            lowerBoundY = radius+5;
-            upperBoundX = radius+5+1;
-            upperBoundY = radius+5+1;
+            canvas.setAttribute("id", "own");
+            context.fillStyle = ALLY_COLOR;
+        } else if (i%2==1){
+            canvas.setAttribute("id", `opponent${i/2+1}`);
+            context.fillStyle = OPPONENT_COLOR;
+        } else if (i%2==0){
+            canvas.setAttribute("id", `opponent${i/2}`);
+            context.fillStyle = ALLY_COLOR;
         }
-        initX = getRandomInt(lowerBoundX, upperBoundX);
-        initY = getRandomInt(lowerBoundY, upperBoundY);
-        elem = document.createElement("canvas");
-        if (i==0){
-            elem.setAttribute("width", 430);
-            elem.setAttribute("height", 670);
-            context = elem.getContext("2d");
-        }
-        elem.setAttribute("style", "position: absolute;");
-        elem.setAttribute("id", "own");
-        nodesAlly.appendChild(elem);
+        canvas.setAttribute("style", "position: absolute;");
+        nodesAlly.appendChild(canvas);
         own = document.getElementById("own");
         context.beginPath();
-        context.fillStyle = "rgb(255, 172, 32)";
-        context.arc(initX, initY, radius, 0*Math.PI/180, 360*Math.PI/180, false);
+        initX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
+        initY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
+        context.arc(initX, initY, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
         context.fill();
         context.stroke();
     }

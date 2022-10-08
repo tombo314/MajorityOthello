@@ -38,7 +38,10 @@ const server = http.createServer((req, res)=>{
 }).listen(process.env.PORT || 8000);
 const io = socket(server);
 
-let users = ["dummy1", "dummy2", "dummy3"];
+let users = [];
+for (let i=1; i<=6; i++){
+    users.push(`dummy${i}`);
+}
 let usersNum;
 let cntUsers = 0;
 io.on("connection", (socket)=>{
