@@ -12,14 +12,16 @@ let canvas;
 let context;
 let socket = io();
 let nodesAlly = document.getElementById("nodes-ally");
-let nodesopponent = document.getElementById("nodes-opponent");
+let nodesOpponent = document.getElementById("nodes-opponent");
 const RADIUS = 20;
-const LOWER_BOUND_X = RADIUS+10;
+const LOWER_BOUND_X_ALLY = RADIUS+10;
+const UPPER_BOUND_X_ALLY = 390+1;
+const LOWER_BOUND_X_OPPONENT = screen.width-UPPER_BOUND_X_ALLY;
+const UPPER_BOUND_X_OPPONENT = screen.width-LOWER_BOUND_X_ALLY;
 const LOWER_BOUND_Y = RADIUS+10;
-const UPPER_BOUND_X = 390+1;
 const UPPER_BOUND_Y = 505+1;
-const ALLY_COLOR = "rgb(255, 30, 30)";
-const OPPONENT_COLOR = "rgb(30, 255, 30)";
+const ALLY_COLOR = "rgb(255, 100, 100)";
+const OPPONENT_COLOR = "rgb(100, 100, 255)";
 
 const getRandomInt=(min, max)=> {
     min = Math.ceil(min);
@@ -31,26 +33,30 @@ socket.emit("battle-start", {value: ""});
 socket.on("battle-start", (data)=>{
     // プレイヤーの円を描画
     users = data.value;
-    canvas = document.createElement("canvas");
-    canvas.setAttribute("width", 430);
-    canvas.setAttribute("height", 670);
-    context = canvas.getContext("2d");
     for (let i=0; i<users.length; i++){
+        canvas = document.createElement("canvas");
+        canvas.setAttribute("width", 430);
+        canvas.setAttribute("height", 670);
+        context = canvas.getContext("2d");
         if (i==0){
             canvas.setAttribute("id", "own");
             context.fillStyle = ALLY_COLOR;
+            initX = getRandomInt(LOWER_BOUND_X_ALLY, UPPER_BOUND_X_ALLY);
+            nodesAlly.appendChild(canvas);
         } else if (i%2==1){
-            canvas.setAttribute("id", `opponent${i/2+1}`);
+            canvas.setAttribute("id", `opponent${parseInt(i/2)+1}`);
             context.fillStyle = OPPONENT_COLOR;
+            initX = getRandomInt(LOWER_BOUND_X_OPPONENT, UPPER_BOUND_X_OPPONENT);
+            nodesOpponent.appendChild(canvas);
         } else if (i%2==0){
-            canvas.setAttribute("id", `opponent${i/2}`);
+            canvas.setAttribute("id", `ally${i/2}`);
             context.fillStyle = ALLY_COLOR;
+            initX = getRandomInt(LOWER_BOUND_X_ALLY, UPPER_BOUND_X_ALLY);
+            nodesAlly.appendChild(canvas);
         }
         canvas.setAttribute("style", "position: absolute;");
-        nodesAlly.appendChild(canvas);
         own = document.getElementById("own");
         context.beginPath();
-        initX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
         initY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
         context.arc(initX, initY, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
         context.fill();
