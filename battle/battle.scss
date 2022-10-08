@@ -29,20 +29,12 @@ html{
     .flex{
         display: flex;
         #nodes-ally, #nodes-enemy{
-            width: 420px;
+            width: 430px;
             height: 670px;
-            background-color: rgb(196, 141, 250);
+            background-color: rgb(220, 184, 255);
         }
         .othello{
             width: 530px;
-            height: 470px;
-            margin: 20px;
-            background-color: rgb(254, 202, 237);
-            tr {
-                td{
-                    border: solid #777 2px;
-                }
-            }
         }
         #nodes-enemy{
             right: 0%;
