@@ -66,4 +66,7 @@ io.on("connection", (socket)=>{
             io.sockets.emit("battle-start", {value: users});
         }
     });
+    socket.on("coordinates-changed", (data)=>{
+        // 全員の座標を全員に送信する
+    });
 });

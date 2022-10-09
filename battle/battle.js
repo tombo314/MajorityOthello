@@ -10,8 +10,10 @@ let aDown;
 let sDown;
 let dDown;
 let own;
+let ownName;
 let canvas;
 let context;
+let playerName;
 let socket = io();
 let nodesAlly = document.getElementById("nodes-ally");
 let nodesOpponent = document.getElementById("nodes-opponent");
@@ -19,11 +21,11 @@ const RADIUS = 20;
 const LOWER_BOUND_X = RADIUS+10;
 const LOWER_BOUND_Y = RADIUS+10;
 const UPPER_BOUND_X = 390+1;
-const UPPER_BOUND_Y = 505+1;
+const UPPER_BOUND_Y = 450+1;
 const ALLY_COLOR = "rgb(255, 100, 100)";
 const OPPONENT_COLOR = "rgb(100, 100, 255)";
 
-const getRandomInt=(min, max)=> {
+let getRandomInt=(min, max)=> {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min);
@@ -31,18 +33,23 @@ const getRandomInt=(min, max)=> {
 
 socket.emit("battle-start", {value: ""});
 socket.on("battle-start", (data)=>{
-    // プレイヤーの円を描画
     users = data.value;
+    // プレイヤーの円を描画
     for (let i=0; i<users.length; i++){
         canvas = document.createElement("canvas");
         canvas.setAttribute("width", 430);
         canvas.setAttribute("height", 670);
+        canvas.setAttribute("style", "position: absolute;");
         context = canvas.getContext("2d");
+        initY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
         if (i==0){
             canvas.setAttribute("id", "own");
             context.fillStyle = ALLY_COLOR;
             initX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
+            ownX = initX;
+            ownY = initY;
             nodesAlly.appendChild(canvas);
+            own = document.getElementById("own");
         } else if (i%2==1){
             canvas.setAttribute("id", `opponent${parseInt(i/2)+1}`);
             context.fillStyle = OPPONENT_COLOR;
@@ -54,17 +61,27 @@ socket.on("battle-start", (data)=>{
             initX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
             nodesAlly.appendChild(canvas);
         }
-        canvas.setAttribute("style", "position: absolute;");
-        own = document.getElementById("own");
         context.beginPath();
-        initY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
         context.arc(initX, initY, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
-        if (i==0){
-            ownX = initX;
-            ownY = initY;
-        }
         context.fill();
         context.stroke();
+
+        // プレイヤーの名前を表示
+        playerName = document.createElement("div");
+        playerName.textContent = users[i];
+        if (i==0){
+            playerName.setAttribute("id", "own-name");
+            nodesAlly.appendChild(playerName);
+            ownName = document.getElementById("own-name");
+            ownName.style.transform = `translate(${ownX-210}px, ${ownY+20}px)`;
+            ownName.style.textAlign = "center";
+        } else if (i%2==1){
+            playerName.setAttribute("id", `opponent${parseInt(i/2)+1}-name`);
+            nodesOpponent.appendChild(playerName);
+        } else if (i%2==0){
+            playerName.setAttribute("id", `ally${i/2}-name`);
+            nodesAlly.appendChild(playerName);
+        }
     }
 });
 
@@ -79,26 +96,28 @@ onkeydown=(e)=>{
         dDown = true;
     }
     if (wDown){
-        if (ownY+y>=-55){
+        if (ownY+y>=35){
             y -= 10;
         }
     }
     if (aDown){
-        if (ownX+x>=35){
+        if (ownX+x>=45){
             x -= 10;
         }
     }
     if (sDown){
-        if (ownY+y<=innerHeight-120){
+        if (ownY+y<=innerHeight-140){
             y += 10;
         }
     }
     if (dDown){
-        if (ownX+x<=innerWidth-35){
+        if (ownX+x<=innerWidth-470){
             x += 10;
         }
     }
     own.style.transform = `translate(${x}px, ${y}px)`;
+    ownName.style.transform = `translate(${ownX+x-210}px, ${ownY+y+20}px)`;
+    socket.emit("coordinates-changed", {value: ""});
 }
 
 onkeyup=(e)=>{
@@ -112,3 +131,14 @@ onkeyup=(e)=>{
         dDown = false;
     }
 }
+
+/*
+・users に入っている名前をそれぞれの ● に対応させて表示する。
+・自分を赤と青でランダムに振り分ける。
+・space キーを決定ボタンにする。
+
+〇オセロを実装する。
+・グリッドと石を canvas で表示する。
+・探索アルゴリズムを作る。
+
+*/
