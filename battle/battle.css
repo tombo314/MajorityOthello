@@ -24,8 +24,8 @@ html {
     width: 530px;
   }
   .flex #nodes-ally, .flex #nodes-opponent {
-    width: 430px;
-    height: 670px;
+    width: 33vw;
+    height: 100vh;
     background-color: rgb(220, 184, 255);
   }
   .flex #nodes-ally #own, .flex #nodes-opponent #own {
