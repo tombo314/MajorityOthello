@@ -5,7 +5,7 @@ html {
   background: linear-gradient(rgba(102, 255, 187, 0.5333333333), #ddd, #5fe);
 }
 
-@media screen and (min-width: 1300px) {
+@media screen and (min-width: 1300px) and (max-width: 1400px) {
   * {
     padding: 0;
     margin: 0;
@@ -109,7 +109,10 @@ html {
       color: #f58;
     }
   }
-  h2 {
+  .too-small {
+    display: none;
+  }
+  .too-large {
     display: none;
   }
 }
@@ -117,7 +120,21 @@ html {
   .wapper {
     display: none;
   }
-  h2 {
+  .too-small {
+    margin: 20px;
+  }
+  .too-large {
+    display: none;
+  }
+}
+@media screen and (min-width: 1400px) {
+  .wapper {
+    display: none;
+  }
+  .too-small {
+    display: none;
+  }
+  .too-large {
     margin: 20px;
   }
 }/*# sourceMappingURL=wait.css.map */
