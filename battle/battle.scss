@@ -1,8 +1,10 @@
 $release: false;
-$num: 0;
+$min: 0;
+$max: 2000;
 
 @if $release {
-    $num: 1300;
+    $min: 1300;
+    $max: 1400;
 }
 
 html{
@@ -12,7 +14,7 @@ html{
     background: linear-gradient(#6fb, #ddd, #5fe);
 }
 
-@media screen and (min-width: ($num+"px")){
+@media screen and (min-width: ($min+"px")) and (max-width: ($max+"px")){
     *{
         padding: 0;
         margin: 0;
@@ -44,16 +46,29 @@ html{
         }
     }
 
-    h2{
+    .too-small{
+        display: none;
+    }
+
+    .too-large{
         display: none;
     }
 }
 
-@media screen and (max-width: ($num+"px")) {
+@media screen and (max-width: ($min+"px")) {
     .wrapper{
         display: none;
     }
-    h2{
+    .too-small{
+        margin: 20px;
+    }
+}
+
+@media screen and (min-width: ($max+"px")) {
+    .wapper{
+        display: none;
+    }
+    .too-large{
         margin: 20px;
     }
 }
