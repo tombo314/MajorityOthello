@@ -21,7 +21,7 @@ html {
     display: flex;
   }
   .flex .othello {
-    width: 530px;
+    width: 550px;
   }
   .flex #nodes-ally, .flex #nodes-opponent {
     width: 430px;
