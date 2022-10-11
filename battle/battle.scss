@@ -1,4 +1,4 @@
-$release: true;
+$release: false;
 $min-width: 0;
 $max-width: 2000;
 $min-height: 0;
@@ -66,6 +66,9 @@ html{
         display: none;
     }
     .too-large-height{
+        display: none;
+    }
+    #btn-window-resize{
         display: none;
     }
 }

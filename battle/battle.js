@@ -10,10 +10,14 @@ let aDown;
 let sDown;
 let dDown;
 let own;
-let ownName;
+let other;
 let canvas;
 let context;
-let playerName;
+let createName;
+let ownName;
+let getName;
+let allyId;
+let opponentId;
 let socket = io();
 let othello = document.getElementById("othello");
 let nodesAlly = document.getElementById("nodes-ally");
@@ -23,6 +27,8 @@ const LOWER_BOUND_X = RADIUS+10;
 const LOWER_BOUND_Y = RADIUS+10;
 const UPPER_BOUND_X = 390+1;
 const UPPER_BOUND_Y = 450+1;
+const INIT_X_DIFF = -35;
+const INIT_Y_DIFF = 20;
 const ALLY_COLOR = "rgb(255, 100, 100)";
 const OPPONENT_COLOR = "rgb(100, 100, 255)";
 
@@ -37,6 +43,14 @@ socket.on("battle-start", (data)=>{
     users = data.value;
     // プレイヤーの円を描画
     for (let i=0; i<users.length; i++){
+        allyId = `ally${i/2}`;
+        opponentId = `opponent${parseInt(i/2)+1}`;
+        if (i==0){
+        } else if (i%2==1){
+            console.log(opponentId);
+        } else if (i%2==0){
+            console.log(allyId);
+        }
         canvas = document.createElement("canvas");
         canvas.setAttribute("width", 430);
         canvas.setAttribute("height", 670);
@@ -52,15 +66,17 @@ socket.on("battle-start", (data)=>{
             nodesAlly.appendChild(canvas);
             own = document.getElementById("own");
         } else if (i%2==1){
-            canvas.setAttribute("id", `opponent${parseInt(i/2)+1}`);
+            canvas.setAttribute("id", opponentId);
             context.fillStyle = OPPONENT_COLOR;
             initX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
             nodesOpponent.appendChild(canvas);
+            other = document.getElementById(opponentId);
         } else if (i%2==0){
-            canvas.setAttribute("id", `ally${i/2}`);
+            canvas.setAttribute("id", allyId);
             context.fillStyle = ALLY_COLOR;
             initX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
             nodesAlly.appendChild(canvas);
+            other = document.getElementById(allyId);
         }
         context.beginPath();
         context.arc(initX, initY, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
@@ -68,23 +84,26 @@ socket.on("battle-start", (data)=>{
         context.stroke();
 
         // プレイヤーの名前を表示
-        playerName = document.createElement("div");
-        playerName.textContent = users[i];
-        playerName.setAttribute("style", "position:absolute; z-index: 999; font-weight: bold;");
+        createName = document.createElement("div");
+        createName.textContent = users[i];
+        createName.setAttribute("style", "position:absolute; z-index: 999; font-weight: bold; text-align: center;");
         if (i==0){
-            playerName.setAttribute("id", "own-name");
-        nodesAlly.appendChild(playerName);
+            createName.setAttribute("id", "own-name");
+            nodesAlly.appendChild(createName);
             ownName = document.getElementById("own-name");
-            ownName.style.transform = `translate(${ownX-35}px, ${ownY+20}px)`;
-            ownName.style.textAlign = "center";
+            ownName.style.transform = `translate(${initX+INIT_X_DIFF}px, ${initY+INIT_Y_DIFF}px)`;
         } else if (i%2==1){
-            playerName.setAttribute("id", `opponent${parseInt(i/2)+1}-name`);
-            nodesOpponent.appendChild(playerName);
+            createName.setAttribute("id", `${opponentId}-name`);
+            nodesOpponent.appendChild(createName);
+            getName = document.getElementById(`${opponentId}-name`);
+            getName.style.transform = `translate(${initX+INIT_X_DIFF}px, ${initY+INIT_Y_DIFF}px)`;
         } else if (i%2==0){
-            playerName.setAttribute("id", `ally${i/2}-name`);
-            nodesAlly.appendChild(playerName);
+            createName.setAttribute("id", `${allyId}-name`);
+            nodesAlly.appendChild(createName);
+            getName = document.getElementById(`${allyId}-name`);
+            getName.style.transform = `translate(${initX+INIT_X_DIFF}px, ${initY+INIT_Y_DIFF}px)`;
         }
-    }
+    } // for文終わり
 });
 
 onkeydown=(e)=>{
@@ -114,13 +133,13 @@ onkeydown=(e)=>{
         }
     }
     if (dDown){
-        if (ownX+x<=innerWidth-470){
+        if (ownX+x<=innerWidth-440){
             x += DIFF;
         }
     }
     own.style.transform = `translate(${x}px, ${y}px)`;
     ownName.style.transform = `translate(${ownX+x-35}px, ${ownY+y+20}px)`;
-    socket.emit("coordinates-changed", {value: ""});
+    // socket.emit("coordinates-changed", {value: ""});
 }
 
 onkeyup=(e)=>{
