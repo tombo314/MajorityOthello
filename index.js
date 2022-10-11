@@ -35,6 +35,11 @@ const server = http.createServer((req, res)=>{
         res.writeHead(200, {"Content-Type": "application/javascript"});
         res.end(fs.readFileSync("battle/battle.js"));
     }
+    // pictures
+    else if (req.url=="/pictures/othello_field.png"){
+        res.writeHead(200, {"Content-Type": "img/png"});
+        res.end(fs.readFileSync("pictures/othello_field.png"));
+    }
 }).listen(process.env.PORT || 8000);
 const io = socket(server);
 

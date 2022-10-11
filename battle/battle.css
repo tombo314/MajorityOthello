@@ -20,16 +20,18 @@ html {
   .flex {
     display: flex;
   }
-  .flex #othello {
+  .flex .othello-wrapper {
     width: 550px;
+    margin-top: 100px;
+    margin-left: 90px;
+  }
+  .flex .othello-wrapper .othello-img {
+    transform: scale(1.2, 1.4);
   }
   .flex #nodes-ally, .flex #nodes-opponent {
     width: 430px;
     height: 670px;
     background-color: rgb(220, 184, 255);
-  }
-  .flex #nodes-ally #own, .flex #nodes-opponent #own {
-    z-index: 999;
   }
   .flex #nodes-opponent {
     right: 0%;
