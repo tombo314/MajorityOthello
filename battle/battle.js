@@ -115,8 +115,9 @@ onkeydown=(e)=>{
             x += 10;
         }
     }
+    const WIDTH_DIFF_FOR_SCHOOL_PC = 420;
     own.style.transform = `translate(${x}px, ${y}px)`;
-    ownName.style.transform = `translate(${ownX+x-210}px, ${ownY+y+20}px)`;
+    ownName.style.transform = `translate(${ownX+x-WIDTH_DIFF_FOR_SCHOOL_PC}px, ${ownY+y+20}px)`;
     socket.emit("coordinates-changed", {value: ""});
 }
 
