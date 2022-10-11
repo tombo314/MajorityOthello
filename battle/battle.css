@@ -21,10 +21,10 @@ html {
     display: flex;
   }
   .flex .othello {
-    width: 530px;
+    width: 40vw;
   }
   .flex #nodes-ally, .flex #nodes-opponent {
-    width: 50vw;
+    width: 30vw;
     height: 100vh;
     background-color: rgb(220, 184, 255);
   }
