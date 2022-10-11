@@ -53,7 +53,7 @@ html {
   }
 }
 @media screen and (min-width: 1400px) {
-  .wapper {
+  .wrapper {
     display: none;
   }
   .too-small {
