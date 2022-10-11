@@ -15,6 +15,7 @@ let canvas;
 let context;
 let playerName;
 let socket = io();
+let othello = document.getElementById("othello");
 let nodesAlly = document.getElementById("nodes-ally");
 let nodesOpponent = document.getElementById("nodes-opponent");
 const RADIUS = 20;
@@ -83,6 +84,50 @@ socket.on("battle-start", (data)=>{
             nodesAlly.appendChild(playerName);
         }
     }
+
+    // オセロの盤面と石を描画
+    context = othello.getContext("2d");
+    context.beginPath();
+    const ROW_NUM = 8;//行の数
+    const COL_NUM = 8;//列の数
+    const GRID_SIZE_X = 38;
+    const GRID_SIZE_Y = 15;
+    const CIRCLE_RADIUS = 6;
+    const STONE_TOP = 20;
+    const STONE_LEFT = 20;
+        
+    let drawCanvas=()=>{
+        //コンテキストを取得する。この場合のコンテキストはスケッチブックと
+        //絵筆に相当する。2dは2次元の意味。3dは2013年8月時点でなし。
+        for(let i=0; i<ROW_NUM; i++){
+            for(let j=0; j<COL_NUM; j++){
+                drawGrid(context, j, i);
+            }
+        }
+        drawStone(context, 'white', STONE_LEFT, STONE_TOP);
+        drawStone(context, 'white', STONE_LEFT+GRID_SIZE_X, STONE_TOP+GRID_SIZE_Y);
+        drawStone(context, 'black', STONE_LEFT+GRID_SIZE_X, STONE_TOP);
+        drawStone(context, 'black', STONE_LEFT, STONE_TOP+GRID_SIZE_Y);
+    }
+
+    let drawGrid=(context, x, y)=>{
+        context.clearRect(x * GRID_SIZE_X, y * GRID_SIZE_Y, GRID_SIZE_X, GRID_SIZE_Y);
+        context.fillStyle = 'rgb(20, 172, 20)';
+        context.strokeStyle = 'black';
+        context.fillRect(x * GRID_SIZE_X, y * GRID_SIZE_Y, GRID_SIZE_X, GRID_SIZE_Y);
+        context.strokeRect(x * GRID_SIZE_X, y * GRID_SIZE_Y, GRID_SIZE_X, GRID_SIZE_Y);
+    }
+
+    let drawStone=(context, color, x, y)=>{
+        context.beginPath();//円を描くためのパスを一度リセットする。
+        context.arc(x, y, CIRCLE_RADIUS, 0, 2 * Math.PI, false);
+        context.fillStyle = color;
+        context.fill();
+        context.lineWidth = 1;
+        context.strokeStyle = 'black';
+        context.stroke();
+    }
+    drawCanvas();
 });
 
 onkeydown=(e)=>{

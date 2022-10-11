@@ -5,7 +5,7 @@ html {
   background: linear-gradient(#6fb, #ddd, #5fe);
 }
 
-@media screen and (min-width: 1300px) and (max-width: 1400px) {
+@media screen and (min-width: 0px) and (max-width: 2000px) {
   * {
     padding: 0;
     margin: 0;
@@ -20,7 +20,7 @@ html {
   .flex {
     display: flex;
   }
-  .flex .othello {
+  .flex #othello {
     width: 550px;
   }
   .flex #nodes-ally, .flex #nodes-opponent {
@@ -41,7 +41,7 @@ html {
     display: none;
   }
 }
-@media screen and (max-width: 1300px) {
+@media screen and (max-width: 0px) {
   .wrapper {
     display: none;
   }
@@ -52,7 +52,7 @@ html {
     display: none;
   }
 }
-@media screen and (min-width: 1400px) {
+@media screen and (min-width: 2000px) {
   .wrapper {
     display: none;
   }

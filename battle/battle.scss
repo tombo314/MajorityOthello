@@ -1,4 +1,4 @@
-$release: true;
+$release: false;
 $min: 0;
 $max: 2000;
 
@@ -30,7 +30,7 @@ html{
 
     .flex{
         display: flex;
-        .othello{
+        #othello{
             width: 550px;
         }
         #nodes-ally, #nodes-opponent{
