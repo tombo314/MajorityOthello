@@ -29,11 +29,11 @@ html{
     .flex{
         display: flex;
         .othello{
-            width: 40vw;
+            width: 530px;
         }
         #nodes-ally, #nodes-opponent{
-            width: 30vw;
-            height: 100vh;
+            width: 430px;
+            height: 670px;
             background-color: rgb(220, 184, 255);
             #own{
                 z-index: 999;
