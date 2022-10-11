@@ -1,4 +1,4 @@
-$release: false;
+$release: true;
 $min: 0;
 $max: 2000;
 
@@ -62,10 +62,16 @@ html{
     .too-small{
         margin: 20px;
     }
+    .too-large{
+        display: none;
+    }
 }
 
 @media screen and (min-width: ($max+"px")) {
     .wapper{
+        display: none;
+    }
+    .too-small{
         display: none;
     }
     .too-large{

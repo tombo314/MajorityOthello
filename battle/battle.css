@@ -5,7 +5,7 @@ html {
   background: linear-gradient(#6fb, #ddd, #5fe);
 }
 
-@media screen and (min-width: 0px) and (max-width: 2000px) {
+@media screen and (min-width: 1300px) and (max-width: 1400px) {
   * {
     padding: 0;
     margin: 0;
@@ -41,16 +41,22 @@ html {
     display: none;
   }
 }
-@media screen and (max-width: 0px) {
+@media screen and (max-width: 1300px) {
   .wrapper {
     display: none;
   }
   .too-small {
     margin: 20px;
   }
+  .too-large {
+    display: none;
+  }
 }
-@media screen and (min-width: 2000px) {
+@media screen and (min-width: 1400px) {
   .wapper {
+    display: none;
+  }
+  .too-small {
     display: none;
   }
   .too-large {
