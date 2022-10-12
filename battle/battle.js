@@ -80,6 +80,7 @@ socket.on("battle-start", (data)=>{
         context.stroke();
 
         // プレイヤーの名前を表示
+        const DIFF_COEFF = -5.5;
         createName = document.createElement("div");
         createName.textContent = users[i];
         createName.setAttribute("style", "position:absolute; z-index: 999; font-weight: bold;");
@@ -87,20 +88,20 @@ socket.on("battle-start", (data)=>{
             createName.setAttribute("id", "own-name");
             nodesAlly.appendChild(createName);
             ownName = document.getElementById("own-name");
-            ownXDiff = -5.5*ownName.textContent.length;
+            ownXDiff = DIFF_COEFF*ownName.textContent.length;
             ownName.style.transform = `translate(${ownX+ownXDiff}px, ${ownY+INIT_Y_DIFF}px)`;
             ownName.style.zIndex = 1000;
         } else if (i%2==1){
             createName.setAttribute("id", `${opponentId}-name`);
             nodesOpponent.appendChild(createName);
             getName = document.getElementById(`${opponentId}-name`);
-            initXDiff = -5.5*getName.textContent.length;
+            initXDiff = DIFF_COEFF*getName.textContent.length;
             getName.style.transform = `translate(${initX+initXDiff}px, ${initY+INIT_Y_DIFF}px)`;
         } else if (i%2==0){
             createName.setAttribute("id", `${allyId}-name`);
             nodesAlly.appendChild(createName);
             getName = document.getElementById(`${allyId}-name`);
-            initXDiff = -5.5*getName.textContent.length;
+            initXDiff = DIFF_COEFF*getName.textContent.length;
             getName.style.transform = `translate(${initX+initXDiff}px, ${initY+INIT_Y_DIFF}px)`;
         }
     } // for文終わり
@@ -147,6 +148,7 @@ onkeyup=(e)=>{
 }
 
 /*
+・マスの真上にきたら opacity を変更する。
 ・自分を赤と青でランダムに振り分ける。
 ・space キーを決定ボタンにする。
 
