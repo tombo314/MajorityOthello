@@ -18,6 +18,8 @@ let ownName;
 let getName;
 let allyId;
 let opponentId;
+let initXDiff;
+let ownXDiff;
 let socket = io();
 let othello = document.getElementById("othello");
 let nodesAlly = document.getElementById("nodes-ally");
@@ -27,7 +29,6 @@ const LOWER_BOUND_X = RADIUS+10;
 const LOWER_BOUND_Y = RADIUS+10;
 const UPPER_BOUND_X = 390+1;
 const UPPER_BOUND_Y = 450+1;
-const INIT_X_DIFF = -35;
 const INIT_Y_DIFF = 20;
 const ALLY_COLOR = "rgb(255, 100, 100)";
 const OPPONENT_COLOR = "rgb(100, 100, 255)";
@@ -81,23 +82,26 @@ socket.on("battle-start", (data)=>{
         // プレイヤーの名前を表示
         createName = document.createElement("div");
         createName.textContent = users[i];
-        createName.setAttribute("style", "width: fit-content; position:absolute; z-index: 999; font-weight: bold;");
+        createName.setAttribute("style", "position:absolute; z-index: 999; font-weight: bold;");
         if (i==0){
             createName.setAttribute("id", "own-name");
             nodesAlly.appendChild(createName);
             ownName = document.getElementById("own-name");
-            ownName.style.transform = `translate(${initX+INIT_X_DIFF}px, ${initY+INIT_Y_DIFF}px)`;
+            ownXDiff = -5.5*ownName.textContent.length;
+            ownName.style.transform = `translate(${ownX+ownXDiff}px, ${ownY+INIT_Y_DIFF}px)`;
             ownName.style.zIndex = 1000;
         } else if (i%2==1){
             createName.setAttribute("id", `${opponentId}-name`);
             nodesOpponent.appendChild(createName);
             getName = document.getElementById(`${opponentId}-name`);
-            getName.style.transform = `translate(${initX+INIT_X_DIFF}px, ${initY+INIT_Y_DIFF}px)`;
+            initXDiff = -5.5*getName.textContent.length;
+            getName.style.transform = `translate(${initX+initXDiff}px, ${initY+INIT_Y_DIFF}px)`;
         } else if (i%2==0){
             createName.setAttribute("id", `${allyId}-name`);
             nodesAlly.appendChild(createName);
             getName = document.getElementById(`${allyId}-name`);
-            getName.style.transform = `translate(${initX+INIT_X_DIFF}px, ${initY+INIT_Y_DIFF}px)`;
+            initXDiff = -5.5*getName.textContent.length;
+            getName.style.transform = `translate(${initX+initXDiff}px, ${initY+INIT_Y_DIFF}px)`;
         }
     } // for文終わり
 });
@@ -113,28 +117,20 @@ onkeydown=(e)=>{
     } else if (e.key=="d"){
         dDown = true;
     }
-    if (wDown){
-        if (ownY+y>=35){
-            y -= DIFF;
-        }
+    if (wDown && ownY+y>=35){
+        y -= DIFF;
     }
-    if (aDown){
-        if (ownX+x>=45){
-            x -= DIFF;
-        }
+    if (aDown && ownX+x>=40){
+        x -= DIFF;
     }
-    if (sDown){
-        if (ownY+y<=innerHeight-140){
-            y += DIFF;
-        }
+    if (sDown && ownY+y<=innerHeight-140){
+        y += DIFF;
     }
-    if (dDown){
-        if (ownX+x<=innerWidth-440){
-            x += DIFF;
-        }
+    if (dDown && ownX+x<=innerWidth-430){
+        x += DIFF;
     }
     own.style.transform = `translate(${x}px, ${y}px)`;
-    ownName.style.transform = `translate(${ownX+x+INIT_X_DIFF}px, ${ownY+y+INIT_Y_DIFF}px)`;
+    ownName.style.transform = `translate(${ownX+x+ownXDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
     // socket.emit("coordinates-changed", {value: ""});
 }
 
