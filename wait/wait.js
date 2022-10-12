@@ -2,7 +2,7 @@ const socket = io();
 
 socket.emit("waiting-started", {value: ""});
 socket.on("waiting-started", (data)=>{
-    const waitForSeconds = 3;
+    const waitForSeconds = 20;
     const waitFor = waitForSeconds*1000;
     let now;
     const func=()=>{
