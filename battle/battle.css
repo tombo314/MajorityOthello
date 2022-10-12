@@ -48,9 +48,6 @@ html {
   .too-large-height {
     display: none;
   }
-  #btn-window-resize {
-    display: none;
-  }
 }
 .too-small-width, .too-large-width, .too-small-height, .too-large-height {
   margin: 20px;

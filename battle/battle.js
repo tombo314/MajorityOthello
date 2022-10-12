@@ -45,12 +45,6 @@ socket.on("battle-start", (data)=>{
     for (let i=0; i<users.length; i++){
         allyId = `ally${i/2}`;
         opponentId = `opponent${parseInt(i/2)+1}`;
-        if (i==0){
-        } else if (i%2==1){
-            console.log(opponentId);
-        } else if (i%2==0){
-            console.log(allyId);
-        }
         canvas = document.createElement("canvas");
         canvas.setAttribute("width", 430);
         canvas.setAttribute("height", 670);
@@ -65,6 +59,7 @@ socket.on("battle-start", (data)=>{
             ownY = initY;
             nodesAlly.appendChild(canvas);
             own = document.getElementById("own");
+            own.style.zIndex = 1000;
         } else if (i%2==1){
             canvas.setAttribute("id", opponentId);
             context.fillStyle = OPPONENT_COLOR;
@@ -86,12 +81,13 @@ socket.on("battle-start", (data)=>{
         // プレイヤーの名前を表示
         createName = document.createElement("div");
         createName.textContent = users[i];
-        createName.setAttribute("style", "position:absolute; z-index: 999; font-weight: bold; text-align: center;");
+        createName.setAttribute("style", "width: fit-content; position:absolute; z-index: 999; font-weight: bold;");
         if (i==0){
             createName.setAttribute("id", "own-name");
             nodesAlly.appendChild(createName);
             ownName = document.getElementById("own-name");
             ownName.style.transform = `translate(${initX+INIT_X_DIFF}px, ${initY+INIT_Y_DIFF}px)`;
+            ownName.style.zIndex = 1000;
         } else if (i%2==1){
             createName.setAttribute("id", `${opponentId}-name`);
             nodesOpponent.appendChild(createName);
@@ -138,7 +134,7 @@ onkeydown=(e)=>{
         }
     }
     own.style.transform = `translate(${x}px, ${y}px)`;
-    ownName.style.transform = `translate(${ownX+x-35}px, ${ownY+y+20}px)`;
+    ownName.style.transform = `translate(${ownX+x+INIT_X_DIFF}px, ${ownY+y+INIT_Y_DIFF}px)`;
     // socket.emit("coordinates-changed", {value: ""});
 }
 
@@ -155,7 +151,6 @@ onkeyup=(e)=>{
 }
 
 /*
-・users に入っている名前をそれぞれの ● に対応させて表示する。
 ・自分を赤と青でランダムに振り分ける。
 ・space キーを決定ボタンにする。
 

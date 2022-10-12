@@ -5,7 +5,7 @@ html {
   background: linear-gradient(rgba(102, 255, 187, 0.5333333333), #ddd, #5fe);
 }
 
-@media screen and (min-width: 1300px) and (max-width: 1400px) {
+@media screen and (min-width: 0px) and (max-width: 2000px) and (min-height: 0px) and (max-height: 1000px) {
   * {
     padding: 0;
     margin: 0;
@@ -109,32 +109,68 @@ html {
       color: #f58;
     }
   }
-  .too-small {
+  .too-small-width {
     display: none;
   }
-  .too-large {
+  .too-large-width {
     display: none;
   }
-}
-@media screen and (max-width: 1300px) {
-  .wapper {
+  .too-small-height {
     display: none;
   }
-  .too-small {
-    margin: 20px;
-  }
-  .too-large {
+  .too-large-height {
     display: none;
   }
 }
-@media screen and (min-width: 1400px) {
-  .wapper {
+.too-small-width, .too-large-width, .too-small-height, .too-large-height {
+  margin: 20px;
+}
+
+@media screen and (max-width: 0px) {
+  .wrapper {
     display: none;
   }
-  .too-small {
+  .too-large-width {
     display: none;
   }
-  .too-large {
-    margin: 20px;
+}
+@media screen and (min-width: 2000px) {
+  .wrapper {
+    display: none;
+  }
+  .too-small-width {
+    display: none;
+  }
+}
+@media screen and (max-height: 0px) {
+  .wrapper {
+    display: none;
+  }
+  .too-large-height {
+    display: none;
+  }
+}
+@media screen and (min-height: 1000px) {
+  .wrapper {
+    display: none;
+  }
+  .too-small-height {
+    display: none;
+  }
+}
+@media screen and (min-width: 0px) and (max-width: 2000px) {
+  .too-small-width {
+    display: none;
+  }
+  .too-large-width {
+    display: none;
+  }
+}
+@media screen and (min-height: 0px) and (max-height: 1000px) {
+  .too-small-height {
+    display: none;
+  }
+  .too-large-height {
+    display: none;
   }
 }/*# sourceMappingURL=wait.css.map */

@@ -43,7 +43,7 @@ const server = http.createServer((req, res)=>{
 }).listen(process.env.PORT || 8000);
 const io = socket(server);
 
-let users = [];
+let users = ["4e"];
 for (let i=1; i<=6; i++){
     users.push(`dummy${i}`);
 }

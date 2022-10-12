@@ -1,10 +1,14 @@
-$release: true;
-$min: 0;
-$max: 2000;
+$release: false;
+$min-width: 0;
+$max-width: 2000;
+$min-height: 0;
+$max-height: 1000;
 
 @if $release {
-    $min: 1300;
-    $max: 1400;
+    $min-width: 1300;
+    $max-width: 1400;
+    $min-height: 600;
+    $max-height: 650;
 }
 
 html{
@@ -14,7 +18,11 @@ html{
     background: linear-gradient(#6fb8, #ddd, #5fe);
 }
 
-@media screen and (min-width: ($min+"px")) and (max-width: ($max+"px")) {
+@media screen
+    and (min-width: ($min-width+"px"))
+    and (max-width: ($max-width+"px"))
+    and (min-height: ($min-height+"px"))
+    and (max-height: ($max-height+"px")) {
     *{
         padding: 0;
         margin: 0;
@@ -120,34 +128,77 @@ html{
         }
     }
 
-    .too-small{
+    .too-small-width{
         display: none;
     }
-    .too-large{
+    .too-large-width{
         display: none;
     }
-}
-
-@media screen and (max-width: ($min+"px")) {
-    .wapper{
+    .too-small-height{
         display: none;
     }
-    .too-small{
-        margin: 20px;
-    }
-    .too-large{
+    .too-large-height{
         display: none;
     }
 }
 
-@media screen and (min-width: ($max+"px")) {
-    .wapper{
+.too-small-width, .too-large-width, .too-small-height, .too-large-height{
+    margin: 20px;
+}
+
+// 横幅が小さすぎる
+@media screen and (max-width: ($min-width+"px")) {
+    .wrapper{
         display: none;
     }
-    .too-small{
+    .too-large-width{
         display: none;
     }
-    .too-large{
-        margin: 20px;
+}
+// 横幅が大きすぎる
+@media screen and (min-width: ($max-width+"px")) {
+    .wrapper{
+        display: none;
+    }
+    .too-small-width{
+        display: none;
+    }
+}
+
+// 縦幅が小さすぎる
+@media screen and (max-height: ($min-height+"px")) {
+    .wrapper{
+        display: none;
+    }
+    .too-large-height{
+        display: none;
+    }
+}
+// 縦幅が大きすぎる
+@media screen and (min-height: ($max-height+"px")) {
+    .wrapper{
+        display: none;
+    }
+    .too-small-height{
+        display: none;
+    }
+}
+
+// 横幅が適切
+@media screen and (min-width: ($min-width+"px")) and (max-width: ($max-width+"px")) {
+    .too-small-width{
+        display: none;
+    }
+    .too-large-width{
+        display: none;
+    }
+}
+// 縦幅が適切
+@media screen and (min-height: ($min-height+"px")) and (max-height: ($max-height+"px")) {
+    .too-small-height{
+        display: none;
+    }
+    .too-large-height{
+        display: none;
     }
 }
