@@ -107,31 +107,38 @@ socket.on("battle-start", (data)=>{
     } // for文終わり
     
     // マス選択時に盤面の上に被せるシート
-    const GRID_X = 59;
-    const GRID_Y = 57.5;
-    const INIT_TOP = -67;
-    const INIT_LEFT = -41;
+    const GRID_X = 56;
+    const GRID_Y = 54;
+    const INIT_LEFT = -40;
+    const INIT_TOP = -65;
+    const DIFF_X = 5.75;
+    const DIFF_Y = 4;
 
-    let paintSquare=(i, j)=>{
+    let makeSquare=(i, j)=>{
         let sheet = document.createElement("div");
         sheet.setAttribute("id", `square${i}${j}`);
         sheet.setAttribute("style", `
             width: ${GRID_X}px;
             height: ${GRID_Y}px;
             position: absolute;
-            background-color: #cfca;
-            z-index: 11;
-            top: ${INIT_TOP+i*GRID_Y}px;
-            left: ${INIT_LEFT+j*(GRID_X+2+i*0.08)}px;
+            left: ${INIT_LEFT+j*(GRID_X+DIFF_X)}px;
+            top: ${INIT_TOP+i*(GRID_Y+DIFF_Y)}px;
         `);
         othelloWrapper.appendChild(sheet);
     };
+    let paintSquare=(i, j)=>{
+        let elem = document.getElementById(`square${i}${j}`);
+        elem.style.backgroundColor = "#cfca";
+    }
     let unPaintSquare=(i, j)=>{
         let elem = document.getElementById(`square${i}${j}`);
         elem.style.backgroundColor = "#70ad47";
     };
-
-    
+    for (let i=0; i<8; i++){
+        for (let j=0; j<8; j++){
+            makeSquare(i, j);
+        }
+    }
 });
 
 onkeydown=(e)=>{
