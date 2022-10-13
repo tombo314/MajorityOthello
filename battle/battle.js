@@ -9,12 +9,11 @@ let wDown;
 let aDown;
 let sDown;
 let dDown;
-let own;
-let other;
 let canvas;
 let context;
-let createName;
+let own;
 let ownName;
+let other;
 let getName;
 let allyId;
 let opponentId;
@@ -24,6 +23,7 @@ let socket = io();
 let othello = document.getElementById("othello");
 let nodesAlly = document.getElementById("nodes-ally");
 let nodesOpponent = document.getElementById("nodes-opponent");
+let othelloWrapper = document.getElementById("othello-wrapper");
 const RADIUS = 20;
 const LOWER_BOUND_X = RADIUS+10;
 const LOWER_BOUND_Y = RADIUS+10;
@@ -46,7 +46,7 @@ socket.on("battle-start", (data)=>{
     for (let i=0; i<users.length; i++){
         allyId = `ally${i/2}`;
         opponentId = `opponent${parseInt(i/2)+1}`;
-        canvas = document.createElement("canvas");
+        let canvas = document.createElement("canvas");
         canvas.setAttribute("width", 430);
         canvas.setAttribute("height", 670);
         canvas.setAttribute("style", "position: absolute; z-index: 999;");
@@ -81,16 +81,16 @@ socket.on("battle-start", (data)=>{
 
         // プレイヤーの名前を表示
         const DIFF_COEFF = -5.5;
-        createName = document.createElement("div");
+        let createName = document.createElement("div");
         createName.textContent = users[i];
-        createName.setAttribute("style", "position: absolute; z-index: 999; font-weight: bold;");
+        createName.setAttribute("style", "position: absolute; z-index: 9; font-weight: bold;");
         if (i==0){
             createName.setAttribute("id", "own-name");
             nodesAlly.appendChild(createName);
             ownName = document.getElementById("own-name");
             ownXDiff = DIFF_COEFF*ownName.textContent.length;
             ownName.style.transform = `translate(${ownX+ownXDiff}px, ${ownY+INIT_Y_DIFF}px)`;
-            ownName.style.zIndex = 1000;
+            ownName.style.zIndex = 10;
         } else if (i%2==1){
             createName.setAttribute("id", `${opponentId}-name`);
             nodesOpponent.appendChild(createName);
@@ -105,6 +105,33 @@ socket.on("battle-start", (data)=>{
             getName.style.transform = `translate(${initX+initXDiff}px, ${initY+INIT_Y_DIFF}px)`;
         }
     } // for文終わり
+    
+    // マス選択時に盤面の上に被せるシート
+    const GRID_X = 59;
+    const GRID_Y = 57.5;
+    const INIT_TOP = -67;
+    const INIT_LEFT = -41;
+
+    let paintSquare=(i, j)=>{
+        let sheet = document.createElement("div");
+        sheet.setAttribute("id", `square${i}${j}`);
+        sheet.setAttribute("style", `
+            width: ${GRID_X}px;
+            height: ${GRID_Y}px;
+            position: absolute;
+            background-color: #cfca;
+            z-index: 11;
+            top: ${INIT_TOP+i*GRID_Y}px;
+            left: ${INIT_LEFT+j*(GRID_X+2+i*0.08)}px;
+        `);
+        othelloWrapper.appendChild(sheet);
+    };
+    let unPaintSquare=(i, j)=>{
+        let elem = document.getElementById(`square${i}${j}`);
+        elem.style.backgroundColor = "#70ad47";
+    };
+
+    
 });
 
 onkeydown=(e)=>{
@@ -133,7 +160,7 @@ onkeydown=(e)=>{
     own.style.transform = `translate(${x}px, ${y}px)`;
     ownName.style.transform = `translate(${ownX+x+ownXDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
     // socket.emit("coordinates-changed", {value: ""});
-}
+};
 
 onkeyup=(e)=>{
     if (e.key=="w"){
@@ -145,7 +172,7 @@ onkeyup=(e)=>{
     } else if (e.key=="d"){
         dDown = false;
     }
-}
+};
 
 /*
 ・マスの真上にきたら opacity を変更する。
