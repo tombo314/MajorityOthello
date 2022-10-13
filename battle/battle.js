@@ -216,7 +216,7 @@ onkeydown=(e)=>{
     if (aDown && ownX+x>=40){
         x -= DIFF;
     }
-    if (sDown && ownY+y<=innerHeight-140){
+    if (sDown && ownY+y<=innerHeight-148){
         y += DIFF;
     }
     if (dDown && ownX+x<=innerWidth-430){

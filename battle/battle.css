@@ -11,9 +11,14 @@ html {
     margin: 0;
     box-sizing: border-box;
   }
+  .time {
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    margin: 3px;
+  }
   h1 {
     text-align: center;
-    margin-top: 40px;
     background-color: rgb(201, 46, 203);
     color: rgb(87, 251, 136);
   }
