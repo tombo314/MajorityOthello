@@ -83,7 +83,7 @@ socket.on("battle-start", (data)=>{
         const DIFF_COEFF = -5.5;
         createName = document.createElement("div");
         createName.textContent = users[i];
-        createName.setAttribute("style", "position:absolute; z-index: 999; font-weight: bold;");
+        createName.setAttribute("style", "position: absolute; z-index: 999; font-weight: bold;");
         if (i==0){
             createName.setAttribute("id", "own-name");
             nodesAlly.appendChild(createName);
