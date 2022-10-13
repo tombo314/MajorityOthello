@@ -13,7 +13,6 @@ let getName;
 let initXDiff;
 let ownXDiff;
 let socket = io();
-let othello = document.getElementById("othello");
 let nodesAlly = document.getElementById("nodes-ally");
 let nodesOpponent = document.getElementById("nodes-opponent");
 let othelloWrapper = document.getElementById("othello-wrapper");
@@ -196,6 +195,48 @@ visualizeStone(4, 4, ALLY_COLOR_FIELD);
 visualizeStone(3, 4, OPPONENT_COLOR_FIELD);
 visualizeStone(4, 3, OPPONENT_COLOR_FIELD);
 
+// 盤面を初期化
+const ALLY = 1;
+const OPPONENT = -1;
+const EMPTY = 0;
+let field = [];
+for (let i=0; i<8; i++){
+    let tmp = []
+    for (let j=0; j<8; j++){
+        tmp.push(0);
+    }
+    field.push(tmp)
+}
+field[3][3] = 1;
+field[4][4] = 1;
+field[3][4] = -1;
+field[4][3] = -1;
+
+// 盤面を表示
+let show=()=>{
+    for (let i=0; i<8; i++){
+        console.log(field[i]);
+    }
+}
+
+// オセロのアルゴリズム
+// 石を置いてひっくり返す
+// その場所には石を置くことができるとする
+let othello=(p, q)=>{
+    field[p][q] = 1;
+    for (let i=p-1; i>=0; i--){
+        if (field[i][q]!=-1){
+            break
+        }
+    }
+}
+
+// オセロのアルゴリズム
+// その場所に投票する
+let vote=()=>{
+
+}
+
 let paintedI;
 let paintedJ;
 onkeydown=(e)=>{
@@ -243,7 +284,6 @@ onkeydown=(e)=>{
     if (430<=coordX){
         paintSquare(paintedI, paintedJ);
     }
-    
 };
 
 onkeyup=(e)=>{
@@ -263,7 +303,6 @@ onkeyup=(e)=>{
 ・space キーを決定ボタンにする。
 
 〇オセロを実装する。
-・グリッドと石を canvas で表示する。
 ・探索アルゴリズムを作る。
 
 */
