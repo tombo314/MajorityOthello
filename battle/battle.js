@@ -25,6 +25,8 @@ const UPPER_BOUND_Y = 450+1;
 const INIT_Y_DIFF = 20;
 const ALLY_COLOR = "rgb(255, 100, 100)";
 const OPPONENT_COLOR = "rgb(100, 100, 255)";
+const ALLY_COLOR_FIELD = "rgb(255, 30, 30)";
+const OPPONENT_COLOR_FIELD = "rgb(30, 30, 255)";
 
 let getRandomInt=(min, max)=> {
     min = Math.ceil(min);
@@ -144,6 +146,32 @@ let unPaintSquare=(i, j)=>{
     elem.style.backgroundColor = "#70ad47";
 };
 
+// 全体に石を配置
+for (let i=0; i<8; i++){
+    for (let j=0; j<8; j++){
+        let stone = document.createElement("canvas");
+        stone.setAttribute("width", 550);
+        stone.setAttribute("height", 670);
+        stone.setAttribute("style", "position: absolute; transform: translate(-80px, -80px); visibility: hidden;");
+        stone.setAttribute("id", `stone${i}${j}`);
+        othelloWrapper.appendChild(stone);
+        let context = stone.getContext("2d");
+        context.beginPath();
+        context.fillStyle = "rgb(255, 30, 30)";
+        context.arc(61.7*i+68, 58*j+43, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
+        context.fill();
+        context.stroke();
+    }
+}
+
+// 石を表示する
+let visualizeStone=(i, j, color)=>{
+    let elem = document.getElementById(`stone${i}${j}`);
+    elem.style.visibility = "visible";
+}
+
+
+
 let paintedI;
 let paintedJ;
 onkeydown=(e)=>{
@@ -207,7 +235,6 @@ onkeyup=(e)=>{
 };
 
 /*
-・マスの真上にきたら opacity を変更する。
 ・自分を赤と青でランダムに振り分ける。
 ・space キーを決定ボタンにする。
 
