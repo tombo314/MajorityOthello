@@ -1,6 +1,3 @@
-let users;
-let initX;
-let initY;
 let ownX;
 let ownY;
 let x = 0;
@@ -9,14 +6,10 @@ let wDown;
 let aDown;
 let sDown;
 let dDown;
-let canvas;
-let context;
 let own;
 let ownName;
 let other;
 let getName;
-let allyId;
-let opponentId;
 let initXDiff;
 let ownXDiff;
 let socket = io();
@@ -41,16 +34,18 @@ let getRandomInt=(min, max)=> {
 
 socket.emit("battle-start", {value: ""});
 socket.on("battle-start", (data)=>{
-    users = data.value;
+    let users = data.value;
     // プレイヤーの円を描画
     for (let i=0; i<users.length; i++){
-        allyId = `ally${i/2}`;
-        opponentId = `opponent${parseInt(i/2)+1}`;
+        let allyId = `ally${i/2}`;
+        let opponentId = `opponent${parseInt(i/2)+1}`;
         let canvas = document.createElement("canvas");
+        let initX;
+        let initY;
         canvas.setAttribute("width", 430);
         canvas.setAttribute("height", 670);
         canvas.setAttribute("style", "position: absolute; z-index: 999;");
-        context = canvas.getContext("2d");
+        let context = canvas.getContext("2d");
         initY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
         if (i==0){
             canvas.setAttribute("id", "own");
@@ -113,7 +108,6 @@ socket.on("battle-start", (data)=>{
     const INIT_TOP = -65;
     const DIFF_X = 5.75;
     const DIFF_Y = 4;
-
     let makeSquare=(i, j)=>{
         let sheet = document.createElement("div");
         sheet.setAttribute("id", `square${i}${j}`);
@@ -126,14 +120,7 @@ socket.on("battle-start", (data)=>{
         `);
         othelloWrapper.appendChild(sheet);
     };
-    let paintSquare=(i, j)=>{
-        let elem = document.getElementById(`square${i}${j}`);
-        elem.style.backgroundColor = "#cfca";
-    }
-    let unPaintSquare=(i, j)=>{
-        let elem = document.getElementById(`square${i}${j}`);
-        elem.style.backgroundColor = "#70ad47";
-    };
+    // シートを生成
     for (let i=0; i<8; i++){
         for (let j=0; j<8; j++){
             makeSquare(i, j);
@@ -141,8 +128,24 @@ socket.on("battle-start", (data)=>{
     }
 });
 
+let paintSquare=(i, j)=>{
+    if (i<0 || j<0 || 8<=i || 8<=j){
+        return false
+    }
+    let elem = document.getElementById(`square${i}${j}`);
+    elem.style.backgroundColor = "#cfca";
+}
+let unPaintSquare=(i, j)=>{
+    if (i<0 || j<0 || 8<=i || 8<=j){
+        return false
+    }
+    let elem = document.getElementById(`square${i}${j}`);
+    elem.style.backgroundColor = "#70ad47";
+};
+
 onkeydown=(e)=>{
     const DIFF = 10;
+    // 上下左右に移動させる
     if (e.key=="w"){
         wDown = true;
     } else if (e.key=="a"){
@@ -166,7 +169,29 @@ onkeydown=(e)=>{
     }
     own.style.transform = `translate(${x}px, ${y}px)`;
     ownName.style.transform = `translate(${ownX+x+ownXDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
+
+    // 全員の座標を反映させる
     // socket.emit("coordinates-changed", {value: ""});
+    
+    // マスにシートをかぶせる
+    let coordX = ownX+x;
+    let coordY = ownY+y;
+    let paintedI;
+    let paintedJ;
+    const INIT_X = 440;
+    const INIT_Y = 40;
+    const DIFF_X = 62;
+    const DIFF_Y = 48;
+    if (paintedI!=null){
+        unPaintSquare(0, 0);
+        // unPaintSquare(paintedI, paintedJ);
+    }
+    paintedI = parseInt((coordY-INIT_Y)/DIFF_Y);
+    paintedJ = parseInt((coordX-INIT_X)/DIFF_X);
+    if (430<=coordX){
+        paintSquare(paintedI, paintedJ);
+    }
+    
 };
 
 onkeyup=(e)=>{
