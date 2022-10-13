@@ -25,8 +25,8 @@ const UPPER_BOUND_Y = 450+1;
 const INIT_Y_DIFF = 20;
 const ALLY_COLOR = "rgb(255, 100, 100)";
 const OPPONENT_COLOR = "rgb(100, 100, 255)";
-const ALLY_COLOR_FIELD = "rgb(255, 30, 30)";
-const OPPONENT_COLOR_FIELD = "rgb(30, 30, 255)";
+const ALLY_COLOR_FIELD = "rgb(255, 50, 50)";
+const OPPONENT_COLOR_FIELD = "rgb(50, 50, 255)";
 
 let getRandomInt=(min, max)=> {
     min = Math.ceil(min);
@@ -153,11 +153,24 @@ for (let i=0; i<8; i++){
         stone.setAttribute("width", 550);
         stone.setAttribute("height", 670);
         stone.setAttribute("style", "position: absolute; transform: translate(-80px, -80px); visibility: hidden;");
-        stone.setAttribute("id", `stone${i}${j}`);
+        stone.setAttribute("id", `stone${i}${j}${ALLY_COLOR_FIELD}`);
         othelloWrapper.appendChild(stone);
         let context = stone.getContext("2d");
         context.beginPath();
-        context.fillStyle = "rgb(255, 30, 30)";
+        context.fillStyle = ALLY_COLOR_FIELD;
+        context.arc(61.7*i+68, 58*j+43, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
+        context.fill();
+        context.stroke();
+        
+        stone = document.createElement("canvas");
+        stone.setAttribute("width", 550);
+        stone.setAttribute("height", 670);
+        stone.setAttribute("style", "position: absolute; transform: translate(-80px, -80px); visibility: hidden;");
+        stone.setAttribute("id", `stone${i}${j}${OPPONENT_COLOR_FIELD}`);
+        othelloWrapper.appendChild(stone);
+        context = stone.getContext("2d");
+        context.beginPath();
+        context.fillStyle = OPPONENT_COLOR_FIELD;
         context.arc(61.7*i+68, 58*j+43, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
         context.fill();
         context.stroke();
@@ -166,11 +179,22 @@ for (let i=0; i<8; i++){
 
 // 石を表示する
 let visualizeStone=(i, j, color)=>{
-    let elem = document.getElementById(`stone${i}${j}`);
+    let otherColor;
+    if (color==ALLY_COLOR_FIELD){
+        otherColor = OPPONENT_COLOR_FIELD;
+    } else {
+        otherColor = ALLY_COLOR_FIELD;
+    }
+    let elem = document.getElementById(`stone${i}${j}${otherColor}`);
+    elem.style.visibility = "hidden";
+    elem = document.getElementById(`stone${i}${j}${color}`);
     elem.style.visibility = "visible";
 }
 
-
+visualizeStone(3, 3, ALLY_COLOR_FIELD);
+visualizeStone(4, 4, ALLY_COLOR_FIELD);
+visualizeStone(3, 4, OPPONENT_COLOR_FIELD);
+visualizeStone(4, 3, OPPONENT_COLOR_FIELD);
 
 let paintedI;
 let paintedJ;
