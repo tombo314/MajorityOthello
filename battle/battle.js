@@ -101,32 +101,33 @@ socket.on("battle-start", (data)=>{
         }
     } // for文終わり
     
-    // マス選択時に盤面の上に被せるシート
-    const GRID_X = 56;
-    const GRID_Y = 54;
-    const INIT_LEFT = -40;
-    const INIT_TOP = -65;
-    const DIFF_X = 5.75;
-    const DIFF_Y = 4;
-    let makeSquare=(i, j)=>{
-        let sheet = document.createElement("div");
-        sheet.setAttribute("id", `square${i}${j}`);
-        sheet.setAttribute("style", `
-            width: ${GRID_X}px;
-            height: ${GRID_Y}px;
-            position: absolute;
-            left: ${INIT_LEFT+j*(GRID_X+DIFF_X)}px;
-            top: ${INIT_TOP+i*(GRID_Y+DIFF_Y)}px;
-        `);
-        othelloWrapper.appendChild(sheet);
-    };
-    // シートを生成
-    for (let i=0; i<8; i++){
-        for (let j=0; j<8; j++){
-            makeSquare(i, j);
-        }
-    }
 });
+
+// マス選択時に盤面の上に被せるシート
+const GRID_X = 56;
+const GRID_Y = 54;
+const INIT_LEFT = -40;
+const INIT_TOP = -65;
+const DIFF_X = 5.75;
+const DIFF_Y = 4;
+let makeSquare=(i, j)=>{
+    let sheet = document.createElement("div");
+    sheet.setAttribute("id", `square${i}${j}`);
+    sheet.setAttribute("style", `
+        width: ${GRID_X}px;
+        height: ${GRID_Y}px;
+        position: absolute;
+        left: ${INIT_LEFT+j*(GRID_X+DIFF_X)}px;
+        top: ${INIT_TOP+i*(GRID_Y+DIFF_Y)}px;
+    `);
+    othelloWrapper.appendChild(sheet);
+};
+// シートを生成
+for (let i=0; i<8; i++){
+    for (let j=0; j<8; j++){
+        makeSquare(i, j);
+    }
+}
 
 let paintSquare=(i, j)=>{
     if (i<0 || j<0 || 8<=i || 8<=j){
@@ -143,6 +144,8 @@ let unPaintSquare=(i, j)=>{
     elem.style.backgroundColor = "#70ad47";
 };
 
+let paintedI;
+let paintedJ;
 onkeydown=(e)=>{
     const DIFF = 10;
     // 上下左右に移動させる
@@ -173,18 +176,15 @@ onkeydown=(e)=>{
     // 全員の座標を反映させる
     // socket.emit("coordinates-changed", {value: ""});
     
-    // マスにシートをかぶせる
+    // シートをマスにかぶせる・マスから取り除く
     let coordX = ownX+x;
     let coordY = ownY+y;
-    let paintedI;
-    let paintedJ;
     const INIT_X = 440;
     const INIT_Y = 40;
     const DIFF_X = 62;
-    const DIFF_Y = 48;
+    const DIFF_Y = 58;
     if (paintedI!=null){
-        unPaintSquare(0, 0);
-        // unPaintSquare(paintedI, paintedJ);
+        unPaintSquare(paintedI, paintedJ);
     }
     paintedI = parseInt((coordY-INIT_Y)/DIFF_Y);
     paintedJ = parseInt((coordX-INIT_X)/DIFF_X);
