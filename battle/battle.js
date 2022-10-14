@@ -209,24 +209,211 @@ for (let i=0; i<8; i++){
 }
 field[3][3] = 1;
 field[4][4] = 1;
-field[3][4] = -1;
-field[4][3] = -1;
+field[3][4] = 2;
+field[4][3] = 2;
 
 // 盤面を表示
-let show=()=>{
+let show=(ary)=>{
     for (let i=0; i<8; i++){
-        console.log(field[i]);
+        console.log(ary[i]);
     }
 }
 
 // オセロのアルゴリズム
 // 石を置いてひっくり返す
 // その場所には石を置くことができるとする
-let othello=(p, q)=>{
-    field[p][q] = 1;
-    for (let i=p-1; i>=0; i--){
-        if (field[i][q]!=-1){
-            break
+let othello=(p, q, oneOrTwo)=>{
+    let n = oneOrTwo;
+    let m;
+    let color;
+    if (n==1){
+        m = 2;
+        color = ALLY_COLOR_FIELD;
+    } else {
+        m = 1
+        color = OPPONENT_COLOR_FIELD;
+    }
+    field[p][q] = n;
+    visualizeStone(p, q, color);
+
+    // 上
+    let ok = false;
+    if (p-1>=0 && field[p-1][q]==m){
+        for (let i=p-1; i>=0; i--){
+            if (field[i][q]==n){
+                ok = true;
+                break
+            }
+        }
+    }
+    if (ok){
+        for (let i=p-1; i>=0; i--){
+            if (field[i][q]==n){
+                break
+            }
+            field[i][q] = n;
+            visualizeStone(i, q, color);
+        }
+    }
+    // 下
+    ok = false;
+    if (p+1<8 && field[p+1][q]==m){
+        for (let i=p+1; i<8; i++){
+            if (field[i][q]==n){
+                ok = true;
+                break
+            }
+        }
+    }
+    if (ok){
+        for (let i=p+1; i<8; i++){
+            if (field[i][q]==n){
+                break
+            }
+            field[i][q] = n;
+            visualizeStone(i, q, color);
+        }
+    }
+    // 左
+    ok = false;
+    if (q-1>=0 && field[p][q-1]==m){
+        for (let j=q-1; j>=0; j--){
+            if (field[p][j]==n){
+                ok = true;
+                break
+            }
+        }
+    }
+    if (ok){
+        for (let j=q-1; j>=0; j--){
+            if (field[p][j]==n){
+                break
+            }
+            field[p][j] = n;
+            visualizeStone(p, j, color);
+        }
+    }
+    // 右
+    ok = false;
+    if (q+1<8 && field[p][q+1]==m){
+        for (let j=q+1; j<8; j++){
+            if (field[p][j]==n){
+                ok = true;
+                break
+            }
+        }
+    }
+    if (ok){
+        for (let j=p+1; j<8; j++){
+            if (field[p][j]==n){
+                break
+            }
+            field[p][j] = n;
+            visualizeStone(p, j, color);
+        }
+    }
+    // 左上
+    ok = false;
+    if (p-1>=0 && q-1>=0 && field[p-1][q-1]==m){
+        j = q-1;
+        for (let i=p-1; i>=0; i--){
+            if (j<0){
+                break;
+            }
+            if (field[i][j]==n){
+                ok = true;
+                break;
+            }
+            j--;
+        }
+    }
+    if (ok){
+        j = q-1;
+        for (let i=p-1; i>=0; i--){
+            if (field[i][j]==n){
+                break;
+            }
+            field[i][j] = n;
+            visualizeStone(i, j, color);
+            j--;
+        }
+    }
+    // 右上
+    ok = false;
+    if (p-1>=0 && q+1<8 && field[p-1][q+1]==m){
+        j = q+1;
+        for (let i=p-1; i>=0; i--){
+            if (j>=8){
+                break;
+            }
+            if (field[i][j]==n){
+                ok = true;
+                break;
+            }
+            j++;
+        }
+    }
+    if (ok){
+        j = q+1;
+        for (let i=p-1; i>=0; i--){
+            if (field[i][j]==n){
+                break
+            }
+            field[i][j] = n;
+            visualizeStone(i, j, color);
+            j++;
+        }
+    }
+    // 左下
+    ok = false;
+    if (p+1<8 && q-1>=0 && field[p+1][q-1]==m){
+        j = q-1;
+        for (let i=p+1; i<8; i++){
+            if (j<0){
+                break;
+            }
+            if (field[i][j]==n){
+                ok = true;
+                break;
+            }
+            j--;
+        }
+    }
+    if (ok){
+        j = q-1;
+        for (let i=p+1; i<8; i++){
+            if (field[i][j]==n){
+                break
+            }
+            field[i][j] = n;
+            visualizeStone(i, j, color);
+            j--;
+        }
+    }
+    // 右下
+    ok = false;
+    if (p+1<8 && q+1<8 && field[p+1][q+1]==m){
+        j = q+1;
+        for (let i=p+1; i<8; i++){
+            if (j>=8){
+                break;
+            }
+            if (field[i][j]==n){
+                ok = true;
+                break;
+            }
+            j++;
+        }
+    }
+    if (ok){
+        j = q+1;
+        for (let i=p+1; i<8; i++){
+            if (field[i][j]==n){
+                break
+            }
+            field[i][j] = n;
+            visualizeStone(i, j, color);
+            j++;
         }
     }
 }
@@ -234,11 +421,11 @@ let othello=(p, q)=>{
 // オセロのアルゴリズム
 // その場所に投票する
 let vote=()=>{
-
 }
 
 let paintedI;
 let paintedJ;
+let isAlly = true;
 onkeydown=(e)=>{
     const DIFF = 10;
     // 上下左右に移動させる
@@ -284,7 +471,18 @@ onkeydown=(e)=>{
     if (430<=coordX){
         paintSquare(paintedI, paintedJ);
     }
-};
+
+    // そのマスに石を置く
+    if (e.key=="Enter"){
+        if (isAlly){
+            othello(paintedJ, paintedI, 1);
+            isAlly = false;
+        } else {
+            othello(paintedJ, paintedI, 2);
+            isAlly = true;
+        }
+    }
+}
 
 onkeyup=(e)=>{
     if (e.key=="w"){
@@ -296,7 +494,7 @@ onkeyup=(e)=>{
     } else if (e.key=="d"){
         dDown = false;
     }
-};
+}
 
 /*
 ・自分を赤と青でランダムに振り分ける。

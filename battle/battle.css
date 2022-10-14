@@ -11,10 +11,13 @@ html {
     margin: 0;
     box-sizing: border-box;
   }
-  .time {
+  .flex-time {
+    display: flex;
+    justify-content: space-evenly;
+  }
+  .flex-time div {
     font-size: 30px;
     font-weight: bold;
-    text-align: center;
     margin: 3px;
   }
   h1 {

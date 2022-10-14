@@ -29,11 +29,14 @@ html{
         box-sizing: border-box;
     }
 
-    .time{
-        font-size: 30px;
-        font-weight: bold;
-        text-align: center;
-        margin: 3px;
+    .flex-time{
+        display: flex;
+        justify-content: space-evenly;
+        div{
+            font-size: 30px;
+            font-weight: bold;
+            margin: 3px;
+        }
     }
 
     h1{
