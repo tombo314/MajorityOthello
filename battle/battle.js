@@ -322,7 +322,7 @@ let othello=(p, q, oneOrTwo)=>{
     }
     if (ok){
         valid = true;
-        for (let j=p+1; j<8; j++){
+        for (let j=q+1; j<8; j++){
             if (field[p][j]==n){
                 break
             }
@@ -454,7 +454,9 @@ let othello=(p, q, oneOrTwo)=>{
     if (valid){
         field[p][q] = n;
         visualizeStone(p, q, color);
+        return true;
     }
+    return false;
 }
 
 // オセロのアルゴリズム
@@ -513,12 +515,15 @@ onkeydown=(e)=>{
 
     // そのマスに石を置く
     if (e.key=="Enter"){
+        let valid;
         if (isAlly){
-            othello(paintedI, paintedJ, 1);
-            isAlly = false;
+            valid = othello(paintedI, paintedJ, 1);
+            if (valid)
+                isAlly = false;
         } else {
-            othello(paintedI, paintedJ, 2);
-            isAlly = true;
+           valid = othello(paintedI, paintedJ, 2);
+           if (valid)
+                isAlly = true;
         }
     }
 }
@@ -535,6 +540,7 @@ onkeyup=(e)=>{
     }
 }
 
+
 /*
 ・自分を赤と青でランダムに振り分ける。
 ・space キーを決定ボタンにする。
@@ -543,3 +549,5 @@ onkeyup=(e)=>{
 ・探索アルゴリズムを作る。
 
 */
+
+// 探索アルゴリズムの右方向だけ（右上・右下は除く）が動かない
