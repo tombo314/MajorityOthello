@@ -157,7 +157,7 @@ for (let i=0; i<8; i++){
         let context = stone.getContext("2d");
         context.beginPath();
         context.fillStyle = ALLY_COLOR_FIELD;
-        context.arc(61.7*i+68, 58*j+43, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
+        context.arc(61.7*j+68, 58*i+43, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
         context.fill();
         context.stroke();
         
@@ -170,7 +170,7 @@ for (let i=0; i<8; i++){
         context = stone.getContext("2d");
         context.beginPath();
         context.fillStyle = OPPONENT_COLOR_FIELD;
-        context.arc(61.7*i+68, 58*j+43, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
+        context.arc(61.7*j+68, 58*i+43, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
         context.fill();
         context.stroke();
     }
@@ -233,9 +233,8 @@ let othello=(p, q, oneOrTwo)=>{
         m = 1
         color = OPPONENT_COLOR_FIELD;
     }
-    field[p][q] = n;
-    visualizeStone(p, q, color);
 
+    let valid = false;
     // 上
     let ok = false;
     if (p-1>=0 && field[p-1][q]==m){
@@ -243,13 +242,20 @@ let othello=(p, q, oneOrTwo)=>{
             if (field[i][q]==n){
                 ok = true;
                 break
+            } else if (field[i][q]==0){
+                ok = false;
+                break;
             }
         }
     }
     if (ok){
+        valid = true;
         for (let i=p-1; i>=0; i--){
             if (field[i][q]==n){
                 break
+            } else if (field[i][q]==0){
+                ok = false;
+                break;
             }
             field[i][q] = n;
             visualizeStone(i, q, color);
@@ -262,10 +268,14 @@ let othello=(p, q, oneOrTwo)=>{
             if (field[i][q]==n){
                 ok = true;
                 break
+            } else if (field[i][q]==0){
+                ok = false;
+                break;
             }
         }
     }
     if (ok){
+        valid = true;
         for (let i=p+1; i<8; i++){
             if (field[i][q]==n){
                 break
@@ -281,10 +291,14 @@ let othello=(p, q, oneOrTwo)=>{
             if (field[p][j]==n){
                 ok = true;
                 break
+            } else if (field[p][j]==0){
+                ok = false;
+                break;
             }
         }
     }
     if (ok){
+        valid = true;
         for (let j=q-1; j>=0; j--){
             if (field[p][j]==n){
                 break
@@ -300,10 +314,14 @@ let othello=(p, q, oneOrTwo)=>{
             if (field[p][j]==n){
                 ok = true;
                 break
+            } else if (field[p][j]==0){
+                ok = false;
+                break;
             }
         }
     }
     if (ok){
+        valid = true;
         for (let j=p+1; j<8; j++){
             if (field[p][j]==n){
                 break
@@ -323,11 +341,15 @@ let othello=(p, q, oneOrTwo)=>{
             if (field[i][j]==n){
                 ok = true;
                 break;
+            } else if (field[i][j]==0){
+                ok = false;
+                break;
             }
             j--;
         }
     }
     if (ok){
+        valid = true;
         j = q-1;
         for (let i=p-1; i>=0; i--){
             if (field[i][j]==n){
@@ -349,11 +371,15 @@ let othello=(p, q, oneOrTwo)=>{
             if (field[i][j]==n){
                 ok = true;
                 break;
+            } else if (field[i][j]==0){
+                ok = false;
+                break;
             }
             j++;
         }
     }
     if (ok){
+        valid = true;
         j = q+1;
         for (let i=p-1; i>=0; i--){
             if (field[i][j]==n){
@@ -375,11 +401,15 @@ let othello=(p, q, oneOrTwo)=>{
             if (field[i][j]==n){
                 ok = true;
                 break;
+            } else if (field[i][j]==0){
+                ok = false;
+                break;
             }
             j--;
         }
     }
     if (ok){
+        valid = true;
         j = q-1;
         for (let i=p+1; i<8; i++){
             if (field[i][j]==n){
@@ -401,11 +431,15 @@ let othello=(p, q, oneOrTwo)=>{
             if (field[i][j]==n){
                 ok = true;
                 break;
+            } else if (field[i][j]==0){
+                ok = false;
+                break;
             }
             j++;
         }
     }
     if (ok){
+        valid = true;
         j = q+1;
         for (let i=p+1; i<8; i++){
             if (field[i][j]==n){
@@ -415,6 +449,11 @@ let othello=(p, q, oneOrTwo)=>{
             visualizeStone(i, j, color);
             j++;
         }
+    }
+
+    if (valid){
+        field[p][q] = n;
+        visualizeStone(p, q, color);
     }
 }
 
@@ -475,10 +514,10 @@ onkeydown=(e)=>{
     // そのマスに石を置く
     if (e.key=="Enter"){
         if (isAlly){
-            othello(paintedJ, paintedI, 1);
+            othello(paintedI, paintedJ, 1);
             isAlly = false;
         } else {
-            othello(paintedJ, paintedI, 2);
+            othello(paintedI, paintedJ, 2);
             isAlly = true;
         }
     }
