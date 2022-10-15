@@ -204,30 +204,14 @@ for (let i=0; i<8; i++){
     field.push(tmp)
 }
 
-// field[3][3] = 1;
-// field[4][4] = 1;
-// field[3][4] = 2;
-// field[4][3] = 2;
-// visualizeStone(3, 3, ALLY_COLOR_FIELD);
-// visualizeStone(4, 4, ALLY_COLOR_FIELD);
-// visualizeStone(3, 4, OPPONENT_COLOR_FIELD);
-// visualizeStone(4, 3, OPPONENT_COLOR_FIELD);
-
-let n = 1;
-let m = 2;
-field[0][0] = n;
-field[0][1] = n;
-field[0][2] = n;
-field[1][0] = n;
-field[1][1] = m;
-field[1][2] = m;
-
-visualizeStone(0, 0, ALLY_COLOR_FIELD);
-visualizeStone(0, 1, ALLY_COLOR_FIELD);
-visualizeStone(0, 2, ALLY_COLOR_FIELD);
-visualizeStone(1, 0, ALLY_COLOR_FIELD);
-visualizeStone(1, 1, OPPONENT_COLOR_FIELD);
-visualizeStone(1, 2, OPPONENT_COLOR_FIELD);
+field[3][3] = 1;
+field[4][4] = 1;
+field[3][4] = 2;
+field[4][3] = 2;
+visualizeStone(3, 3, ALLY_COLOR_FIELD);
+visualizeStone(4, 4, ALLY_COLOR_FIELD);
+visualizeStone(3, 4, OPPONENT_COLOR_FIELD);
+visualizeStone(4, 3, OPPONENT_COLOR_FIELD);
 
 // 盤面を表示
 let show=(ary)=>{
