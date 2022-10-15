@@ -190,10 +190,6 @@ let visualizeStone=(i, j, color)=>{
     elem.style.visibility = "visible";
 }
 
-visualizeStone(3, 3, ALLY_COLOR_FIELD);
-visualizeStone(4, 4, ALLY_COLOR_FIELD);
-visualizeStone(3, 4, OPPONENT_COLOR_FIELD);
-visualizeStone(4, 3, OPPONENT_COLOR_FIELD);
 
 // 盤面を初期化
 const ALLY = 1;
@@ -207,10 +203,31 @@ for (let i=0; i<8; i++){
     }
     field.push(tmp)
 }
-field[3][3] = 1;
-field[4][4] = 1;
-field[3][4] = 2;
-field[4][3] = 2;
+
+// field[3][3] = 1;
+// field[4][4] = 1;
+// field[3][4] = 2;
+// field[4][3] = 2;
+// visualizeStone(3, 3, ALLY_COLOR_FIELD);
+// visualizeStone(4, 4, ALLY_COLOR_FIELD);
+// visualizeStone(3, 4, OPPONENT_COLOR_FIELD);
+// visualizeStone(4, 3, OPPONENT_COLOR_FIELD);
+
+let n = 1;
+let m = 2;
+field[0][0] = n;
+field[0][1] = n;
+field[0][2] = n;
+field[1][0] = n;
+field[1][1] = m;
+field[1][2] = m;
+
+visualizeStone(0, 0, ALLY_COLOR_FIELD);
+visualizeStone(0, 1, ALLY_COLOR_FIELD);
+visualizeStone(0, 2, ALLY_COLOR_FIELD);
+visualizeStone(1, 0, ALLY_COLOR_FIELD);
+visualizeStone(1, 1, OPPONENT_COLOR_FIELD);
+visualizeStone(1, 2, OPPONENT_COLOR_FIELD);
 
 // 盤面を表示
 let show=(ary)=>{
@@ -233,8 +250,11 @@ let othello=(p, q, oneOrTwo)=>{
         m = 1
         color = OPPONENT_COLOR_FIELD;
     }
-
     let valid = false;
+    // そのマスにすでに置いてあったら置けない
+    if (field[p][q]!=0){
+        return false;
+    }
     // 上
     let ok = false;
     if (p-1>=0 && field[p-1][q]==m){
@@ -464,6 +484,180 @@ let othello=(p, q, oneOrTwo)=>{
 let vote=()=>{
 }
 
+let search=(p, q, n)=>{
+    let m;
+    if (n==1){
+        m = 2;
+    } else {
+        m = 1;
+    }
+    
+    // 上
+    let ok = false;
+    if (p-1>=0 && field[p-1][q]==m){
+        for (let i=p-1; i>=0; i--){
+            if (field[i][q]==n){
+                ok = true;
+                break
+            } else if (field[i][q]==0){
+                ok = false;
+                break;
+            }
+        }
+    }
+    if (ok){
+        return true;
+    }
+    // 下
+    ok = false;
+    if (p+1<8 && field[p+1][q]==m){
+        for (let i=p+1; i<8; i++){
+            if (field[i][q]==n){
+                ok = true;
+                break
+            } else if (field[i][q]==0){
+                ok = false;
+                break;
+            }
+        }
+    }
+    if (ok){
+        return true;
+    }
+    // 左
+    ok = false;
+    if (q-1>=0 && field[p][q-1]==m){
+        for (let j=q-1; j>=0; j--){
+            if (field[p][j]==n){
+                ok = true;
+                break
+            } else if (field[p][j]==0){
+                ok = false;
+                break;
+            }
+        }
+    }
+    if (ok){
+        return true;
+    }
+    // 右
+    ok = false;
+    if (q+1<8 && field[p][q+1]==m){
+        for (let j=q+1; j<8; j++){
+            if (field[p][j]==n){
+                ok = true;
+                break
+            } else if (field[p][j]==0){
+                ok = false;
+                break;
+            }
+        }
+    }
+    if (ok){
+        return true;
+    }
+    // 左上
+    ok = false;
+    if (p-1>=0 && q-1>=0 && field[p-1][q-1]==m){
+        j = q-1;
+        for (let i=p-1; i>=0; i--){
+            if (j<0){
+                break;
+            }
+            if (field[i][j]==n){
+                ok = true;
+                break;
+            } else if (field[i][j]==0){
+                ok = false;
+                break;
+            }
+            j--;
+        }
+    }
+    if (ok){
+        return true;
+    }
+    // 右上
+    ok = false;
+    if (p-1>=0 && q+1<8 && field[p-1][q+1]==m){
+        j = q+1;
+        for (let i=p-1; i>=0; i--){
+            if (j>=8){
+                break;
+            }
+            if (field[i][j]==n){
+                ok = true;
+                break;
+            } else if (field[i][j]==0){
+                ok = false;
+                break;
+            }
+            j++;
+        }
+    }
+    if (ok){
+        return true;
+    }
+    // 左下
+    ok = false;
+    if (p+1<8 && q-1>=0 && field[p+1][q-1]==m){
+        j = q-1;
+        for (let i=p+1; i<8; i++){
+            if (j<0){
+                break;
+            }
+            if (field[i][j]==n){
+                ok = true;
+                break;
+            } else if (field[i][j]==0){
+                ok = false;
+                break;
+            }
+            j--;
+        }
+    }
+    if (ok){
+        return true;
+    }
+    // 右下
+    ok = false;
+    if (p+1<8 && q+1<8 && field[p+1][q+1]==m){
+        j = q+1;
+        for (let i=p+1; i<8; i++){
+            if (j>=8){
+                break;
+            }
+            if (field[i][j]==n){
+                ok = true;
+                break;
+            } else if (field[i][j]==0){
+                ok = false;
+                break;
+            }
+            j++;
+        }
+    }
+    if (ok){
+        return true;
+    }
+
+    return false;
+}
+
+let canPutStone=(n)=>{
+    for (let i=0; i<8; i++){
+        for (let j=0; j<8; j++){
+            if (field[i][j]!=0){
+                continue;
+            }
+            if (search(i, j, n)){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 let paintedI;
 let paintedJ;
 let isAlly = true;
@@ -518,12 +712,18 @@ onkeydown=(e)=>{
         let valid;
         if (isAlly){
             valid = othello(paintedI, paintedJ, 1);
-            if (valid)
-                isAlly = false;
+            if (valid){
+                if (canPutStone(2)){
+                    isAlly = false;
+                }
+            }
         } else {
-           valid = othello(paintedI, paintedJ, 2);
-           if (valid)
-                isAlly = true;
+            valid = othello(paintedI, paintedJ, 2);
+            if (valid){
+                if (canPutStone(1)){
+                    isAlly = true;
+                }
+           }
         }
     }
 }
