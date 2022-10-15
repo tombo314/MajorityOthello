@@ -32,23 +32,13 @@ html{
     .flex-time{
         display: flex;
         justify-content: space-evenly;
-        .text1{
+        div{
             font-size: 24px;
             font-weight: bold;
             margin: 7px;
-            transform: translateX(-100px);
-        }
-        .time{
-            font-size: 30px;
-            font-weight: bold;
-            margin: 3px;
-        }
-        .text2{
-            font-size: 24px;
-            font-weight: bold;
-            left: 0;
-            margin: 7px;
-            transform: translateX(100px);
+            #turn-color{
+                color: rgb(255, 50, 50);
+            }
         }
     }
 

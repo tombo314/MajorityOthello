@@ -15,23 +15,13 @@ html {
     display: flex;
     justify-content: space-evenly;
   }
-  .flex-time .text1 {
+  .flex-time div {
     font-size: 24px;
     font-weight: bold;
     margin: 7px;
-    transform: translateX(-100px);
   }
-  .flex-time .time {
-    font-size: 30px;
-    font-weight: bold;
-    margin: 3px;
-  }
-  .flex-time .text2 {
-    font-size: 24px;
-    font-weight: bold;
-    left: 0;
-    margin: 7px;
-    transform: translateX(100px);
+  .flex-time div #turn-color {
+    color: rgb(255, 50, 50);
   }
   h1 {
     text-align: center;

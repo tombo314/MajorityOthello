@@ -710,6 +710,17 @@ onkeydown=(e)=>{
            }
         }
     }
+    let turn = document.getElementById("turn");
+    let turnColor;
+    if (isAlly){
+        turn.innerHTML = "<span id='turn-color'>赤</span>のターン";
+        turnColor = document.getElementById("turn-color");
+        turnColor.style.color = "rgb(255, 50, 50)";
+    } else {
+        turn.innerHTML = "<span id='turn-color'>青</span>のターン";
+        turnColor = document.getElementById("turn-color");
+        turnColor.style.color = "rgb(50, 50, 255)";
+    }
 }
 
 onkeyup=(e)=>{
