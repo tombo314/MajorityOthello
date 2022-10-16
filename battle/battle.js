@@ -735,7 +735,7 @@ onkeydown=(e)=>{
             valid = othello(paintedI, paintedJ, 1);
             if (valid){
                 cntStone += 1;
-                if (cntStone>=10){
+                if (cntStone>=64){
                     finished = true;
                 }
                 if (canPutStone(2)){
@@ -746,7 +746,7 @@ onkeydown=(e)=>{
             valid = othello(paintedI, paintedJ, 2);
             if (valid){
                 cntStone += 1;
-                if (cntStone>=10){
+                if (cntStone>=64){
                     finished = true;
                 }
                 if (canPutStone(1)){
