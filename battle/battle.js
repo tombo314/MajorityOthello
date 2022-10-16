@@ -190,7 +190,6 @@ let visualizeStone=(i, j, color)=>{
     elem.style.visibility = "visible";
 }
 
-
 // 盤面を初期化
 const ALLY = 1;
 const OPPONENT = -1;
@@ -642,9 +641,44 @@ let canPutStone=(n)=>{
     return false;
 }
 
+let finish=()=>{
+    const TIME = new Date();
+    while (new Date()-TIME<1){
+        continue;
+    }
+    let cnt = 0;
+    for (let i=0; i<8; i++){
+        for (let j=0; j<8; j++){
+            if (field[i][j]==1){
+                cnt += 1;
+            }
+        }
+    }
+    let tmp = 64-cnt;
+    let ownColor;
+    let opponentColor;
+    if (ALLY_COLOR_FIELD=="rgb(255, 50, 50)"){
+        ownColor = "赤";
+        opponentColor = "青";
+    } else {
+        ownColor = "青";
+        opponentColor = "赤";
+    }
+    if (cnt>tmp){
+        alert(`${ownColor}の勝利です。`);
+    } else if (cnt<tmp){
+        alert(`${opponentColor}の勝利です。`);
+    } else {
+        alert("引き分けです。");
+    }
+}
+
 let paintedI;
 let paintedJ;
 let isAlly = true;
+let cntStone = 4;
+let finished = false;
+let keysVaild = true;
 onkeydown=(e)=>{
     const DIFF = 10;
     // 上下左右に移動させる
@@ -669,8 +703,11 @@ onkeydown=(e)=>{
     if (dDown && ownX+x<=innerWidth-430){
         x += DIFF;
     }
-    own.style.transform = `translate(${x}px, ${y}px)`;
-    ownName.style.transform = `translate(${ownX+x+ownXDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
+
+    if (keysVaild){
+        own.style.transform = `translate(${x}px, ${y}px)`;
+        ownName.style.transform = `translate(${ownX+x+ownXDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
+    }
 
     // 全員の座標を反映させる
     // socket.emit("coordinates-changed", {value: ""});
@@ -687,7 +724,7 @@ onkeydown=(e)=>{
     }
     paintedI = parseInt((coordY-INIT_Y)/DIFF_Y);
     paintedJ = parseInt((coordX-INIT_X)/DIFF_X);
-    if (430<=coordX){
+    if (430<=coordX && keysVaild){
         paintSquare(paintedI, paintedJ);
     }
 
@@ -697,6 +734,10 @@ onkeydown=(e)=>{
         if (isAlly){
             valid = othello(paintedI, paintedJ, 1);
             if (valid){
+                cntStone += 1;
+                if (cntStone>=10){
+                    finished = true;
+                }
                 if (canPutStone(2)){
                     isAlly = false;
                 }
@@ -704,6 +745,10 @@ onkeydown=(e)=>{
         } else {
             valid = othello(paintedI, paintedJ, 2);
             if (valid){
+                cntStone += 1;
+                if (cntStone>=10){
+                    finished = true;
+                }
                 if (canPutStone(1)){
                     isAlly = true;
                 }
@@ -721,28 +766,30 @@ onkeydown=(e)=>{
         turnColor = document.getElementById("turn-color");
         turnColor.style.color = "rgb(50, 50, 255)";
     }
+
 }
 
 onkeyup=(e)=>{
-    if (e.key=="w"){
-        wDown = false;
-    } else if (e.key=="a"){
-        aDown = false;
-    } else if (e.key=="s"){
-        sDown = false;
-    } else if (e.key=="d"){
-        dDown = false;
+    if (keysVaild){
+        if (finished){
+            finish();
+            keysVaild = false;
+        }
+        if (e.key=="w"){
+            wDown = false;
+        } else if (e.key=="a"){
+            aDown = false;
+        } else if (e.key=="s"){
+            sDown = false;
+        } else if (e.key=="d"){
+            dDown = false;
+        }
     }
 }
 
 
 /*
-・自分を赤と青でランダムに振り分ける。
-・space キーを決定ボタンにする。
-
-〇オセロを実装する。
-・探索アルゴリズムを作る。
+・全員の動きを同期する
+・投票システムを作る
 
 */
-
-// 探索アルゴリズムの右方向だけ（右上・右下は除く）が動かない
