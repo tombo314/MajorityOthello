@@ -2,11 +2,8 @@
 let paintedI;
 let paintedJ;
 let isAlly = true;
-let cntStone = 4;
 let finished = false;
-let keysVaild = true;
-let x = 0;
-let y = 0;
+let keysValid = true;
 let wDown;
 let aDown;
 let sDown;
@@ -14,6 +11,9 @@ let dDown;
 let own;
 let ownName;
 let xDiff;
+let x = 0;
+let y = 0;
+let cntStone = 4;
 
 // 定数の宣言
 const RED = 1;
@@ -33,6 +33,7 @@ const GRID_INIT_LEFT = -40;
 const GRID_INIT_TOP = -65;
 const GRID_DIFF_X = 5.75;
 const GRID_DIFF_Y = 4;
+const STONE_CNT_FINISH = 8;
 const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
 const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
 const COLOR_FIELD_RED = "rgb(255, 50, 50)";
@@ -557,10 +558,6 @@ let canPutStone=(n)=>{
     return false;
 }
 let finish=()=>{
-    const TIME = new Date();
-    while (new Date()-TIME<1){
-        continue;
-    }
     let cnt = 0;
     for (let i=0; i<8; i++){
         for (let j=0; j<8; j++){
@@ -569,7 +566,7 @@ let finish=()=>{
             }
         }
     }
-    let tmp = 64-cnt;
+    let tmp = STONE_CNT_FINISH-cnt;
     let ownColor;
     let opponentColor;
     if (COLOR_FIELD_RED=="rgb(255, 50, 50)"){
@@ -587,7 +584,6 @@ let finish=()=>{
         alert("引き分けです。");
     }
 }
-
 
 // 関数を用いた変数の初期化
 let socket = io();
@@ -655,10 +651,10 @@ for (let i=0; i<8; i++){
     }
     field.push(tmp)
 }
-field[3][3] = 1;
-field[4][4] = 1;
-field[3][4] = 2;
-field[4][3] = 2;
+field[3][3] = RED;
+field[4][4] = RED;
+field[3][4] = BLUE;
+field[4][3] = BLUE;
 visualizeStone(3, 3, COLOR_FIELD_RED);
 visualizeStone(4, 4, COLOR_FIELD_RED);
 visualizeStone(3, 4, COLOR_FIELD_BLUE);
@@ -688,7 +684,7 @@ onkeydown=(e)=>{
         x += DISPLACEMENT;
     }
 
-    if (keysVaild){
+    if (keysValid){
         own.style.transform = `translate(${x}px, ${y}px)`;
         ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
     }
@@ -708,7 +704,7 @@ onkeydown=(e)=>{
     }
     paintedI = parseInt((coordY-INIT_Y)/DIFF_Y);
     paintedJ = parseInt((coordX-INIT_X)/DIFF_X);
-    if (430<=coordX && keysVaild){
+    if (430<=coordX && keysValid){
         paintSquare(paintedI, paintedJ);
     }
 
@@ -719,22 +715,26 @@ onkeydown=(e)=>{
             valid = othello(paintedI, paintedJ, 1);
             if (valid){
                 cntStone += 1;
-                if (cntStone>=64){
+                if (cntStone>=STONE_CNT_FINISH){
                     finished = true;
                 }
-                if (canPutStone(2)){
+                if (canPutStone(BLUE)){
                     isAlly = false;
+                } else if (!canPutStone(RED)){
+                    finished = true;
                 }
             }
         } else {
             valid = othello(paintedI, paintedJ, 2);
             if (valid){
                 cntStone += 1;
-                if (cntStone>=64){
+                if (cntStone>=STONE_CNT_FINISH){
                     finished = true;
                 }
-                if (canPutStone(1)){
+                if (canPutStone(RED)){
                     isAlly = true;
+                } else if (!canPutStone(BLUE)){
+                    finishd = true;
                 }
            }
         }
@@ -754,10 +754,10 @@ onkeydown=(e)=>{
 }
 
 onkeyup=(e)=>{
-    if (keysVaild){
+    if (keysValid){
         if (finished){
             finish();
-            keysVaild = false;
+            keysValid = false;
         }
         if (e.key=="w"){
             wDown = false;
