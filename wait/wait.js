@@ -9,14 +9,14 @@ socket.on("waiting-started", (data)=>{
         now = new Date().getTime();
         if (now-TIME>=waitFor){
             clearInterval(set);
-            socket.emit("battle-ready", {value: ""});
+            socket.emit("waiting-finished", {value: ""});
         }
     }
     const TIME = new Date().getTime();
     let set = setInterval(func, 1000);
 });
 
-socket.on("battle-ready", (data)=>{
+socket.on("waiting-finished", (data)=>{
     alert("バトル画面に遷移します。");
     window.location.href = "/battle/battle.html";
 });

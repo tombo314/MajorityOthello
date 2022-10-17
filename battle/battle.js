@@ -1,5 +1,3 @@
-let ownX;
-let ownY;
 let x = 0;
 let y = 0;
 let wDown;
@@ -33,74 +31,91 @@ let getRandomInt=(min, max)=> {
     return Math.floor(Math.random() * (max - min) + min);
 }
 
-socket.emit("battle-start", {value: ""});
-socket.on("battle-start", (data)=>{
-    let users = data.value;
-    // プレイヤーの円を描画
-    for (let i=0; i<users.length; i++){
-        let allyId = `ally${i/2}`;
-        let opponentId = `opponent${parseInt(i/2)+1}`;
-        let canvas = document.createElement("canvas");
-        let initX;
-        let initY;
-        canvas.setAttribute("width", 430);
-        canvas.setAttribute("height", 670);
-        canvas.setAttribute("style", "position: absolute; z-index: 999;");
-        let context = canvas.getContext("2d");
-        initY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
-        if (i==0){
-            canvas.setAttribute("id", "own");
-            context.fillStyle = ALLY_COLOR;
-            initX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
-            ownX = initX;
-            ownY = initY;
-            nodesAlly.appendChild(canvas);
-            own = document.getElementById("own");
-            own.style.zIndex = 1000;
-        } else if (i%2==1){
-            canvas.setAttribute("id", opponentId);
-            context.fillStyle = OPPONENT_COLOR;
-            initX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
-            nodesOpponent.appendChild(canvas);
-            other = document.getElementById(opponentId);
-        } else if (i%2==0){
-            canvas.setAttribute("id", allyId);
-            context.fillStyle = ALLY_COLOR;
-            initX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
-            nodesAlly.appendChild(canvas);
-            other = document.getElementById(allyId);
-        }
-        context.beginPath();
-        context.arc(initX, initY, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
-        context.fill();
-        context.stroke();
+// 自分の情報を設定し、サーバーに送信
+let username = sessionStorage.getItem("username");
+let ownX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
+let ownY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
 
-        // プレイヤーの名前を表示
-        const DIFF_COEFF = -5.5;
-        let createName = document.createElement("div");
-        createName.textContent = users[i];
-        createName.setAttribute("style", "position: absolute; z-index: 9; font-weight: bold;");
-        if (i==0){
-            createName.setAttribute("id", "own-name");
-            nodesAlly.appendChild(createName);
-            ownName = document.getElementById("own-name");
-            ownXDiff = DIFF_COEFF*ownName.textContent.length;
-            ownName.style.transform = `translate(${ownX+ownXDiff}px, ${ownY+INIT_Y_DIFF}px)`;
-            ownName.style.zIndex = 10;
-        } else if (i%2==1){
-            createName.setAttribute("id", `${opponentId}-name`);
-            nodesOpponent.appendChild(createName);
-            getName = document.getElementById(`${opponentId}-name`);
-            initXDiff = DIFF_COEFF*getName.textContent.length;
-            getName.style.transform = `translate(${initX+initXDiff}px, ${initY+INIT_Y_DIFF}px)`;
-        } else if (i%2==0){
-            createName.setAttribute("id", `${allyId}-name`);
-            nodesAlly.appendChild(createName);
-            getName = document.getElementById(`${allyId}-name`);
-            initXDiff = DIFF_COEFF*getName.textContent.length;
-            getName.style.transform = `translate(${initX+initXDiff}px, ${initY+INIT_Y_DIFF}px)`;
-        }
-    } // for文終わり
+if (username!=null){
+    socket.emit("user-info-init", {value: [username, ownX, ownY]});
+} else {
+    socket.emit("user-info-init", {value: null});
+}
+socket.on("user-info-init", (data)=>{
+    let users = data.value;
+    let name;
+    let initX;
+    let initY;
+    for (let v in users){
+        name = v;
+        initX = users[v][0];
+        initY = users[v][1];
+    }
+    // // プレイヤーの円を描画
+    // for (let i=0; i<; i++){
+    //     let allyId = `ally${i/2}`;
+    //     let opponentId = `opponent${parseInt(i/2)+1}`;
+    //     let canvas = document.createElement("canvas");
+    //     let initX;
+    //     let initY;
+    //     canvas.setAttribute("width", 430);
+    //     canvas.setAttribute("height", 670);
+    //     canvas.setAttribute("style", "position: absolute; z-index: 999;");
+    //     let context = canvas.getContext("2d");
+    //     initY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
+    //     if (i==0){
+    //         canvas.setAttribute("id", "own");
+    //         context.fillStyle = ALLY_COLOR;
+    //         initX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
+    //         ownX = initX;
+    //         ownY = initY;
+    //         nodesAlly.appendChild(canvas);
+    //         own = document.getElementById("own");
+    //         own.style.zIndex = 1000;
+    //     } else if (i%2==1){
+    //         canvas.setAttribute("id", opponentId);
+    //         context.fillStyle = OPPONENT_COLOR;
+    //         initX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
+    //         nodesOpponent.appendChild(canvas);
+    //         other = document.getElementById(opponentId);
+    //     } else if (i%2==0){
+    //         canvas.setAttribute("id", allyId);
+    //         context.fillStyle = ALLY_COLOR;
+    //         initX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
+    //         nodesAlly.appendChild(canvas);
+    //         other = document.getElementById(allyId);
+    //     }
+    //     context.beginPath();
+    //     context.arc(initX, initY, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
+    //     context.fill();
+    //     context.stroke();
+
+    //     // プレイヤーの名前を表示
+    //     const DIFF_COEFF = -5.5;
+    //     let createName = document.createElement("div");
+    //     createName.textContent = users[i];
+    //     createName.setAttribute("style", "position: absolute; z-index: 9; font-weight: bold;");
+    //     if (i==0){
+    //         createName.setAttribute("id", "own-name");
+    //         nodesAlly.appendChild(createName);
+    //         ownName = document.getElementById("own-name");
+    //         ownXDiff = DIFF_COEFF*ownName.textContent.length;
+    //         ownName.style.transform = `translate(${ownX+ownXDiff}px, ${ownY+INIT_Y_DIFF}px)`;
+    //         ownName.style.zIndex = 10;
+    //     } else if (i%2==1){
+    //         createName.setAttribute("id", `${opponentId}-name`);
+    //         nodesOpponent.appendChild(createName);
+    //         getName = document.getElementById(`${opponentId}-name`);
+    //         initXDiff = DIFF_COEFF*getName.textContent.length;
+    //         getName.style.transform = `translate(${initX+initXDiff}px, ${initY+INIT_Y_DIFF}px)`;
+    //     } else if (i%2==0){
+    //         createName.setAttribute("id", `${allyId}-name`);
+    //         nodesAlly.appendChild(createName);
+    //         getName = document.getElementById(`${allyId}-name`);
+    //         initXDiff = DIFF_COEFF*getName.textContent.length;
+    //         getName.style.transform = `translate(${initX+initXDiff}px, ${initY+INIT_Y_DIFF}px)`;
+    //     }
+    // } // for文終わり
     
 });
 
@@ -122,7 +137,7 @@ let makeSquare=(i, j)=>{
         top: ${INIT_TOP+i*(GRID_Y+DIFF_Y)}px;
     `);
     othelloWrapper.appendChild(sheet);
-};
+}
 // シートを生成
 for (let i=0; i<8; i++){
     for (let j=0; j<8; j++){
@@ -143,7 +158,7 @@ let unPaintSquare=(i, j)=>{
     }
     let elem = document.getElementById(`square${i}${j}`);
     elem.style.backgroundColor = "#70ad47";
-};
+}
 
 // 全体に石を配置
 for (let i=0; i<8; i++){
@@ -789,7 +804,17 @@ onkeyup=(e)=>{
 
 
 /*
+・全員の初期情報を共有する
+    ・個人に依存する情報を先にクライアント側で生成する
+    -> ・サーバーに送信する
+    （ユーザー名をキーとして連想配列を作り、その値に配列でユーザー情報を保持する）
+    -> ・全員の情報を全クライアントに送信する
+    -> ・クライアントはその情報をもとに画面に全ユーザーを描画し、対応するユーザー情報を保持する
+
 ・全員の動きを同期する
-・投票システムを作る
+    ・座標情報が変更されるたびに、それをユーザー間で共有する
+    -> ・ユーザー名と変更後の座標をサーバーに送信する
+    -> ・サーバーは全ユーザーにそれを共有する
+    -> ・クライアントは変更後の座標にプレイヤーを移動させる
 
 */

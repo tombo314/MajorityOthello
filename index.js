@@ -42,10 +42,17 @@ const server = http.createServer((req, res)=>{
     }
 }).listen(process.env.PORT || 8000);
 const io = socket(server);
-let users = ["aaaaaaaaaaaaaaaa", "a"];
-for (let i=1; i<=6; i++){
-    users.push(`dummy${i}`);
+
+let includesInDict=(d, value)=>{
+    for (let v in d){
+        if (v==value){
+            return true;
+        }
+    }
+    return false;
 }
+
+let users = {"dummy1": [200, 200], "dummy2": [150, 180], "dummy3": [90, 240]};
 let usersNum;
 let cntUsers = 0;
 io.on("connection", (socket)=>{
@@ -53,21 +60,29 @@ io.on("connection", (socket)=>{
         io.sockets.emit("need-users", {value: users});
     });
     socket.on("name", (data)=>{
-        users.push(data.value);
+        users[data.value] = "";
     });
     socket.on("waiting-started", (data)=>{
-        if (users.length==1 || true){
-            io.sockets.emit("waiting-started", {value: "a"});
+        if (Object.keys(users).length==1 || true){
+            io.sockets.emit("waiting-started", {value: ""});
         }
     });
-    socket.on("battle-ready", (data)=>{
-        io.sockets.emit("battle-ready", {value: ""});
-        usersNum = users.length;
+    socket.on("waiting-finished", (data)=>{
+        io.sockets.emit("waiting-finished", {value: ""});
+        usersNum = Object.keys(users).length;
     });
-    socket.on("battle-start", (data)=>{
-        cntUsers++;
+    socket.on("user-info-init", (data)=>{
+        let userInfo = data.value;
+        if (userInfo!=null){
+            let username = userInfo[0];
+            let userX = userInfo[1];
+            let userY = userInfo[2];
+            cntUsers++;
+            users[username] = [userX, userY];
+        }
+        console.log(users);
         if (cntUsers>=usersNum || true){
-            io.sockets.emit("battle-start", {value: users});
+            io.sockets.emit("user-info-init", {value: users});
         }
     });
     socket.on("coordinates-changed", (data)=>{
