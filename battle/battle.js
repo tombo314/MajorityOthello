@@ -1,4 +1,4 @@
-// ページのリロードを禁止する
+// リリースモード（ページのリロードを禁止する）
 let release = false;
 
 // 変数の宣言・初期化
@@ -716,7 +716,7 @@ onkeydown=(e)=>{
     if (e.key=="Enter"){
         let valid;
         if (isAlly){
-            valid = othello(paintedI, paintedJ, 1);
+            valid = othello(paintedI, paintedJ, RED);
             if (valid){
                 cntStone += 1;
                 if (cntStone>=STONE_CNT_FINISH){
@@ -729,7 +729,7 @@ onkeydown=(e)=>{
                 }
             }
         } else {
-            valid = othello(paintedI, paintedJ, 2);
+            valid = othello(paintedI, paintedJ, BLUE);
             if (valid){
                 cntStone += 1;
                 if (cntStone>=STONE_CNT_FINISH){

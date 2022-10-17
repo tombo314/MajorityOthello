@@ -52,7 +52,23 @@ let includesInDict=(d, value)=>{
     return false;
 }
 
-let users = {"dummy1": {"userX":200, "userY":400, "color":"red"}, "dummy2": {"userX":150, "userY":80, "color":"blue"}, "dummy3": {"userX":310, "userY":240, "color":"blue"}};
+let users = {
+    "dummy1": {
+        "userX":200,
+        "userY":400,
+        "color":"red"
+    },
+    "dummy2":{
+        "userX":150,
+        "userY":80,
+        "color":"blue"
+    },
+    "dummy3": {
+        "userX":310,
+        "userY":240,
+        "color":"blue"
+    }
+};
 let usersNum;
 let cntUsers = 0;
 let cntRed = 0;
