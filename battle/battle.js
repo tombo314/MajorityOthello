@@ -1,4 +1,10 @@
-// 変数宣言
+// 変数の宣言・初期化
+let paintedI;
+let paintedJ;
+let isAlly = true;
+let cntStone = 4;
+let finished = false;
+let keysVaild = true;
 let x = 0;
 let y = 0;
 let wDown;
@@ -9,20 +15,35 @@ let own;
 let ownName;
 let xDiff;
 
-// 定数宣言
+// 定数の宣言
+const RED = 1;
+const BLUE = 2;
+const EMPTY = 0;
 const RADIUS = 20;
+const DISPLACEMENT = 10;
 const LOWER_BOUND_X = RADIUS+10;
 const LOWER_BOUND_Y = RADIUS+10;
 const UPPER_BOUND_X = 390+1;
 const UPPER_BOUND_Y = 450+1;
 const INIT_Y_DIFF = 20;
-const DIFF_COEFF = -5.5;
+const XDIFF_COEFF = -5.5;
+const GRID_X = 56;
+const GRID_Y = 54;
+const GRID_INIT_LEFT = -40;
+const GRID_INIT_TOP = -65;
+const GRID_DIFF_X = 5.75;
+const GRID_DIFF_Y = 4;
 const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
 const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
 const COLOR_FIELD_RED = "rgb(255, 50, 50)";
 const COLOR_FIELD_BLUE = "rgb(50, 50, 255)";
 
-// 関数宣言
+// 関数の宣言
+let show=(ary)=>{
+    for (let i=0; i<8; i++){
+        console.log(ary[i]);
+    }
+}
 let getRandomInt=(min, max)=> {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -35,8 +56,8 @@ let makeSquare=(i, j)=>{
         width: ${GRID_X}px;
         height: ${GRID_Y}px;
         position: absolute;
-        left: ${INIT_LEFT+j*(GRID_X+DIFF_X)}px;
-        top: ${INIT_TOP+i*(GRID_Y+DIFF_Y)}px;
+        left: ${GRID_INIT_LEFT+j*(GRID_X+GRID_DIFF_X)}px;
+        top: ${GRID_INIT_TOP+i*(GRID_Y+GRID_DIFF_Y)}px;
     `);
     othelloWrapper.appendChild(sheet);
 }
@@ -106,77 +127,10 @@ let makePlayerName=(playerName, initX, initY)=>{
     createName.setAttribute("id", `id-${playerName}-name`);
     nodesAlly.appendChild(createName);
     elem = document.getElementById(`id-${playerName}-name`);
-    xDiff = DIFF_COEFF*elem.textContent.length;
+    xDiff = XDIFF_COEFF*elem.textContent.length;
     elem.style.transform = `translate(${initX+xDiff}px, ${initY+INIT_Y_DIFF}px)`;
     elem.style.zIndex = 10;
 }
-
-// 関数を用いた変数の初期化
-let socket = io();
-let username = sessionStorage.getItem("username");
-let ownX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
-let ownY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
-let nodesAlly = document.getElementById("nodes-ally");
-let nodesOpponent = document.getElementById("nodes-opponent");
-let othelloWrapper = document.getElementById("othello-wrapper");
-
-// ユーザー情報送信
-if (username!=null){
-    socket.emit("user-info-init", {value: {"username":username, "userX":ownX, "userY":ownY}});
-} else {
-    socket.emit("user-info-init", {value: null});
-}
-
-// 全プレイヤーの情報を取得
-socket.on("user-info-init", (data)=>{
-    let users = data.value;
-
-    for (let v in users){
-        let playerName = v;
-        let initX = users[playerName]["userX"];
-        let initY = users[playerName]["userY"];
-        let side = users[playerName]["color"];
-        if (side=="red" || true){
-            color = COLOR_PLAYER_RED;
-        } else if (side=="blue") {
-            color = COLOR_PLAYER_BLUE;
-        }
-
-        // 全プレイヤーの円を描画
-        makePlayerCircle(playerName, initX, initY, color);
-        
-        // プレイヤーの名前を表示
-        makePlayerName(playerName, initX, initY);
-    }
-
-    // 自分の情報を取得
-    own = document.getElementById(`id-${username}`);
-    ownName = document.getElementById(`id-${username}-name`);
-});
-
-// マス選択時に盤面の上に被せるシート
-const GRID_X = 56;
-const GRID_Y = 54;
-const INIT_LEFT = -40;
-const INIT_TOP = -65;
-const DIFF_X = 5.75;
-const DIFF_Y = 4;
-
-// シートを生成
-for (let i=0; i<8; i++){
-    for (let j=0; j<8; j++){
-        makeSquare(i, j);
-    }
-}
-
-// 全体に石を配置
-for (let i=0; i<8; i++){
-    for (let j=0; j<8; j++){
-        makeStone(i, j);
-    }
-}
-
-// 石を表示する
 let visualizeStone=(i, j, color)=>{
     let otherColor;
     if (color==COLOR_FIELD_RED){
@@ -189,39 +143,6 @@ let visualizeStone=(i, j, color)=>{
     elem = document.getElementById(`stone${i}${j}${color}`);
     elem.style.visibility = "visible";
 }
-
-// 盤面を初期化
-const ALLY = 1;
-const OPPONENT = -1;
-const EMPTY = 0;
-let field = [];
-for (let i=0; i<8; i++){
-    let tmp = []
-    for (let j=0; j<8; j++){
-        tmp.push(0);
-    }
-    field.push(tmp)
-}
-
-field[3][3] = 1;
-field[4][4] = 1;
-field[3][4] = 2;
-field[4][3] = 2;
-visualizeStone(3, 3, COLOR_FIELD_RED);
-visualizeStone(4, 4, COLOR_FIELD_RED);
-visualizeStone(3, 4, COLOR_FIELD_BLUE);
-visualizeStone(4, 3, COLOR_FIELD_BLUE);
-
-// 盤面を表示
-let show=(ary)=>{
-    for (let i=0; i<8; i++){
-        console.log(ary[i]);
-    }
-}
-
-// オセロのアルゴリズム
-// 石を置いてひっくり返す
-// その場所には石を置くことができるとする
 let othello=(p, q, oneOrTwo)=>{
     let n = oneOrTwo;
     let m;
@@ -461,12 +382,8 @@ let othello=(p, q, oneOrTwo)=>{
     }
     return false;
 }
-
-// オセロのアルゴリズム
-// その場所に投票する
 let vote=()=>{
 }
-
 let search=(p, q, n)=>{
     let m;
     if (n==1){
@@ -626,7 +543,6 @@ let search=(p, q, n)=>{
 
     return false;
 }
-
 let canPutStone=(n)=>{
     for (let i=0; i<8; i++){
         for (let j=0; j<8; j++){
@@ -640,7 +556,6 @@ let canPutStone=(n)=>{
     }
     return false;
 }
-
 let finish=()=>{
     const TIME = new Date();
     while (new Date()-TIME<1){
@@ -673,14 +588,83 @@ let finish=()=>{
     }
 }
 
-let paintedI;
-let paintedJ;
-let isAlly = true;
-let cntStone = 4;
-let finished = false;
-let keysVaild = true;
+
+// 関数を用いた変数の初期化
+let socket = io();
+let username = sessionStorage.getItem("username");
+let ownX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
+let ownY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
+let nodesAlly = document.getElementById("nodes-ally");
+let nodesOpponent = document.getElementById("nodes-opponent");
+let othelloWrapper = document.getElementById("othello-wrapper");
+
+// ユーザー情報送信
+if (username!=null){
+    socket.emit("user-info-init", {value: {"username":username, "userX":ownX, "userY":ownY}});
+} else {
+    socket.emit("user-info-init", {value: null});
+}
+
+// 全プレイヤーの情報を取得
+socket.on("user-info-init", (data)=>{
+    let users = data.value;
+
+    for (let v in users){
+        let playerName = v;
+        let initX = users[playerName]["userX"];
+        let initY = users[playerName]["userY"];
+        let side = users[playerName]["color"];
+        if (side=="red" || true){
+            color = COLOR_PLAYER_RED;
+        } else if (side=="blue") {
+            color = COLOR_PLAYER_BLUE;
+        }
+
+        // 全プレイヤーの円を描画
+        makePlayerCircle(playerName, initX, initY, color);
+        
+        // プレイヤーの名前を表示
+        makePlayerName(playerName, initX, initY);
+    }
+
+    // 自分の情報を取得
+    own = document.getElementById(`id-${username}`);
+    ownName = document.getElementById(`id-${username}-name`);
+});
+
+// マス選択時に盤面の上に被せるシートを生成
+for (let i=0; i<8; i++){
+    for (let j=0; j<8; j++){
+        makeSquare(i, j);
+    }
+}
+
+// 全体に石を配置
+for (let i=0; i<8; i++){
+    for (let j=0; j<8; j++){
+        makeStone(i, j);
+    }
+}
+
+// 盤面を初期化
+let field = [];
+for (let i=0; i<8; i++){
+    let tmp = []
+    for (let j=0; j<8; j++){
+        tmp.push(0);
+    }
+    field.push(tmp)
+}
+field[3][3] = 1;
+field[4][4] = 1;
+field[3][4] = 2;
+field[4][3] = 2;
+visualizeStone(3, 3, COLOR_FIELD_RED);
+visualizeStone(4, 4, COLOR_FIELD_RED);
+visualizeStone(3, 4, COLOR_FIELD_BLUE);
+visualizeStone(4, 3, COLOR_FIELD_BLUE);
+
 onkeydown=(e)=>{
-    const DIFF = 10;
     // 上下左右に移動させる
     if (e.key=="w"){
         wDown = true;
@@ -692,16 +676,16 @@ onkeydown=(e)=>{
         dDown = true;
     }
     if (wDown && ownY+y>=35){
-        y -= DIFF;
+        y -= DISPLACEMENT;
     }
     if (aDown && ownX+x>=40){
-        x -= DIFF;
+        x -= DISPLACEMENT;
     }
     if (sDown && ownY+y<=innerHeight-148){
-        y += DIFF;
+        y += DISPLACEMENT;
     }
     if (dDown && ownX+x<=innerWidth-430){
-        x += DIFF;
+        x += DISPLACEMENT;
     }
 
     if (keysVaild){
@@ -786,7 +770,6 @@ onkeyup=(e)=>{
         }
     }
 }
-
 
 /*
 ・全員の初期情報を共有する
