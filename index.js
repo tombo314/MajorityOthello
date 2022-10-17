@@ -52,7 +52,7 @@ let includesInDict=(d, value)=>{
     return false;
 }
 
-let users = {"dummy1": [200, 400], "dummy2": [150, 80], "dummy3": [310, 240]};
+let users = {"dummy1": {"userX":200, "userY":400}, "dummy2": {"userX":150, "userY":80}, "dummy3": {"userX":310, "userY":240}};
 let usersNum;
 let cntUsers = 0;
 io.on("connection", (socket)=>{
@@ -74,11 +74,11 @@ io.on("connection", (socket)=>{
     socket.on("user-info-init", (data)=>{
         let userInfo = data.value;
         if (userInfo!=null){
-            let username = userInfo[0];
-            let userX = userInfo[1];
-            let userY = userInfo[2];
+            let username = userInfo["username"];
+            let userX = userInfo["userX"];
+            let userY = userInfo["userY"];
             cntUsers++;
-            users[username] = [userX, userY];
+            users[username] = {"userX": userX, "userY":userY};
         }
         if (cntUsers>=usersNum || true){
             io.sockets.emit("user-info-init", {value: users});

@@ -1,3 +1,4 @@
+// 変数宣言
 let x = 0;
 let y = 0;
 let wDown;
@@ -7,10 +8,8 @@ let dDown;
 let own;
 let ownName;
 let xDiff;
-let socket = io();
-let nodesAlly = document.getElementById("nodes-ally");
-let nodesOpponent = document.getElementById("nodes-opponent");
-let othelloWrapper = document.getElementById("othello-wrapper");
+
+// 定数宣言
 const RADIUS = 20;
 const LOWER_BOUND_X = RADIUS+10;
 const LOWER_BOUND_Y = RADIUS+10;
@@ -22,30 +21,40 @@ const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
 const COLOR_FIELD_RED = "rgb(255, 50, 50)";
 const COLOR_FIELD_BLUE = "rgb(50, 50, 255)";
 
+// 関数宣言
 let getRandomInt=(min, max)=> {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min);
 }
 
-// 自分の情報を設定し、サーバーに送信
+// 関数を用いた変数の初期化
+let socket = io();
 let username = sessionStorage.getItem("username");
 let ownX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
 let ownY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
+let nodesAlly = document.getElementById("nodes-ally");
+let nodesOpponent = document.getElementById("nodes-opponent");
+let othelloWrapper = document.getElementById("othello-wrapper");
 
+// ユーザー情報送信
 if (username!=null){
-    socket.emit("user-info-init", {value: [username, ownX, ownY]});
+    socket.emit("user-info-init", {value: {"username":username, "userX":ownX, "userY":ownY}});
 } else {
     socket.emit("user-info-init", {value: null});
 }
+
+// 全プレイヤーの情報を取得
 socket.on("user-info-init", (data)=>{
     let users = data.value;
 
+    console.log(users);
+
     for (let v in users){
         let playerName = v;
-        let initX = users[v][0];
-        let initY = users[v][1];
-        let side = users[v][2];
+        let initX = users[playerName]["userX"];
+        let initY = users[playerName]["userY"];
+        let side = users[playerName]["color"];
         if (side=="red" || true){
             color = COLOR_PLAYER_RED;
         } else if (side=="blue") {
