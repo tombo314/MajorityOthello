@@ -33,7 +33,7 @@ const GRID_INIT_LEFT = -40;
 const GRID_INIT_TOP = -65;
 const GRID_DIFF_X = 5.75;
 const GRID_DIFF_Y = 4;
-const STONE_CNT_FINISH = 8;
+const STONE_CNT_FINISH = 64;
 const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
 const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
 const COLOR_FIELD_RED = "rgb(255, 50, 50)";
@@ -605,12 +605,13 @@ if (username!=null){
 socket.on("user-info-init", (data)=>{
     let users = data.value;
 
+    console.log(users);
     for (let v in users){
         let playerName = v;
         let initX = users[playerName]["userX"];
         let initY = users[playerName]["userY"];
         let side = users[playerName]["color"];
-        if (side=="red" || true){
+        if (side=="red"){
             color = COLOR_PLAYER_RED;
         } else if (side=="blue") {
             color = COLOR_PLAYER_BLUE;
