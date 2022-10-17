@@ -52,7 +52,7 @@ let includesInDict=(d, value)=>{
     return false;
 }
 
-let users = {"dummy1": [200, 200], "dummy2": [150, 180], "dummy3": [90, 240]};
+let users = {"dummy1": [200, 400], "dummy2": [150, 80], "dummy3": [310, 240]};
 let usersNum;
 let cntUsers = 0;
 io.on("connection", (socket)=>{

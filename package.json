@@ -1,8 +1,8 @@
 {
-  "name": "josisu",
+  "name": "majority-othello",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "nodemon": "^2.0.20",
-    "socket.io": "^4.5.2"
+    "socket.io": "^4.5.2",
+    "uniq": "^1.0.1"
   }
 }

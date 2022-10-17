@@ -5,7 +5,7 @@ html {
   background: linear-gradient(#6fb, #ddd, #5fe);
 }
 
-@media screen and (min-width: 1350px) and (max-width: 1400px) and (min-height: 600px) and (max-height: 650px) {
+@media screen and (min-width: 0px) and (max-width: 2000px) and (min-height: 0px) and (max-height: 1000px) {
   * {
     padding: 0;
     margin: 0;
@@ -57,7 +57,7 @@ html {
   margin: 20px;
 }
 
-@media screen and (max-width: 1350px) {
+@media screen and (max-width: 0px) {
   .wrapper {
     display: none;
   }
@@ -65,7 +65,7 @@ html {
     display: none;
   }
 }
-@media screen and (min-width: 1400px) {
+@media screen and (min-width: 2000px) {
   .wrapper {
     display: none;
   }
@@ -73,7 +73,7 @@ html {
     display: none;
   }
 }
-@media screen and (max-height: 600px) {
+@media screen and (max-height: 0px) {
   .wrapper {
     display: none;
   }
@@ -81,7 +81,7 @@ html {
     display: none;
   }
 }
-@media screen and (min-height: 650px) {
+@media screen and (min-height: 1000px) {
   .wrapper {
     display: none;
   }
@@ -89,7 +89,7 @@ html {
     display: none;
   }
 }
-@media screen and (min-width: 1350px) and (max-width: 1400px) {
+@media screen and (min-width: 0px) and (max-width: 2000px) {
   .too-small-width {
     display: none;
   }
@@ -97,7 +97,7 @@ html {
     display: none;
   }
 }
-@media screen and (min-height: 600px) and (max-height: 650px) {
+@media screen and (min-height: 0px) and (max-height: 1000px) {
   .too-small-height {
     display: none;
   }
