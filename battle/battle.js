@@ -16,6 +16,7 @@ const LOWER_BOUND_Y = RADIUS+10;
 const UPPER_BOUND_X = 390+1;
 const UPPER_BOUND_Y = 450+1;
 const INIT_Y_DIFF = 20;
+const DIFF_COEFF = -5.5;
 const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
 const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
 const COLOR_FIELD_RED = "rgb(255, 50, 50)";
@@ -26,6 +27,88 @@ let getRandomInt=(min, max)=> {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min);
+}
+let makeSquare=(i, j)=>{
+    let sheet = document.createElement("div");
+    sheet.setAttribute("id", `square${i}${j}`);
+    sheet.setAttribute("style", `
+        width: ${GRID_X}px;
+        height: ${GRID_Y}px;
+        position: absolute;
+        left: ${INIT_LEFT+j*(GRID_X+DIFF_X)}px;
+        top: ${INIT_TOP+i*(GRID_Y+DIFF_Y)}px;
+    `);
+    othelloWrapper.appendChild(sheet);
+}
+let paintSquare=(i, j)=>{
+    if (i<0 || j<0 || 8<=i || 8<=j){
+        return false
+    }
+    let elem = document.getElementById(`square${i}${j}`);
+    elem.style.backgroundColor = "#cfca";
+}
+let unPaintSquare=(i, j)=>{
+    if (i<0 || j<0 || 8<=i || 8<=j){
+        return false
+    }
+    let elem = document.getElementById(`square${i}${j}`);
+    elem.style.backgroundColor = "#70ad47";
+}
+let makeStone=(i, j)=>{
+    // 赤
+    let stone = document.createElement("canvas");
+    stone.setAttribute("width", 550);
+    stone.setAttribute("height", 670);
+    stone.setAttribute("style", "position: absolute; transform: translate(-80px, -80px); visibility: hidden;");
+    stone.setAttribute("id", `stone${i}${j}${COLOR_FIELD_RED}`);
+    othelloWrapper.appendChild(stone);
+    let context = stone.getContext("2d");
+    context.beginPath();
+    context.fillStyle = COLOR_FIELD_RED;
+    context.arc(61.7*j+68, 58*i+43, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
+    context.fill();
+    context.stroke();
+    
+    // 青
+    stone = document.createElement("canvas");
+    stone.setAttribute("width", 550);
+    stone.setAttribute("height", 670);
+    stone.setAttribute("style", "position: absolute; transform: translate(-80px, -80px); visibility: hidden;");
+    stone.setAttribute("id", `stone${i}${j}${COLOR_FIELD_BLUE}`);
+    othelloWrapper.appendChild(stone);
+    context = stone.getContext("2d");
+    context.beginPath();
+    context.fillStyle = COLOR_FIELD_BLUE;
+    context.arc(61.7*j+68, 58*i+43, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
+    context.fill();
+    context.stroke();
+}
+let makePlayerCircle=(playerName, initX, initY, color)=>{
+    let canvas = document.createElement("canvas");
+    canvas.setAttribute("width", 430);
+    canvas.setAttribute("height", 670);
+    canvas.setAttribute("style", "position: absolute; z-index: 999;");
+    let context = canvas.getContext("2d");
+    canvas.setAttribute("id", `id-${playerName}`);
+    context.fillStyle = color;
+    nodesAlly.appendChild(canvas);
+    let elem = document.getElementById(`id-${playerName}`);
+    elem.style.zIndex = 1000;
+    context.beginPath();
+    context.arc(initX, initY, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
+    context.fill();
+    context.stroke();
+}
+let makePlayerName=(playerName, initX, initY)=>{
+    let createName = document.createElement("div");
+    createName.textContent = playerName;
+    createName.setAttribute("style", "position: absolute; z-index: 9; font-weight: bold;");
+    createName.setAttribute("id", `id-${playerName}-name`);
+    nodesAlly.appendChild(createName);
+    elem = document.getElementById(`id-${playerName}-name`);
+    xDiff = DIFF_COEFF*elem.textContent.length;
+    elem.style.transform = `translate(${initX+xDiff}px, ${initY+INIT_Y_DIFF}px)`;
+    elem.style.zIndex = 10;
 }
 
 // 関数を用いた変数の初期化
@@ -48,8 +131,6 @@ if (username!=null){
 socket.on("user-info-init", (data)=>{
     let users = data.value;
 
-    console.log(users);
-
     for (let v in users){
         let playerName = v;
         let initX = users[playerName]["userX"];
@@ -62,34 +143,10 @@ socket.on("user-info-init", (data)=>{
         }
 
         // 全プレイヤーの円を描画
-        let canvas = document.createElement("canvas");
-        canvas.setAttribute("width", 430);
-        canvas.setAttribute("height", 670);
-        canvas.setAttribute("style", "position: absolute; z-index: 999;");
-        let context = canvas.getContext("2d");
-        canvas.setAttribute("id", `id-${playerName}`);
-        context.fillStyle = color;
-        nodesAlly.appendChild(canvas);
-        let elem = document.getElementById(`id-${playerName}`);
-        elem.style.zIndex = 1000;
-        context.beginPath();
-        context.arc(initX, initY, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
-        context.fill();
-        context.stroke();
+        makePlayerCircle(playerName, initX, initY, color);
         
         // プレイヤーの名前を表示
-        const DIFF_COEFF = -5.5;
-        let createName = document.createElement("div");
-        createName.textContent = playerName;
-        createName.setAttribute("style", "position: absolute; z-index: 9; font-weight: bold;");
-        createName.setAttribute("id", `id-${playerName}-name`);
-        nodesAlly.appendChild(createName);
-        elem = document.getElementById(`id-${playerName}-name`);
-        xDiff = DIFF_COEFF*elem.textContent.length;
-        elem.style.transform = `translate(${initX+xDiff}px, ${initY+INIT_Y_DIFF}px)`;
-        elem.style.zIndex = 10;
-        
-        console.log(v);
+        makePlayerName(playerName, initX, initY);
     }
 
     // 自分の情報を取得
@@ -104,18 +161,7 @@ const INIT_LEFT = -40;
 const INIT_TOP = -65;
 const DIFF_X = 5.75;
 const DIFF_Y = 4;
-let makeSquare=(i, j)=>{
-    let sheet = document.createElement("div");
-    sheet.setAttribute("id", `square${i}${j}`);
-    sheet.setAttribute("style", `
-        width: ${GRID_X}px;
-        height: ${GRID_Y}px;
-        position: absolute;
-        left: ${INIT_LEFT+j*(GRID_X+DIFF_X)}px;
-        top: ${INIT_TOP+i*(GRID_Y+DIFF_Y)}px;
-    `);
-    othelloWrapper.appendChild(sheet);
-}
+
 // シートを生成
 for (let i=0; i<8; i++){
     for (let j=0; j<8; j++){
@@ -123,49 +169,10 @@ for (let i=0; i<8; i++){
     }
 }
 
-let paintSquare=(i, j)=>{
-    if (i<0 || j<0 || 8<=i || 8<=j){
-        return false
-    }
-    let elem = document.getElementById(`square${i}${j}`);
-    elem.style.backgroundColor = "#cfca";
-}
-let unPaintSquare=(i, j)=>{
-    if (i<0 || j<0 || 8<=i || 8<=j){
-        return false
-    }
-    let elem = document.getElementById(`square${i}${j}`);
-    elem.style.backgroundColor = "#70ad47";
-}
-
 // 全体に石を配置
 for (let i=0; i<8; i++){
     for (let j=0; j<8; j++){
-        let stone = document.createElement("canvas");
-        stone.setAttribute("width", 550);
-        stone.setAttribute("height", 670);
-        stone.setAttribute("style", "position: absolute; transform: translate(-80px, -80px); visibility: hidden;");
-        stone.setAttribute("id", `stone${i}${j}${COLOR_FIELD_RED}`);
-        othelloWrapper.appendChild(stone);
-        let context = stone.getContext("2d");
-        context.beginPath();
-        context.fillStyle = COLOR_FIELD_RED;
-        context.arc(61.7*j+68, 58*i+43, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
-        context.fill();
-        context.stroke();
-        
-        stone = document.createElement("canvas");
-        stone.setAttribute("width", 550);
-        stone.setAttribute("height", 670);
-        stone.setAttribute("style", "position: absolute; transform: translate(-80px, -80px); visibility: hidden;");
-        stone.setAttribute("id", `stone${i}${j}${COLOR_FIELD_BLUE}`);
-        othelloWrapper.appendChild(stone);
-        context = stone.getContext("2d");
-        context.beginPath();
-        context.fillStyle = COLOR_FIELD_BLUE;
-        context.arc(61.7*j+68, 58*i+43, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
-        context.fill();
-        context.stroke();
+        makeStone(i, j);
     }
 }
 
