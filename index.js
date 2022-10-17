@@ -80,7 +80,6 @@ io.on("connection", (socket)=>{
             cntUsers++;
             users[username] = [userX, userY];
         }
-        console.log(users);
         if (cntUsers>=usersNum || true){
             io.sockets.emit("user-info-init", {value: users});
         }

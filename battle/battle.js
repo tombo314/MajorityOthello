@@ -40,22 +40,16 @@ if (username!=null){
 }
 socket.on("user-info-init", (data)=>{
     let users = data.value;
-    let playerName;
-    let initX;
-    let initY;
-    let playerColor;
-    let fieldColor;
 
     for (let v in users){
-        playerName = v;
-        initX = users[v][0];
-        initY = users[v][1];
-        if (0<=initX && initX<=0 || true){
-            playerColor = COLOR_PLAYER_RED;
-            fieldColor = COLOR_FIELD_RED;
-        } else {
-            playerColor = COLOR_PLAYER_BLUE;
-            fieldColor = COLOR_FIELD_BLUE;
+        let playerName = v;
+        let initX = users[v][0];
+        let initY = users[v][1];
+        let side = users[v][2];
+        if (side=="red" || true){
+            color = COLOR_PLAYER_RED;
+        } else if (side=="blue") {
+            color = COLOR_PLAYER_BLUE;
         }
 
         // 全プレイヤーの円を描画
@@ -65,7 +59,7 @@ socket.on("user-info-init", (data)=>{
         canvas.setAttribute("style", "position: absolute; z-index: 999;");
         let context = canvas.getContext("2d");
         canvas.setAttribute("id", `id-${playerName}`);
-        context.fillStyle = COLOR_PLAYER_RED;
+        context.fillStyle = color;
         nodesAlly.appendChild(canvas);
         let elem = document.getElementById(`id-${playerName}`);
         elem.style.zIndex = 1000;
@@ -696,7 +690,7 @@ onkeydown=(e)=>{
 
     if (keysVaild){
         own.style.transform = `translate(${x}px, ${y}px)`;
-        ownName.style.transform = `translate(${ownX+x+ownXDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
+        ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
     }
 
     // 全員の座標を反映させる
