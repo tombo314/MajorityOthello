@@ -1,3 +1,6 @@
+// ページのリロードを禁止する
+let release = false;
+
 // 変数の宣言・初期化
 let paintedI;
 let paintedJ;
@@ -735,7 +738,7 @@ onkeydown=(e)=>{
                 if (canPutStone(RED)){
                     isAlly = true;
                 } else if (!canPutStone(BLUE)){
-                    finishd = true;
+                    finished = true;
                 }
            }
         }
@@ -752,6 +755,9 @@ onkeydown=(e)=>{
         turnColor.style.color = "rgb(50, 50, 255)";
     }
 
+    if (release && e.key=="F5"){
+        e.preventDefault();
+    }
 }
 
 onkeyup=(e)=>{
@@ -787,5 +793,3 @@ onkeyup=(e)=>{
     -> ・クライアントは変更後の座標にプレイヤーを移動させる
 
 */
-
-/*  */
