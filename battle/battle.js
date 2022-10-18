@@ -608,7 +608,6 @@ if (username!=null){
 socket.on("user-info-init", (data)=>{
     let users = data.value;
 
-    console.log(users);
     for (let v in users){
         let playerName = v;
         let initX = users[playerName]["userX"];
@@ -694,7 +693,7 @@ onkeydown=(e)=>{
     }
 
     // 全員の座標を反映させる
-    // socket.emit("coordinates-changed", {value: ""});
+    socket.emit("coordinates-changed", {value: {"username":username, "userCoord":[ownX+x, ownY+y], "nameCoord":[]}});
     
     // シートをマスにかぶせる・マスから取り除く
     let coordX = ownX+x;

@@ -1,28 +1,22 @@
 const socket = io();
 const btnStart = document.getElementById("btn-start");
+const blackSheet = document.getElementById("black");
+const btnMakeRoom = document.getElementById("make-room");
+const btnEnterRoom = document.getElementById("enter-room");
 
-// ユーザー名登録
+// ユーザー名入力
 let username;
-let users;
 btnStart.onclick=()=>{
     username = prompt("ユーザー名を入力してください...");
     socket.emit("need-users", {value: ""});
 };
 
-let includesInDict=(d, value)=>{
-    for (let v in d){
-        if (v==value){
-            return true;
-        }
-    }
-    return false;
-}
-
+// ユーザー名の重複がないか判定し、なければ登録
 socket.on("need-users", (data)=>{
-    users = data.value;
+    let users = data.value;
     if (username==null || username==""){
         // キャンセル
-    } else if (!includesInDict(users, username)){
+    } else if (!users.includes(username)){
         socket.emit("name", {value: username});
         sessionStorage.setItem("username", username);
         window.location.href = "../wait/wait.html";
@@ -30,3 +24,11 @@ socket.on("need-users", (data)=>{
         alert("その名前は既に使われています。");
     }
 });
+
+blackSheet.onclick=()=>{
+    blackSheet.style.visibility = "hidden";
+}
+
+btnMakeRoom.onclick=()=>{
+    blackSheet.style.visibility = "visible";
+}

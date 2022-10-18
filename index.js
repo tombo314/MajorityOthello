@@ -53,22 +53,23 @@ let includesInDict=(d, value)=>{
 }
 
 let users = {
-    "dummy1": {
-        "userX":200,
-        "userY":400,
-        "color":"red"
-    },
-    "dummy2":{
-        "userX":150,
-        "userY":80,
-        "color":"blue"
-    },
-    "dummy3": {
-        "userX":310,
-        "userY":240,
-        "color":"blue"
-    }
+    // "dummy1": {
+    //     "userX":200,
+    //     "userY":400,
+    //     "color":"red"
+    // },
+    // "dummy2":{
+    //     "userX":150,
+    //     "userY":80,
+    //     "color":"blue"
+    // },
+    // "dummy3": {
+    //     "userX":310,
+    //     "userY":240,
+    //     "color":"blue"
+    // }
 };
+let waiting = [];
 let usersNum;
 let cntUsers = 0;
 let cntRed = 0;
@@ -76,19 +77,20 @@ let cntBlue = 0;
 let color;
 io.on("connection", (socket)=>{
     socket.on("need-users", (data)=>{
-        io.sockets.emit("need-users", {value: users});
+        io.sockets.emit("need-users", {value: waiting});
     });
     socket.on("name", (data)=>{
-        users[data.value] = "";
+        waiting.push(data.value);
     });
     socket.on("waiting-started", (data)=>{
-        if (Object.keys(users).length==1 || true){
+        if (waiting.length==1 || true){
             io.sockets.emit("waiting-started", {value: ""});
         }
     });
     socket.on("waiting-finished", (data)=>{
         io.sockets.emit("waiting-finished", {value: ""});
-        usersNum = Object.keys(users).length;
+        usersNum = waiting.length;
+        waiting = [];
     });
     socket.on("user-info-init", (data)=>{
         let userInfo = data.value;

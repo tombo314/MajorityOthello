@@ -29,6 +29,11 @@ html{
         box-sizing: border-box;
     }
 
+    .wrapper{
+        position: absolute;
+        transform: translateX(66%);
+    }
+
     h1{
         margin-top: 30px;
         text-align: center;
@@ -56,6 +61,59 @@ html{
             }
             &:active{
                 opacity: 0.6;
+            }
+        }
+    }
+
+    .wrapper-room{
+        text-align: center;
+        margin-top: 100px;
+        .btn{
+            width: 160px;
+            height: 70px;
+            border: 2px #555 solid;
+            border-radius: 20px;
+            font-size: 22px;
+            margin: 0 20px;
+            &:hover{
+                opacity: 0.8;
+                background-color: #ddd;
+            }
+            &:active{
+                opacity: 0.6;
+            }
+        }
+    }
+
+    #black{
+        width: 120vw;
+        height: 120vh;
+        position: absolute;
+        background-color: #2224;
+        visibility: hidden;
+    }
+
+    .room-make-window{
+        width: 800px;
+        height: 400px;
+        border-radius: 30px;
+        background-color: #f62e;
+        transform: translate(300px, 120px);
+        visibility: hidden;
+        .wrapper{
+            margin-left: -120px;
+            margin-top: 30px;
+            label{
+                font-size: 22px;
+                font-weight: bold;
+            }
+            input{
+                width: 300px;
+                height: 30px;
+                font-size: 18px;
+                border: 1px #555 solid;
+                border-radius: 6px;
+                outline: none;
             }
         }
     }
