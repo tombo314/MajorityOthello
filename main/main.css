@@ -79,7 +79,7 @@ html {
     visibility: hidden;
   }
   #room-make-window .wrapper {
-    margin-left: -120px;
+    margin-left: -90px;
     margin-top: 30px;
   }
   #room-make-window .wrapper label {

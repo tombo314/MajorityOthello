@@ -36,6 +36,21 @@ blackSheet.onclick=()=>{
 btnMakeRoom.onclick=()=>{
     blackSheet.style.visibility = "visible";
     roomMakeWindow.style.visibility = "visible";
+    roomName.value = "部屋名を入力してください。";
+    roomName.style.color = "#2227";
+    roomName.focus();
 }
 
-// 
+onkeydown=()=>{
+    if (roomName.value=="部屋名を入力してください。"){
+        roomName.value = "";
+        roomName.style.color = "#222";
+    }
+}
+
+onkeyup=()=>{
+    if (roomName.value==""){
+        roomName.value = "部屋名を入力してください。";
+        roomName.style.color = "#2227";
+    }
+}
