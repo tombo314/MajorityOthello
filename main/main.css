@@ -85,6 +85,7 @@ html {
   #room-make-window .wrapper label {
     font-size: 22px;
     font-weight: bold;
+    color: #222;
   }
   #room-make-window .wrapper input {
     width: 300px;
