@@ -90,7 +90,7 @@ html{
         height: 120vh;
         position: absolute;
         background-color: #2226;
-        // visibility: hidden;
+        visibility: hidden;
     }
 
     #room-make-window{
@@ -99,7 +99,7 @@ html{
         border-radius: 30px;
         background-color: #f72d;
         transform: translate(300px, 120px);
-        // visibility: hidden;
+        visibility: hidden;
         .wrapper{
             margin-left: -90px;
             margin-top: 30px;
