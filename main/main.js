@@ -4,6 +4,7 @@ const blackSheet = document.getElementById("black");
 const btnMakeRoom = document.getElementById("make-room");
 const btnEnterRoom = document.getElementById("enter-room");
 const roomMakeWindow = document.getElementById("room-make-window");
+const roomName = document.getElementById("room-name");
 
 // ユーザー名入力
 let username;
@@ -29,11 +30,10 @@ socket.on("need-users", (data)=>{
 blackSheet.onclick=()=>{
     blackSheet.style.visibility = "hidden";
     roomMakeWindow.style.visibility = "hidden";
+    roomName.value = "";
 }
 
 btnMakeRoom.onclick=()=>{
     blackSheet.style.visibility = "visible";
     roomMakeWindow.style.visibility = "visible";
 }
-
-// 
