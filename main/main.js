@@ -32,7 +32,6 @@ socket.on("need-users", (data)=>{
 blackSheet.onclick=()=>{
     blackSheet.style.visibility = "hidden";
     roomMakeWindow.style.visibility = "hidden";
-    roomName.value = "";
 }
 
 // 「部屋を作る」を押してフォームを表示
@@ -47,7 +46,7 @@ btnMakeRoom.onclick=()=>{
 }
 
 // 文字が入力されたら「部屋名を～」をクリア
-roomName.onkeydown=(e)=>{
+roomName.onkeydown=()=>{
     if (roomName.value=="部屋名を入力してください。"){
         roomName.value = "";
         roomName.style.color = "#222";
@@ -62,7 +61,7 @@ roomName.onkeyup=()=>{
 }
 
 // 文字が入力されたら「パスワードを～」をクリア
-roomPassword.onkeydown=(e)=>{
+roomPassword.onkeydown=()=>{
     if (roomPassword.value=="パスワードを入力してください。"){
         roomPassword.value = "";
         roomPassword.style.color = "#222";

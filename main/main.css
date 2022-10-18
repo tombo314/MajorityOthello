@@ -95,6 +95,28 @@ html {
     outline: none;
     caret-color: #222;
   }
+  #room-make-window .wrapper #room-name {
+    margin-top: 50px;
+  }
+  #room-make-window .wrapper #room-password {
+    margin-top: 50px;
+  }
+  #room-make-window .wrapper #btn-make-room {
+    width: 160px;
+    height: 70px;
+    border: 2px #555 solid;
+    border-radius: 20px;
+    font-size: 22px;
+    margin-top: 90px;
+    transform: translateX(120px);
+  }
+  #room-make-window .wrapper #btn-make-room:hover {
+    opacity: 0.8;
+    background-color: #ddd;
+  }
+  #room-make-window .wrapper #btn-make-room:active {
+    opacity: 0.6;
+  }
   .too-small-width {
     display: none;
   }

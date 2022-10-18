@@ -90,7 +90,7 @@ html{
         height: 120vh;
         position: absolute;
         background-color: #2226;
-        visibility: hidden;
+        visibility: hidden; // ここを消して表示
     }
 
     #room-make-window{
@@ -99,7 +99,7 @@ html{
         border-radius: 30px;
         background-color: #f72d;
         transform: translate(300px, 120px);
-        visibility: hidden;
+        visibility: hidden; // ここを消して表示
         .wrapper{
             margin-left: -90px;
             margin-top: 30px;
@@ -115,6 +115,28 @@ html{
                 border-radius: 6px;
                 outline: none;
                 caret-color: #222;
+            }
+            #room-name{
+                margin-top: 50px;
+            }
+            #room-password{
+                margin-top: 50px;
+            }
+            #btn-make-room{
+                width: 160px;
+                height: 70px;
+                border: 2px #555 solid;
+                border-radius: 20px;
+                font-size: 22px;
+                margin-top: 90px;
+                transform: translateX(120px);
+                &:hover{
+                    opacity: 0.8;
+                    background-color: #ddd;
+                }
+                &:active{
+                    opacity: 0.6;
+                }
             }
         }
     }
