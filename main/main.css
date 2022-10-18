@@ -93,6 +93,7 @@ html {
     border: 1px #555 solid;
     border-radius: 6px;
     outline: none;
+    caret-color: #222;
   }
   .too-small-width {
     display: none;

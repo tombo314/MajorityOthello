@@ -44,10 +44,10 @@ btnMakeRoom.onclick=()=>{
 onkeydown=()=>{
     if (roomName.value=="部屋名を入力してください。"){
         roomName.value = "";
+        cursor00 = false;
         roomName.style.color = "#222";
     }
 }
-
 onkeyup=()=>{
     if (roomName.value==""){
         roomName.value = "部屋名を入力してください。";
