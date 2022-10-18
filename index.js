@@ -112,7 +112,7 @@ io.on("connection", (socket)=>{
             io.sockets.emit("user-info-init", {value: users});
         }
     });
-    socket.on("coordinates-changed", (data)=>{
-        // 全員の座標を全員に送信する
+    socket.on("coordinate-changed", (data)=>{
+        io.sockets.emit("coordinate-changed", {value: data.value});
     });
 });
