@@ -23,7 +23,7 @@ html {
   }
   h1 span {
     font-size: 32px;
-    color: orange;
+    color: rgb(255, 50, 50);
   }
   .wrapper-btn-start {
     text-align: center;
@@ -74,7 +74,7 @@ html {
     width: 800px;
     height: 400px;
     border-radius: 30px;
-    background-color: rgba(255, 102, 34, 0.9333333333);
+    background-color: rgba(255, 119, 34, 0.8666666667);
     transform: translate(300px, 120px);
     visibility: hidden;
   }
