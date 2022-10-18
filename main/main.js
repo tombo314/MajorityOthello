@@ -41,7 +41,7 @@ btnMakeRoom.onclick=()=>{
     roomName.focus();
 }
 
-onkeydown=()=>{
+roomName.onkeydown=(e)=>{
     if (roomName.value=="部屋名を入力してください。"){
         roomName.value = "";
         cursor00 = false;

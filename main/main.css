@@ -67,8 +67,7 @@ html {
     width: 120vw;
     height: 120vh;
     position: absolute;
-    background-color: rgba(34, 34, 34, 0.2666666667);
-    visibility: hidden;
+    background-color: rgba(34, 34, 34, 0.4);
   }
   #room-make-window {
     width: 800px;
@@ -76,7 +75,6 @@ html {
     border-radius: 30px;
     background-color: rgba(255, 119, 34, 0.8666666667);
     transform: translate(300px, 120px);
-    visibility: hidden;
   }
   #room-make-window .wrapper {
     margin-left: -90px;
