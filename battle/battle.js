@@ -5,9 +5,6 @@ if (sessionStorage.getItem("battleAlreadyLoaded")=="true"){
     sessionStorage.setItem("battleAlreadyLoaded", "true");
 }
 
-// リリースモード（ページのリロードを禁止する）
-let release = true;
-
 // 変数の宣言・初期化
 let paintedI;
 let paintedJ;
@@ -115,32 +112,40 @@ let makeStone=(i, j)=>{
     context.fill();
     context.stroke();
 }
+let playerCircleUsed = new Set();
 let makePlayerCircle=(playerName, initX, initY, color)=>{
-    let canvas = document.createElement("canvas");
-    canvas.setAttribute("width", 430);
-    canvas.setAttribute("height", 670);
-    canvas.setAttribute("style", "position: absolute; z-index: 999;");
-    let context = canvas.getContext("2d");
-    canvas.setAttribute("id", `id-${playerName}`);
-    context.fillStyle = color;
-    nodesAlly.appendChild(canvas);
-    let elem = document.getElementById(`id-${playerName}`);
-    elem.style.zIndex = 1000;
-    context.beginPath();
-    context.arc(initX, initY, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
-    context.fill();
-    context.stroke();
+    if (!playerCircleUsed.has(playerName)){
+        let canvas = document.createElement("canvas");
+        canvas.setAttribute("width", 430);
+        canvas.setAttribute("height", 670);
+        canvas.setAttribute("style", "position: absolute; z-index: 999;");
+        let context = canvas.getContext("2d");
+        canvas.setAttribute("id", `id-${playerName}`);
+        context.fillStyle = color;
+        nodesAlly.appendChild(canvas);
+        playerCircleUsed.add(playerName);
+        let elem = document.getElementById(`id-${playerName}`);
+        elem.style.zIndex = 1000;
+        context.beginPath();
+        context.arc(initX, initY, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
+        context.fill();
+        context.stroke();
+    }
 }
+let playerNameUsed = new Set();
 let makePlayerName=(playerName, initX, initY)=>{
-    let createName = document.createElement("div");
-    createName.textContent = playerName;
-    createName.setAttribute("style", "position: absolute; z-index: 9; font-weight: bold;");
-    createName.setAttribute("id", `id-${playerName}-name`);
-    nodesAlly.appendChild(createName);
-    elem = document.getElementById(`id-${playerName}-name`);
-    xDiff = XDIFF_COEFF*elem.textContent.length;
-    elem.style.transform = `translate(${initX+xDiff}px, ${initY+INIT_Y_DIFF}px)`;
-    elem.style.zIndex = 10;
+    if (!playerNameUsed.has(playerName)){
+        let createName = document.createElement("div");
+        createName.textContent = playerName;
+        createName.setAttribute("style", "position: absolute; z-index: 9; font-weight: bold;");
+        createName.setAttribute("id", `id-${playerName}-name`);
+        nodesAlly.appendChild(createName);
+        playerNameUsed.add(playerName);
+        elem = document.getElementById(`id-${playerName}-name`);
+        xDiff = XDIFF_COEFF*elem.textContent.length;
+        elem.style.transform = `translate(${initX+xDiff}px, ${initY+INIT_Y_DIFF}px)`;
+        elem.style.zIndex = 10;
+    }
 }
 let visualizeStone=(i, j, color)=>{
     let otherColor;
@@ -799,18 +804,13 @@ onkeydown=(e)=>{
     if (isRed){
         turn.innerHTML = "<span id='turn-color'>赤</span>のターン";
         turnColor = document.getElementById("turn-color");
-        turnColor.style.color = "rgb(255, 50, 50)";
-        socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>赤</span>のターン", "rgb(255, 50, 50)"]});
+        turnColor.style.color = COLOR_FIELD_RED;
+        socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>赤</span>のターン", COLOR_FIELD_RED]});
     } else {
         turn.innerHTML = "<span id='turn-color'>青</span>のターン";
         turnColor = document.getElementById("turn-color");
-        turnColor.style.color = "rgb(50, 50, 255)";
-        socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>青</span>のターン", "rgb(50, 50, 255)"]});
-    }
-
-    // F5によるリロードを禁止する
-    if (release && e.key=="F5"){
-        e.preventDefault();
+        turnColor.style.color = COLOR_FIELD_BLUE;
+        socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>青</span>のターン", COLOR_FIELD_BLUE]});
     }
 }
 
