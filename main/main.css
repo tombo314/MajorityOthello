@@ -76,6 +76,7 @@ html {
     border-radius: 30px;
     background-color: rgba(255, 119, 34, 0.8666666667);
     transform: translate(300px, 120px);
+    visibility: hidden;
   }
   #room-make-window .wrapper {
     margin-left: -90px;
@@ -109,6 +110,7 @@ html {
     font-size: 22px;
     margin-top: 90px;
     transform: translateX(120px);
+    outline: none;
   }
   #room-make-window .wrapper #btn-make-room-finish:hover {
     opacity: 0.8;

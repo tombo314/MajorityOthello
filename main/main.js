@@ -99,6 +99,6 @@ btnMakeRoomFinish.onclick=()=>{
     } else if (roomPassword.value=="パスワードを入力してください。"){
         alert("パスワードを入力してください。");
     } else if (!passwordOK){
-        alert("パスワードは整数4文字で入力してください。");
+        alert("パスワードは4文字の整数で入力してください。");
     }
 }
