@@ -699,17 +699,19 @@ onkeydown=(e)=>{
     socket.emit("coordinate-changed", {value: {"username":username, "userCoord":[x, y], "nameCoord":[ownX+x+xDiff, ownY+y+INIT_Y_DIFF]}});
     socket.on("coordinate-changed", (data)=>{
         let user = data.value;
-        let username = user["username"];
+        let usernameOther = user["username"];
         let userCoord = user["userCoord"];
         let userX = userCoord[0];
         let userY = userCoord[1];
         let nameCoord = user["nameCoord"];
         let nameX = nameCoord[0];
         let nameY = nameCoord[1];
-        let userElem = document.getElementById(`id-${username}`);
-        let nameElem = document.getElementById(`id-${username}-name`);
-        userElem.style.transform = `translate(${userX}px, ${userY}px)`;
-        nameElem.style.transform = `translate(${nameX}px, ${nameY}px)`;
+        let userElem = document.getElementById(`id-${usernameOther}`);
+        let nameElem = document.getElementById(`id-${usernameOther}-name`);
+        if (usernameOther==username){
+            userElem.style.transform = `translate(${userX}px, ${userY}px)`;
+            nameElem.style.transform = `translate(${nameX}px, ${nameY}px)`;
+        }
     });
     
     // シートをマスにかぶせる・マスから取り除く
