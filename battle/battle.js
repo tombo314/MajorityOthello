@@ -5,8 +5,6 @@ if (sessionStorage.getItem("battleAlreadyLoaded")=="true"){
     sessionStorage.setItem("battleAlreadyLoaded", "true");
 }
 
-// 実装は600行目くらいから
-
 // リリースモード（ページのリロードを禁止する）
 let release = true;
 
