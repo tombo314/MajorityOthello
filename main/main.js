@@ -1,5 +1,3 @@
-// 
-
 const socket = io();
 const btnStart = document.getElementById("btn-start");
 const blackSheet = document.getElementById("black-sheet");
