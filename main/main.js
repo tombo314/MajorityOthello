@@ -1,11 +1,15 @@
 const socket = io();
 const btnStart = document.getElementById("btn-start");
-const blackSheet = document.getElementById("black");
-const btnMakeRoom = document.getElementById("make-room");
-const btnEnterRoom = document.getElementById("enter-room");
+const blackSheet = document.getElementById("black-sheet");
+const btnMakeRoom = document.getElementById("btn-make-room");
+const btnEnterRoom = document.getElementById("btn-enter-room");
 const roomMakeWindow = document.getElementById("room-make-window");
 const roomName = document.getElementById("room-name");
 const roomPassword = document.getElementById("room-password");
+const btnMakeRoomFinish = document.getElementById("btn-make-room-finish");
+
+// キャッシュをクリア
+sessionStorage.clear();
 
 // ユーザー名入力
 let username;
@@ -60,17 +64,41 @@ roomName.onkeyup=()=>{
     }
 }
 
+let passwordOK;
 // 文字が入力されたら「パスワードを～」をクリア
-roomPassword.onkeydown=()=>{
+roomPassword.onkeydown=(e)=>{
     if (roomPassword.value=="パスワードを入力してください。"){
         roomPassword.value = "";
         roomPassword.style.color = "#222";
     }
+}
+// 全半角のスペースを含んでいるか
+let includesSpace=(str)=>{
+    if (str.includes(" ") || str.includes("　")){
+        return true;
+    }
+    return false;
 }
 // value が空のとき「パスワードを～」を表示
 roomPassword.onkeyup=()=>{
     if (roomPassword.value==""){
         roomPassword.value = "パスワードを入力してください。";
         roomPassword.style.color = "#2227";
+    }
+    if (roomPassword.value.length=="4" && !isNaN(roomPassword.value) && !includesSpace(roomPassword.value)){
+        passwordOK = true;
+    } else {
+        passwordOK = false;
+    }
+}
+
+// 「部屋を作る」を完了する
+btnMakeRoomFinish.onclick=()=>{
+    if (roomName.value=="部屋名を入力してください。"){
+        alert("部屋名を入力してください。");
+    } else if (roomPassword.value=="パスワードを入力してください。"){
+        alert("パスワードを入力してください。");
+    } else if (!passwordOK){
+        alert("パスワードは整数4文字で入力してください。");
     }
 }

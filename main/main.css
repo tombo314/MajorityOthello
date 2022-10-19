@@ -63,7 +63,7 @@ html {
   .wrapper-room .btn:active {
     opacity: 0.6;
   }
-  #black {
+  #black-sheet {
     width: 120vw;
     height: 120vh;
     position: absolute;
@@ -76,7 +76,6 @@ html {
     border-radius: 30px;
     background-color: rgba(255, 119, 34, 0.8666666667);
     transform: translate(300px, 120px);
-    visibility: hidden;
   }
   #room-make-window .wrapper {
     margin-left: -90px;
@@ -102,7 +101,7 @@ html {
   #room-make-window .wrapper #room-password {
     margin-top: 50px;
   }
-  #room-make-window .wrapper #btn-make-room {
+  #room-make-window .wrapper #btn-make-room-finish {
     width: 160px;
     height: 70px;
     border: 2px #555 solid;
@@ -111,11 +110,11 @@ html {
     margin-top: 90px;
     transform: translateX(120px);
   }
-  #room-make-window .wrapper #btn-make-room:hover {
+  #room-make-window .wrapper #btn-make-room-finish:hover {
     opacity: 0.8;
     background-color: #ddd;
   }
-  #room-make-window .wrapper #btn-make-room:active {
+  #room-make-window .wrapper #btn-make-room-finish:active {
     opacity: 0.6;
   }
   .too-small-width {

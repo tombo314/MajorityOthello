@@ -43,15 +43,6 @@ const server = http.createServer((req, res)=>{
 }).listen(process.env.PORT || 8000);
 const io = socket(server);
 
-let includesInDict=(d, value)=>{
-    for (let v in d){
-        if (v==value){
-            return true;
-        }
-    }
-    return false;
-}
-
 let users = {
     // "dummy1": {
     //     "userX":200,
@@ -83,7 +74,7 @@ io.on("connection", (socket)=>{
         waiting.push(data.value);
     });
     socket.on("waiting-started", (data)=>{
-        if (waiting.length==1 || true){
+        if (waiting.length==1){
             io.sockets.emit("waiting-started", {value: ""});
         }
     });
@@ -108,7 +99,7 @@ io.on("connection", (socket)=>{
             }
             users[username] = {"userX": userX, "userY":userY, "color":color};
         }
-        if (cntUsers>=usersNum || true){
+        if (cntUsers>=usersNum){
             io.sockets.emit("user-info-init", {value: users});
         }
     });

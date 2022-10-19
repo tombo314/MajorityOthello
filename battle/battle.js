@@ -1,5 +1,7 @@
+// 実装は600行目くらいから
+
 // リリースモード（ページのリロードを禁止する）
-let release = false;
+let release = true;
 
 // 変数の宣言・初期化
 let paintedI;
@@ -591,6 +593,7 @@ let finish=()=>{
 // 関数を用いた変数の初期化
 let socket = io();
 let username = sessionStorage.getItem("username");
+console.log(username);
 let ownX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
 let ownY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
 let nodesAlly = document.getElementById("nodes-ally");
@@ -790,6 +793,7 @@ onkeyup=(e)=>{
         }
     }
 }
+
 
 /*
 ・全員の初期情報を共有する

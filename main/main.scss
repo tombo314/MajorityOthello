@@ -85,7 +85,7 @@ html{
         }
     }
 
-    #black{
+    #black-sheet{
         width: 120vw;
         height: 120vh;
         position: absolute;
@@ -99,7 +99,7 @@ html{
         border-radius: 30px;
         background-color: #f72d;
         transform: translate(300px, 120px);
-        visibility: hidden; // ここを消して表示
+        // visibility: hidden; // ここを消して表示
         .wrapper{
             margin-left: -90px;
             margin-top: 30px;
@@ -123,7 +123,7 @@ html{
             #room-password{
                 margin-top: 50px;
             }
-            #btn-make-room{
+            #btn-make-room-finish{
                 width: 160px;
                 height: 70px;
                 border: 2px #555 solid;
