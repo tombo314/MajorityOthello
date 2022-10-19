@@ -109,5 +109,7 @@ io.on("connection", (socket)=>{
     socket.on("field-changed", (data)=>{
         io.sockets.emit("field-changed", {value: data.value});
     });
-    socket.on
+    socket.on("text-color-changed", (data)=>{
+        io.sockets.emit("text-color-changed", {value: data.value})
+    });
 });
