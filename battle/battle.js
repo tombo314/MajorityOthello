@@ -685,11 +685,14 @@ socket.on("field-changed", (data)=>{
 // 赤・青の文字の変化を共有する
 socket.on("text-color-changed", (data)=>{
     let tmp = data.value;
-    let text = tmp[0];
-    let color = tmp[1];
-    turn.innerHTML = text;
-    turnColor = document.getElementById("turn-color");
-    turnColor.style.color = color;
+    let usernameOther = tmp[0];
+    let text = tmp[1];
+    let color = tmp[2];
+    if (usernameOther!=username){
+        turn.innerHTML = text;
+        turnColor = document.getElementById("turn-color");
+        turnColor.style.color = color;
+    }
 });
 
 onkeydown=(e)=>{
@@ -795,12 +798,12 @@ onkeydown=(e)=>{
         turn.innerHTML = "<span id='turn-color'>赤</span>のターン";
         turnColor = document.getElementById("turn-color");
         turnColor.style.color = "rgb(255, 50, 50)";
-        socket.emit("text-color-changed", {value: ["<span id='turn-color'>赤</span>のターン", "rgb(255, 50, 50)"]});
+        socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>赤</span>のターン", "rgb(255, 50, 50)"]});
     } else {
         turn.innerHTML = "<span id='turn-color'>青</span>のターン";
         turnColor = document.getElementById("turn-color");
         turnColor.style.color = "rgb(50, 50, 255)";
-        socket.emit("text-color-changed", {value: ["<span id='turn-color'>青</span>のターン", "rgb(50, 50, 255)"]});
+        socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>青</span>のターン", "rgb(50, 50, 255)"]});
     }
 
     // F5によるリロードを禁止する
