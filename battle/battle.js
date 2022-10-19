@@ -770,7 +770,7 @@ onkeydown=(e)=>{
                 } else if (!canPutStone(BLUE)){
                     finished = true;
                 }
-                socket.emit("field-changed", {value: [paintedI, paintedJ, BLUE]});
+                socket.emit("field-changed", {value: [username, paintedI, paintedJ, BLUE]});
            }
         }
     }
