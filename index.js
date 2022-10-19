@@ -106,4 +106,7 @@ io.on("connection", (socket)=>{
     socket.on("coordinate-changed", (data)=>{
         io.sockets.emit("coordinate-changed", {value: data.value});
     });
+    socket.on("field-changed", (data)=>{
+        io.sockets.emit("field-changed", {value: data.value});
+    });
 });
