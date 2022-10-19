@@ -11,7 +11,7 @@ let release = true;
 // 変数の宣言・初期化
 let paintedI;
 let paintedJ;
-let isAlly = true;
+let isRed = true;
 let finished = false;
 let keysValid = true;
 let wDown;
@@ -677,9 +677,11 @@ socket.on("field-changed", (data)=>{
     let paintedI = tmp[1];
     let paintedJ = tmp[2];
     let color = tmp[3];
+    let isR = tmp[4];
     if (usernameOther!=username){
         othello(paintedI, paintedJ, color);
     }
+    isRed = isR;
 });
 
 // 赤・青の文字の変化を共有する
@@ -762,7 +764,7 @@ onkeydown=(e)=>{
     // そのマスに石を置く
     if (e.key=="Enter"){
         let valid;
-        if (isAlly){
+        if (isRed){
             valid = othello(paintedI, paintedJ, RED);
             if (valid){
                 cntStone += 1;
@@ -770,7 +772,7 @@ onkeydown=(e)=>{
                     finished = true;
                 }
                 if (canPutStone(BLUE)){
-                    isAlly = false;
+                    isRed = false;
                 } else if (!canPutStone(RED)){
                     finished = true;
                 }
@@ -784,17 +786,17 @@ onkeydown=(e)=>{
                     finished = true;
                 }
                 if (canPutStone(RED)){
-                    isAlly = true;
+                    isRed = true;
                 } else if (!canPutStone(BLUE)){
                     finished = true;
                 }
-                socket.emit("field-changed", {value: [username, paintedI, paintedJ, BLUE]});
+                socket.emit("field-changed", {value: [username, paintedI, paintedJ, BLUE, isRed]});
            }
         }
     }
     let turn = document.getElementById("turn");
     let turnColor;
-    if (isAlly){
+    if (isRed){
         turn.innerHTML = "<span id='turn-color'>赤</span>のターン";
         turnColor = document.getElementById("turn-color");
         turnColor.style.color = "rgb(255, 50, 50)";
