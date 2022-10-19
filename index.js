@@ -67,6 +67,9 @@ let cntRed = 0;
 let cntBlue = 0;
 let color;
 io.on("connection", (socket)=>{
+    socket.on("delete-user", (data)=>{
+        delete users[data.value];
+    });
     socket.on("need-users", (data)=>{
         io.sockets.emit("need-users", {value: waiting});
     });

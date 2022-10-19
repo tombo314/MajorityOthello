@@ -8,6 +8,9 @@ const roomName = document.getElementById("room-name");
 const roomPassword = document.getElementById("room-password");
 const btnMakeRoomFinish = document.getElementById("btn-make-room-finish");
 
+// サーバーから自分のデータを削除
+socket.emit("delete-user", {value: sessionStorage.getItem("username")});
+
 // キャッシュをクリア
 sessionStorage.clear();
 
@@ -26,7 +29,7 @@ socket.on("need-users", (data)=>{
     } else if (!users.includes(username)){
         socket.emit("name", {value: username});
         sessionStorage.setItem("username", username);
-        window.location.href = "../wait/wait.html";
+        window.location.href = "/wait/wait.html";
     } else {
         alert("その名前は既に使われています。");
     }
@@ -66,7 +69,7 @@ roomName.onkeyup=()=>{
 
 let passwordOK;
 // 文字が入力されたら「パスワードを～」をクリア
-roomPassword.onkeydown=(e)=>{
+roomPassword.onkeydown=()=>{
     if (roomPassword.value=="パスワードを入力してください。"){
         roomPassword.value = "";
         roomPassword.style.color = "#222";
