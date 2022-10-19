@@ -666,6 +666,17 @@ visualizeStone(4, 4, COLOR_FIELD_RED);
 visualizeStone(3, 4, COLOR_FIELD_BLUE);
 visualizeStone(4, 3, COLOR_FIELD_BLUE);
 
+socket.on("field-changed", (data)=>{
+    let tmp = data.value;
+    let usernameOther = tmp[0];
+    let paintedI = tmp[1];
+    let paintedJ = tmp[2];
+    let color = tmp[3];
+    if (usernameOther!=username){
+        othello(paintedI, paintedJ, color);
+    }
+});
+
 onkeydown=(e)=>{
     // 上下左右に移動させる
     if (e.key=="w"){
@@ -745,6 +756,7 @@ onkeydown=(e)=>{
                 } else if (!canPutStone(RED)){
                     finished = true;
                 }
+                socket.emit("field-changed", {value: [username, paintedI, paintedJ, RED]});
             }
         } else {
             valid = othello(paintedI, paintedJ, BLUE);
@@ -758,6 +770,7 @@ onkeydown=(e)=>{
                 } else if (!canPutStone(BLUE)){
                     finished = true;
                 }
+                socket.emit("field-changed", {value: [paintedI, paintedJ, BLUE]});
            }
         }
     }
