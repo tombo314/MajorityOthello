@@ -1,6 +1,6 @@
 const socket = io();
-// デバッグ用
-const btnStart = document.getElementById("btn-start");
+const btnStart = document.getElementById("btn-start"); // デバッグ用
+sessionStorage.setItem("battleAlreadyLoaded", "false");
 
 socket.emit("waiting-started", {value: ""});
 socket.on("waiting-started", (data)=>{

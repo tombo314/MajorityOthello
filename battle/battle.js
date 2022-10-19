@@ -1,3 +1,10 @@
+// バトル画面のリロード時にスタート画面に戻る
+if (sessionStorage.getItem("battleAlreadyLoaded")=="true"){
+    window.location.href = "/";
+} else {
+    sessionStorage.setItem("battleAlreadyLoaded", "true");
+}
+
 // 実装は600行目くらいから
 
 // リリースモード（ページのリロードを禁止する）
@@ -593,7 +600,6 @@ let finish=()=>{
 // 関数を用いた変数の初期化
 let socket = io();
 let username = sessionStorage.getItem("username");
-console.log(username);
 let ownX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
 let ownY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
 let nodesAlly = document.getElementById("nodes-ally");
