@@ -708,7 +708,7 @@ onkeydown=(e)=>{
         let nameY = nameCoord[1];
         let userElem = document.getElementById(`id-${usernameOther}`);
         let nameElem = document.getElementById(`id-${usernameOther}-name`);
-        if (usernameOther==username){
+        if (usernameOther!=username){
             userElem.style.transform = `translate(${userX}px, ${userY}px)`;
             nameElem.style.transform = `translate(${nameX}px, ${nameY}px)`;
         }
