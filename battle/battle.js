@@ -670,6 +670,7 @@ visualizeStone(4, 4, COLOR_FIELD_RED);
 visualizeStone(3, 4, COLOR_FIELD_BLUE);
 visualizeStone(4, 3, COLOR_FIELD_BLUE);
 
+// 盤面の変化を共有する
 socket.on("field-changed", (data)=>{
     let tmp = data.value;
     let usernameOther = tmp[0];
@@ -679,6 +680,16 @@ socket.on("field-changed", (data)=>{
     if (usernameOther!=username){
         othello(paintedI, paintedJ, color);
     }
+});
+
+// 赤・青の文字の変化を共有する
+socket.on("text-color-changed", (data)=>{
+    let tmp = data.value;
+    let text = tmp[0];
+    let color = tmp[1];
+    turn.innerHTML = text;
+    turnColor = document.getElementById("turn-color");
+    turnColor.style.color = color;
 });
 
 onkeydown=(e)=>{
@@ -784,12 +795,15 @@ onkeydown=(e)=>{
         turn.innerHTML = "<span id='turn-color'>赤</span>のターン";
         turnColor = document.getElementById("turn-color");
         turnColor.style.color = "rgb(255, 50, 50)";
+        socket.emit("text-color-changed", {value: ["<span id='turn-color'>赤</span>のターン", "rgb(255, 50, 50)"]});
     } else {
         turn.innerHTML = "<span id='turn-color'>青</span>のターン";
         turnColor = document.getElementById("turn-color");
         turnColor.style.color = "rgb(50, 50, 255)";
+        socket.emit("text-color-changed", {value: ["<span id='turn-color'>青</span>のターン", "rgb(50, 50, 255)"]});
     }
 
+    // F5によるリロードを禁止する
     if (release && e.key=="F5"){
         e.preventDefault();
     }
