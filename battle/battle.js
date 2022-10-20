@@ -40,7 +40,7 @@ const GRID_INIT_LEFT = -40;
 const GRID_INIT_TOP = -65;
 const GRID_DIFF_X = 5.75;
 const GRID_DIFF_Y = 4;
-const STONE_CNT_FINISH = 64;
+const STONE_LIMIT = 8;
 const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
 const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
 const COLOR_FIELD_RED = "rgb(255, 50, 50)";
@@ -581,7 +581,7 @@ let finish=()=>{
             }
         }
     }
-    let tmp = STONE_CNT_FINISH-cnt;
+    let tmp = STONE_LIMIT-cnt;
     let ownColor;
     let opponentColor;
     if (COLOR_FIELD_RED=="rgb(255, 50, 50)"){
@@ -702,6 +702,16 @@ socket.on("text-color-changed", (data)=>{
     }
 });
 
+// ゲームの終了を認識する
+socket.on("game-finished", (data)=>{
+    let usernameOther = data.value;
+    if (usernameOther!=username){
+        finished = true;
+        keysValid = false;
+        finish();
+    }
+});
+
 onkeydown=(e)=>{
     // 上下左右に移動させる
     if (e.key=="w"){
@@ -773,7 +783,7 @@ onkeydown=(e)=>{
             valid = othello(paintedI, paintedJ, RED);
             if (valid){
                 cntStone += 1;
-                if (cntStone>=STONE_CNT_FINISH){
+                if (cntStone>=STONE_LIMIT){
                     finished = true;
                 }
                 if (canPutStone(BLUE)){
@@ -787,7 +797,7 @@ onkeydown=(e)=>{
             valid = othello(paintedI, paintedJ, BLUE);
             if (valid){
                 cntStone += 1;
-                if (cntStone>=STONE_CNT_FINISH){
+                if (cntStone>=STONE_LIMIT){
                     finished = true;
                 }
                 if (canPutStone(RED)){
@@ -819,6 +829,7 @@ onkeyup=(e)=>{
         if (finished){
             finish();
             keysValid = false;
+            socket.emit("game-finished", {value: username});
         }
         if (e.key=="w"){
             wDown = false;
@@ -834,17 +845,6 @@ onkeyup=(e)=>{
 
 
 /*
-・全員の初期情報を共有する
-    ・個人に依存する情報を先にクライアント側で生成する
-    -> ・サーバーに送信する
-    （ユーザー名をキーとして連想配列を作り、その値に配列でユーザー情報を保持する）
-    -> ・全員の情報を全クライアントに送信する
-    -> ・クライアントはその情報をもとに画面に全ユーザーを描画し、対応するユーザー情報を保持する
-
-・全員の動きを同期する
-    ・座標情報が変更されるたびに、それをユーザー間で共有する
-    -> ・ユーザー名と変更後の座標をサーバーに送信する
-    -> ・サーバーは全ユーザーにそれを共有する
-    -> ・クライアントは変更後の座標にプレイヤーを移動させる
+・部屋のシステムを導入する
 
 */
