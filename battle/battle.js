@@ -1,6 +1,6 @@
 // バトル画面のリロード時にスタート画面に戻る
 if (sessionStorage.getItem("battleAlreadyLoaded")=="true"){
-    // window.location.href = "/";
+    window.location.href = "/";
 } else {
     sessionStorage.setItem("battleAlreadyLoaded", "true");
 }
