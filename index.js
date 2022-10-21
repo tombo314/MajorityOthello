@@ -69,6 +69,9 @@ io.on("connection", (socket)=>{
         io.sockets.emit("waiting-finished", {value: ""});
         cntWaiting = waiting.length;
         waiting = [];
+        cntUsers = 0;
+        cntRed = 0;
+        cntBlue = 0;
     });
     socket.on("user-info-init", (data)=>{
         let userInfo = data.value;
