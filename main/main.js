@@ -18,7 +18,6 @@ sessionStorage.clear();
 let username;
 btnStart.onclick=()=>{
     username = prompt("ユーザー名を入力してください...");
-    console.log(username);
     socket.emit("need-users", {value: ""});
 };
 

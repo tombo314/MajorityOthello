@@ -1,6 +1,6 @@
 // バトル画面のリロード時にスタート画面に戻る
 if (sessionStorage.getItem("battleAlreadyLoaded")=="true"){
-    window.location.href = "/";
+    // window.location.href = "/";
 } else {
     sessionStorage.setItem("battleAlreadyLoaded", "true");
 }
@@ -15,10 +15,10 @@ let dDown;
 let own;
 let ownName;
 let xDiff;
-let color;
 let x = 0;
 let y = 0;
 let cntStone = 4;
+let color = "red";
 let isRed = true;
 let finished = false;
 let keysValid = true;
@@ -635,8 +635,6 @@ socket.on("user-info-init", (data)=>{
             if (username==playerName){
                 ownX = Math.min(ownX, 350);
                 ownX = innerWidth - ownX;
-                console.log("OK!");
-                // console.log("OK:" + color);
                 color = playerColor;
             }
         }
@@ -723,6 +721,7 @@ socket.on("game-finished", (data)=>{
 });
 
 onkeydown=(e)=>{
+    console.log(color);
     // 上下左右に移動させる
     if (e.key=="w"){
         wDown = true;
