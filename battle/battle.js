@@ -42,7 +42,6 @@ const GRID_INIT_TOP = -65;
 const GRID_DIFF_X = 5.75;
 const GRID_DIFF_Y = 4;
 const STONE_LIMIT = 64;
-const SCREEN_WIDTH = 1360;
 const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
 const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
 const COLOR_FIELD_RED = "rgb(255, 50, 50)";
@@ -621,27 +620,29 @@ if (username!=null){
 // 全プレイヤーの情報を取得
 socket.on("user-info-init", (data)=>{
     let users = data.value;
-
     for (let v in users){
         let playerName = v;
-        let playerColor;
+        let playerColorRGB;
         let initX = users[playerName]["userX"];
         let initY = users[playerName]["userY"];
-        color = users[playerName]["color"];
-        if (color=="red"){
-            playerColor = COLOR_PLAYER_RED;
-        } else if (color=="blue"){
-            playerColor = COLOR_PLAYER_BLUE;
+        let playerColor = users[playerName]["color"];
+        if (playerColor=="red"){
+            playerColorRGB = COLOR_PLAYER_RED;
+        } else if (playerColor=="blue"){
+            playerColorRGB = COLOR_PLAYER_BLUE;
             initX = Math.min(initX, 350);
-            initX = SCREEN_WIDTH - initX;
+            initX = innerWidth - initX;
             if (username==playerName){
                 ownX = Math.min(ownX, 350);
-                ownX = SCREEN_WIDTH - ownX;
+                ownX = innerWidth - ownX;
+                console.log("OK!");
+                // console.log("OK:" + color);
+                color = playerColor;
             }
         }
 
         // 全プレイヤーの円を描画
-        makePlayerCircle(playerName, initX, initY, playerColor);
+        makePlayerCircle(playerName, initX, initY, playerColorRGB);
         
         // プレイヤーの名前を表示
         makePlayerName(playerName, initX, initY);
@@ -756,7 +757,7 @@ onkeydown=(e)=>{
             x += DISPLACEMENT;
         }
     } else if (color=="blue"){
-        if (dDown && ownX+x<=SCREEN_WIDTH-40){
+        if (dDown && ownX+x<=innerWidth-40){
             x += DISPLACEMENT;
         }
     }
@@ -876,4 +877,5 @@ onkeyup=(e)=>{
 ・部屋のシステムを導入する。
 ・片方のチームが操作しているとき、もう片方のチームは自陣まで下げられて、操作できないようにする。
 
+・グローバル変数colorがバグってる？
 */

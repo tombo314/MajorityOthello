@@ -1,7 +1,7 @@
-const http = require("http");
-const fs = require("fs");
-const socket = require("socket.io");
-const server = http.createServer((req, res)=>{
+let http = require("http");
+let fs = require("fs");
+let socket = require("socket.io");
+let server = http.createServer((req, res)=>{
     // main
     if (req.url=="/"){
         res.writeHead(200, {"Content-Type": "text/html"});
@@ -41,11 +41,11 @@ const server = http.createServer((req, res)=>{
         res.end(fs.readFileSync("pictures/othello_field.png"));
     }
 }).listen(process.env.PORT || 8000);
-const io = socket(server);
+let io = socket(server);
 
 let users = {};
 let waiting = [];
-let cntWaiting;
+let cntWaiting = 0;
 let cntUsers = 0;
 let cntRed = 0;
 let cntBlue = 0;
@@ -60,15 +60,12 @@ io.on("connection", (socket)=>{
     socket.on("name", (data)=>{
         waiting.push(data.value);
     });
-    socket.on("waiting-started", (data)=>{
-        if (waiting.length==1){
-            io.sockets.emit("waiting-started", {value: ""});
-        }
-    });
     socket.on("waiting-finished", (data)=>{
         io.sockets.emit("waiting-finished", {value: ""});
         cntWaiting = waiting.length;
+        users = {};
         waiting = [];
+        cntWaiting = 0;
         cntUsers = 0;
         cntRed = 0;
         cntBlue = 0;
@@ -87,22 +84,22 @@ io.on("connection", (socket)=>{
                 color = "blue";
                 cntBlue++;
             }
-            users[username] = {"userX": userX, "userY":userY, "color":color};
+            users[username] = {"userX":userX, "userY":userY, "color":color};
         }
         if (cntUsers>=cntWaiting){
-            io.sockets.emit("user-info-init", {value: users});
+            io.sockets.emit("user-info-init", {value:users});
         }
     });
     socket.on("coordinate-changed", (data)=>{
-        io.sockets.emit("coordinate-changed", {value: data.value});
+        io.sockets.emit("coordinate-changed", {value:data.value});
     });
     socket.on("field-changed", (data)=>{
-        io.sockets.emit("field-changed", {value: data.value});
+        io.sockets.emit("field-changed", {value:data.value});
     });
     socket.on("text-color-changed", (data)=>{
-        io.sockets.emit("text-color-changed", {value: data.value})
+        io.sockets.emit("text-color-changed", {value:data.value})
     });
     socket.on("game-finished", (data)=>{
-        io.sockets.emit("game-finished", {value: data.value});
+        io.sockets.emit("game-finished", {value:data.value});
     });
 });

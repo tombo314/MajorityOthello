@@ -17,6 +17,7 @@ html {
     color: #333;
   }
   .btn-start {
+    position: absolute;
     width: 180px;
     height: 60px;
     margin: 40px;
