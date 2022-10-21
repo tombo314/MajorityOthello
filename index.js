@@ -86,8 +86,7 @@ io.on("connection", (socket)=>{
             }
             users[username] = {"userX": userX, "userY":userY, "color":color};
         }
-        // if (cntUsers>=cntWaiting){
-        if (cntUsers>=cntWaiting || true){
+        if (cntUsers>=cntWaiting){
             io.sockets.emit("user-info-init", {value: users});
         }
     });
