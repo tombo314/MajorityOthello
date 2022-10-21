@@ -43,25 +43,9 @@ const server = http.createServer((req, res)=>{
 }).listen(process.env.PORT || 8000);
 const io = socket(server);
 
-let users = {
-    // "dummy1": {
-    //     "userX":200,
-    //     "userY":400,
-    //     "color":"red"
-    // },
-    // "dummy2":{
-    //     "userX":150,
-    //     "userY":80,
-    //     "color":"blue"
-    // },
-    // "dummy3": {
-    //     "userX":310,
-    //     "userY":240,
-    //     "color":"blue"
-    // }
-};
+let users = {};
 let waiting = [];
-let usersNum;
+let cntWaiting;
 let cntUsers = 0;
 let cntRed = 0;
 let cntBlue = 0;
@@ -83,7 +67,7 @@ io.on("connection", (socket)=>{
     });
     socket.on("waiting-finished", (data)=>{
         io.sockets.emit("waiting-finished", {value: ""});
-        usersNum = waiting.length;
+        cntWaiting = waiting.length;
         waiting = [];
     });
     socket.on("user-info-init", (data)=>{
@@ -102,7 +86,8 @@ io.on("connection", (socket)=>{
             }
             users[username] = {"userX": userX, "userY":userY, "color":color};
         }
-        if (cntUsers>=usersNum){
+        // if (cntUsers>=cntWaiting){
+        if (cntUsers>=cntWaiting || true){
             io.sockets.emit("user-info-init", {value: users});
         }
     });

@@ -1,6 +1,6 @@
 // バトル画面のリロード時にスタート画面に戻る
 if (sessionStorage.getItem("battleAlreadyLoaded")=="true"){
-    window.location.href = "/";
+    // window.location.href = "/";
 } else {
     sessionStorage.setItem("battleAlreadyLoaded", "true");
 }
@@ -8,9 +8,6 @@ if (sessionStorage.getItem("battleAlreadyLoaded")=="true"){
 // 変数の宣言・初期化
 let paintedI;
 let paintedJ;
-let isRed = true;
-let finished = false;
-let keysValid = true;
 let wDown;
 let aDown;
 let sDown;
@@ -18,9 +15,13 @@ let dDown;
 let own;
 let ownName;
 let xDiff;
+let color;
 let x = 0;
 let y = 0;
 let cntStone = 4;
+let isRed = true;
+let finished = false;
+let keysValid = true;
 
 // 定数の宣言
 const RED = 1;
@@ -30,7 +31,7 @@ const RADIUS = 20;
 const DISPLACEMENT = 10;
 const LOWER_BOUND_X = RADIUS+10;
 const LOWER_BOUND_Y = RADIUS+10;
-const UPPER_BOUND_X = 390+1;
+const UPPER_BOUND_X = 360+1;
 const UPPER_BOUND_Y = 450+1;
 const INIT_Y_DIFF = 20;
 const XDIFF_COEFF = -5.5;
@@ -41,6 +42,7 @@ const GRID_INIT_TOP = -65;
 const GRID_DIFF_X = 5.75;
 const GRID_DIFF_Y = 4;
 const STONE_LIMIT = 64;
+const SCREEN_WIDTH = 1360;
 const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
 const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
 const COLOR_FIELD_RED = "rgb(255, 50, 50)";
@@ -116,7 +118,8 @@ let playerCircleUsed = new Set();
 let makePlayerCircle=(playerName, initX, initY, color)=>{
     if (!playerCircleUsed.has(playerName)){
         let canvas = document.createElement("canvas");
-        canvas.setAttribute("width", 430);
+        // canvas.setAttribute("width", 430);
+        canvas.setAttribute("width", 1400);
         canvas.setAttribute("height", 670);
         canvas.setAttribute("style", "position: absolute; z-index: 999;");
         let context = canvas.getContext("2d");
@@ -625,6 +628,14 @@ socket.on("user-info-init", (data)=>{
         let initX = users[playerName]["userX"];
         let initY = users[playerName]["userY"];
         let side = users[playerName]["color"];
+        if (username==playerName){
+            if (side=="blue"){
+                ownX = Math.min(ownX, 350);
+                initX = Math.min(initX, 350);
+                ownX = SCREEN_WIDTH - ownX;
+                initX = SCREEN_WIDTH - initX;
+            }
+        }
         if (side=="red"){
             color = COLOR_PLAYER_RED;
         } else if (side=="blue") {
@@ -845,6 +856,10 @@ onkeyup=(e)=>{
 
 
 /*
-・部屋のシステムを導入する
+・投票システムを作る
+・(デザイン)/main/index.htmlの背景を、赤と青の丸が動いていて壁にぶつかると跳ね返るデザインにする。
+・部屋のシステムを導入する。
+・自分の丸の色をチームの色に対応させる。
+・片方のチームが操作しているとき、もう片方のチームは自陣まで下げられて、操作できないようにする。
 
 */
