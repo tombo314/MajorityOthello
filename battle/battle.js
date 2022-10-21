@@ -1,6 +1,6 @@
 // バトル画面のリロード時にスタート画面に戻る
 if (sessionStorage.getItem("battleAlreadyLoaded")=="true"){
-    // window.location.href = "/";
+    window.location.href = "/";
 } else {
     sessionStorage.setItem("battleAlreadyLoaded", "true");
 }
@@ -115,16 +115,15 @@ let makeStone=(i, j)=>{
     context.stroke();
 }
 let playerCircleUsed = new Set();
-let makePlayerCircle=(playerName, initX, initY, color)=>{
+let makePlayerCircle=(playerName, initX, initY, playerColor)=>{
     if (!playerCircleUsed.has(playerName)){
         let canvas = document.createElement("canvas");
-        // canvas.setAttribute("width", 430);
         canvas.setAttribute("width", 1400);
         canvas.setAttribute("height", 670);
         canvas.setAttribute("style", "position: absolute; z-index: 999;");
         let context = canvas.getContext("2d");
         canvas.setAttribute("id", `id-${playerName}`);
-        context.fillStyle = color;
+        context.fillStyle = playerColor;
         nodesAlly.appendChild(canvas);
         playerCircleUsed.add(playerName);
         let elem = document.getElementById(`id-${playerName}`);
@@ -625,25 +624,24 @@ socket.on("user-info-init", (data)=>{
 
     for (let v in users){
         let playerName = v;
+        let playerColor;
         let initX = users[playerName]["userX"];
         let initY = users[playerName]["userY"];
-        let side = users[playerName]["color"];
-        if (username==playerName){
-            if (side=="blue"){
+        color = users[playerName]["color"];
+        if (color=="red"){
+            playerColor = COLOR_PLAYER_RED;
+        } else if (color=="blue"){
+            playerColor = COLOR_PLAYER_BLUE;
+            initX = Math.min(initX, 350);
+            initX = SCREEN_WIDTH - initX;
+            if (username==playerName){
                 ownX = Math.min(ownX, 350);
-                initX = Math.min(initX, 350);
                 ownX = SCREEN_WIDTH - ownX;
-                initX = SCREEN_WIDTH - initX;
             }
-        }
-        if (side=="red"){
-            color = COLOR_PLAYER_RED;
-        } else if (side=="blue") {
-            color = COLOR_PLAYER_BLUE;
         }
 
         // 全プレイヤーの円を描画
-        makePlayerCircle(playerName, initX, initY, color);
+        makePlayerCircle(playerName, initX, initY, playerColor);
         
         // プレイヤーの名前を表示
         makePlayerName(playerName, initX, initY);
@@ -734,25 +732,42 @@ onkeydown=(e)=>{
     } else if (e.key=="d"){
         dDown = true;
     }
+    // 上
     if (wDown && ownY+y>=35){
         y -= DISPLACEMENT;
     }
-    if (aDown && ownX+x>=40){
-        x -= DISPLACEMENT;
+    // 左
+    if (color=="red"){
+        if (aDown && ownX+x>=40){
+            x -= DISPLACEMENT;
+        }
+    } else if (color=="blue") {
+        if (aDown && ownX+x>=430){
+            x -= DISPLACEMENT;
+        }
     }
+    // 下
     if (sDown && ownY+y<=innerHeight-148){
         y += DISPLACEMENT;
     }
-    if (dDown && ownX+x<=innerWidth-430){
-        x += DISPLACEMENT;
+    // 右
+    if (color=="red"){
+        if (dDown && ownX+x<=innerWidth-430){
+            x += DISPLACEMENT;
+        }
+    } else if (color=="blue"){
+        if (dDown && ownX+x<=SCREEN_WIDTH-40){
+            x += DISPLACEMENT;
+        }
     }
 
+    // 自分に自分の座標を反映させる
     if (keysValid){
         own.style.transform = `translate(${x}px, ${y}px)`;
         ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
     }
 
-    // 全員の座標を反映させる
+    // 全員に自分の座標を反映させる
     socket.emit("coordinate-changed", {value: {"username":username, "userCoord":[x, y], "nameCoord":[ownX+x+xDiff, ownY+y+INIT_Y_DIFF]}});
     socket.on("coordinate-changed", (data)=>{
         let user = data.value;
