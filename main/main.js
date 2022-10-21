@@ -1,12 +1,12 @@
-const socket = io();
-const btnStart = document.getElementById("btn-start");
-const blackSheet = document.getElementById("black-sheet");
-const btnMakeRoom = document.getElementById("btn-make-room");
-const btnEnterRoom = document.getElementById("btn-enter-room");
-const roomMakeWindow = document.getElementById("room-make-window");
-const roomName = document.getElementById("room-name");
-const roomPassword = document.getElementById("room-password");
-const btnMakeRoomFinish = document.getElementById("btn-make-room-finish");
+let socket = io();
+let btnStart = document.getElementById("btn-start");
+let blackSheet = document.getElementById("black-sheet");
+let btnMakeRoom = document.getElementById("btn-make-room");
+let btnEnterRoom = document.getElementById("btn-enter-room");
+let roomMakeWindow = document.getElementById("room-make-window");
+let roomName = document.getElementById("room-name");
+let roomPassword = document.getElementById("room-password");
+let btnMakeRoomFinish = document.getElementById("btn-make-room-finish");
 
 // サーバーから自分のデータを削除
 socket.emit("delete-user", {value: sessionStorage.getItem("username")});
@@ -99,9 +99,12 @@ roomPassword.onkeyup=()=>{
 btnMakeRoomFinish.onclick=()=>{
     if (roomName.value=="部屋名を入力してください。"){
         alert("部屋名を入力してください。");
+        return false;
     } else if (roomPassword.value=="パスワードを入力してください。"){
         alert("パスワードを入力してください。");
     } else if (!passwordOK){
         alert("パスワードは4文字の整数で入力してください。");
+    } else {
+        // socket.emit("make-room");
     }
 }
