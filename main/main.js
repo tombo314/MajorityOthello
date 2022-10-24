@@ -1,3 +1,4 @@
+let username;
 let socket = io();
 let roomForRooms = document.getElementById("room-for-rooms");
 let blackSheet = document.getElementById("black-sheet");
@@ -8,33 +9,30 @@ let roomName = document.getElementById("room-name");
 let roomPassword = document.getElementById("room-password");
 let roomUsername = document.getElementById("username");
 let btnSubmit = document.getElementById("btn-submit");
+const BUTTON_ROOM_SELECT_WIDTH = 120;
+
+// 部屋に入るときにユーザーを登録する
+let registerUser=(roomName)=>{
+    username = prompt("ユーザー名を入力してください...");
+    // socket.emit("need-users", {value: ""});
+    // socket.on("need-users", (data)=>{
+    //     let users = data.value;
+    //     if (username==null || username==""){
+    //         // キャンセル
+    //     } else if (!users.includes(username)){
+    //         socket.emit("register-name", {value: username});
+    //         sessionStorage.setItem("username", username);
+    //     } else {
+    //         alert("その名前は既に使われています。");
+    //     }
+    // });
+}
 
 // サーバーから自分のデータを削除
 socket.emit("delete-user", {value: sessionStorage.getItem("username")});
 // キャッシュをクリア
 sessionStorage.clear();
 
-// ユーザー名入力
-// ここを部屋の選択時のイベントにする
-// let username;
-// btnStart.onclick=()=>{
-//     username = prompt("ユーザー名を入力してください...");
-//     socket.emit("need-users", {value: ""});
-// };
-
-// ユーザー名の重複がないか判定し、なければ登録
-socket.on("need-users", (data)=>{
-    let users = data.value;
-    if (username==null || username==""){
-        // キャンセル
-    } else if (!users.includes(username)){
-        socket.emit("name", {value: username});
-        sessionStorage.setItem("username", username);
-        window.location.href = "/wait/wait.html";
-    } else {
-        alert("その名前は既に使われています。");
-    }
-});
 
 // 周りの暗いところをクリックしてキャンセル
 blackSheet.onclick=()=>{
@@ -116,31 +114,45 @@ roomUsername.onkeyup=()=>{
 // 「部屋を作る」を完了する
 let roomCnt = 0;
 btnSubmit.onclick=(e)=>{
+    // 部屋名が空白
     if (roomName.value=="部屋名を入力してください。" || roomName.value==""){
         e.preventDefault();
         alert("部屋名を入力してください。");
     }
+    // パスワードが空白
     else if (roomPassword.value=="パスワードを入力してください。" || roomPassword.value==""){
         e.preventDefault();
         alert("パスワードを入力してください。");
     }
+    // パスワードが４桁の数字でない
     else if (!passwordOK){
         e.preventDefault();
         alert("パスワードは4桁の数字で入力してください。");
     }
+    // ユーザー名が空白
     else if (roomUsername.value=="ユーザー名を入力してください。" || roomUsername.value==""){
         e.preventDefault();
         alert("ユーザー名を入力してください。");
-    } else {
-        e.preventDefault();
-        const BUTTON_ROOM_SELECT_WIDTH = 120;
+    }
+    // 何もなければ /wait/wait.html に遷移
+    else {
+        // socket.emit("update-rooms", {value: {"roomName":roomName, "roomPassword":roomPassword, "roomUsername":roomUsername}});
+    }
+}
+
+socket.on("update-rooms", (data)=>{
+    let clone = roomForRooms.cloneNode(false);
+    roomForRooms.parentNode.replaceChild(clone , roomForRooms);
+    let rooms = data.value;
+    for (let v of rooms){
         let elem = document.createElement("button");
-        elem.textContent = roomName.value;
+        elem.textContent = v;
         elem.setAttribute("class", "btn-room-select");
         elem.setAttribute("style",
             `width: ${BUTTON_ROOM_SELECT_WIDTH}px;
              font-size: ${Math.min(30, BUTTON_ROOM_SELECT_WIDTH / elem.textContent.length)}px`
         );
+        elem.setAttribute("onclick", `registerUser(${elem.textContent})`);
         roomForRooms.appendChild(elem);
         roomCnt++;
         if (roomCnt%6==0){
@@ -148,4 +160,8 @@ btnSubmit.onclick=(e)=>{
             roomForRooms.appendChild(br);
         }
     }
-}
+});
+
+socket.on("ok", (data)=>{
+    alert(data.value);
+});

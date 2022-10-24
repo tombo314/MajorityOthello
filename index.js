@@ -52,8 +52,10 @@ let server = http.createServer((req, res)=>{
             let username = data[2].slice(9, data[2].length);
             rooms[username] = {
                 "roomName":roomName,
-                "roomPassward":roomPassward
+                "roomPassward":roomPassward,
+                "users":[username]
             };
+            io.sockets.emit("update-rooms", {value:rooms});
         });
     }
 }).listen(process.env.PORT || 8000);
@@ -62,8 +64,6 @@ let io = socket(server);
 let rooms = {}
 let users = {};
 let waiting = [];
-let cntWaiting = 0;
-let cntUsers = 0;
 let cntRed = 0;
 let cntBlue = 0;
 let color;
@@ -71,19 +71,20 @@ io.on("connection", (socket)=>{
     socket.on("delete-user", (data)=>{
         delete users[data.value];
     });
+    socket.on("update-rooms", (data)=>{
+        io.sockets.emit("update-rooms", {value:rooms});
+    });
     socket.on("need-users", ()=>{
         io.sockets.emit("need-users", {value: waiting});
     });
-    socket.on("name", (data)=>{
-        waiting.push(data.value);
+    socket.on("register-name", (data)=>{
+        // waiting.push(data.value);
+
     });
     socket.on("waiting-finished", (data)=>{
         io.sockets.emit("waiting-finished", {value: ""});
-        cntWaiting = waiting.length;
         users = {};
         waiting = [];
-        cntWaiting = 0;
-        cntUsers = 0;
         cntRed = 0;
         cntBlue = 0;
     });
@@ -93,7 +94,6 @@ io.on("connection", (socket)=>{
             let username = userInfo["username"];
             let userX = userInfo["userX"];
             let userY = userInfo["userY"];
-            cntUsers++;
             if (cntRed<=cntBlue){
                 color = "red";
                 cntRed++;
@@ -103,9 +103,7 @@ io.on("connection", (socket)=>{
             }
             users[username] = {"userX":userX, "userY":userY, "color":color};
         }
-        if (cntUsers>=cntWaiting){
-            io.sockets.emit("user-info-init", {value:users});
-        }
+        io.sockets.emit("user-info-init", {value:users});
     });
     socket.on("coordinate-changed", (data)=>{
         io.sockets.emit("coordinate-changed", {value:data.value});
