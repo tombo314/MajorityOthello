@@ -40,9 +40,27 @@ let server = http.createServer((req, res)=>{
         res.writeHead(200, {"Content-Type": "img/png"});
         res.end(fs.readFileSync("pictures/othello_field.png"));
     }
+    // index.html から部屋の情報を受け取る
+    if (req.method=="POST"){
+        let data = "";
+        req.on("data", (value)=>{
+            data += value;
+        }).on("end", ()=>{
+            data = data.split("&");
+            let roomName = data[0].slice(10, data[0].length);
+            let roomPassward = data[1].slice(14, data[1].length);
+            let username = data[2].slice(9, data[2].length);
+            rooms[username] = {
+                "roomName":roomName,
+                "roomPassward":roomPassward
+            };
+            console.log(rooms);
+        });
+    }
 }).listen(process.env.PORT || 8000);
 let io = socket(server);
 
+let rooms = {}
 let users = {};
 let waiting = [];
 let cntWaiting = 0;
@@ -54,7 +72,7 @@ io.on("connection", (socket)=>{
     socket.on("delete-user", (data)=>{
         delete users[data.value];
     });
-    socket.on("need-users", (data)=>{
+    socket.on("need-users", ()=>{
         io.sockets.emit("need-users", {value: waiting});
     });
     socket.on("name", (data)=>{

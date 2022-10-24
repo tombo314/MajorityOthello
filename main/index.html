@@ -11,10 +11,7 @@
     <div class="wrapper">
         <h1>自分の<span>●</span>を動かしてチームでバトルするゲーム</h1>
 
-        <!-- デバッグ用 -->
-        <div class="wrapper-btn-start">
-            <button class="btn-start" id="btn-start">Start</button>
-        </div>
+        <div class="room-for-rooms"></div>
 
         <div class="wrapper-room">
             <button class="btn" id="btn-make-room">部屋を作る</button>
@@ -25,15 +22,18 @@
     <div id="black-sheet"></div>
 
     <div id="room-make-window">
-        <div class="wrapper">
-            <label>部屋名　　：</label>
-            <input type="text" id="room-name">
+        <form class="wrapper" method="POST" id="form" action="/wait/wait.html">
+            <label>　　　 　部　屋　名　：</label>
+            <input type="text" id="room-name" name="room-name">
             <br>
-            <label>パスワード：</label>
-            <input type="text" id="room-password">
+            <label>パスワード(数字４桁) ：</label>
+            <input type="text" id="room-password" name="room-password">
             <br>
-            <button id="btn-make-room-finish">作る</button>
-        </div>
+            <label>　　　ユ ー ザ ー 名　：</label>
+            <input type="text" id="username" name="username">
+            <br>
+            <input type="submit" id="btn-submit" value="作る">
+        </form>
     </div>
 
     <h2 class="too-small-width">横幅が小さすぎます。</h2>

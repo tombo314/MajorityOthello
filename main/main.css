@@ -45,6 +45,8 @@ html {
     opacity: 0.6;
   }
   .wrapper-room {
+    position: absolute;
+    top: 50vh;
     text-align: center;
     margin-top: 100px;
   }
@@ -63,6 +65,14 @@ html {
   .wrapper-room .btn:active {
     opacity: 0.6;
   }
+  .wrapper-room #btn-make-room {
+    position: absolute;
+    left: 10vh;
+  }
+  .wrapper-room #btn-enter-room {
+    position: absolute;
+    left: 50vh;
+  }
   #black-sheet {
     width: 120vw;
     height: 120vh;
@@ -79,8 +89,7 @@ html {
     visibility: hidden;
   }
   #room-make-window .wrapper {
-    margin-left: -90px;
-    margin-top: 30px;
+    margin-left: -260px;
   }
   #room-make-window .wrapper label {
     font-size: 22px;
@@ -96,28 +105,24 @@ html {
     outline: none;
     caret-color: #222;
   }
-  #room-make-window .wrapper #room-name {
-    margin-top: 50px;
-  }
-  #room-make-window .wrapper #room-password {
-    margin-top: 50px;
-  }
-  #room-make-window .wrapper #btn-make-room-finish {
-    width: 160px;
-    height: 70px;
+  #room-make-window .wrapper #btn-submit {
+    width: 200px;
+    height: 60px;
+    font-size: 24px;
+    margin-top: 60px;
+    margin-left: 180px;
     border: 2px #555 solid;
     border-radius: 20px;
-    font-size: 22px;
-    margin-top: 90px;
-    transform: translateX(120px);
     outline: none;
   }
-  #room-make-window .wrapper #btn-make-room-finish:hover {
+  #room-make-window .wrapper #btn-submit:hover {
     opacity: 0.8;
-    background-color: #ddd;
   }
-  #room-make-window .wrapper #btn-make-room-finish:active {
+  #room-make-window .wrapper #btn-submit:action {
     opacity: 0.6;
+  }
+  #room-make-window .wrapper #room-name, #room-make-window .wrapper #room-password, #room-make-window .wrapper #username {
+    margin-top: 50px;
   }
   .too-small-width {
     display: none;
