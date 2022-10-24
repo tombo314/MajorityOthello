@@ -89,7 +89,7 @@ io.on("connection", (socket)=>{
     socket.on("register-name", (data)=>{
         let username = data.value["username"];
         let roomName = data.value["roomName"];
-        rooms[roomName]["users"].append(username);
+        rooms[roomName]["users"].push(username);
     });
     socket.on("waiting-finished", (data)=>{
         io.sockets.emit("waiting-finished", {value: ""});

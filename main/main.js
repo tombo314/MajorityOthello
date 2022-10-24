@@ -24,6 +24,7 @@ let registerUser=(roomName)=>{
         } else if (!users.has(username)){
             socket.emit("register-name", {value: {"username":username, "roomName":roomName}});
             sessionStorage.setItem("username", username);
+            sessionStorage.setItem("isHost", "false");
             window.location.href = "/wait/wait.html";
         } else {
             alert("その名前は既に使われています。");
@@ -138,6 +139,10 @@ btnSubmit.onclick=(e)=>{
         alert("ユーザー名を入力してください。");
     }
     // 何もなければ /wait/wait.html に遷移
+    else {
+        sessionStorage.setItem("isHost", "true");
+        sessionStorage.setItem("username", roomUsername.value);
+    }
 }
 
 socket.on("update-rooms", (data)=>{
@@ -151,7 +156,7 @@ socket.on("update-rooms", (data)=>{
             `width: ${BUTTON_ROOM_SELECT_WIDTH}px;
              font-size: ${Math.min(30, BUTTON_ROOM_SELECT_WIDTH / elem.textContent.length)}px`
         );
-        elem.setAttribute("onclick", `registerUser("${elem.textContent}")`);
+        elem.setAttribute("onclick", `registerUser('${elem.textContent}')`);
         roomForRooms.appendChild(elem);
         roomCnt++;
         if (roomCnt%6==0){
@@ -160,3 +165,4 @@ socket.on("update-rooms", (data)=>{
         }
     }
 });
+
