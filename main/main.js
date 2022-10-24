@@ -1,4 +1,3 @@
-let username;
 let socket = io();
 let roomForRooms = document.getElementById("room-for-rooms");
 let blackSheet = document.getElementById("black-sheet");
@@ -13,19 +12,23 @@ const BUTTON_ROOM_SELECT_WIDTH = 120;
 
 // 部屋に入るときにユーザーを登録する
 let registerUser=(roomName)=>{
-    username = prompt("ユーザー名を入力してください...");
-    // socket.emit("need-users", {value: ""});
-    // socket.on("need-users", (data)=>{
-    //     let users = data.value;
-    //     if (username==null || username==""){
-    //         // キャンセル
-    //     } else if (!users.includes(username)){
-    //         socket.emit("register-name", {value: username});
-    //         sessionStorage.setItem("username", username);
-    //     } else {
-    //         alert("その名前は既に使われています。");
-    //     }
-    // });
+    let username = prompt("ユーザー名を入力してください...");
+    socket.emit("need-users", {value: ""});
+    socket.on("need-users", (data)=>{
+        let users = new Set();
+        for (let v in data.value){
+            users.add(v);
+        }
+        if (username==null || username==""){
+            // キャンセル
+        } else if (!users.has(username)){
+            socket.emit("register-name", {value: {"username":username, "roomName":roomName}});
+            sessionStorage.setItem("username", username);
+            window.location.href = "/wait/wait.html";
+        } else {
+            alert("その名前は既に使われています。");
+        }
+    });
 }
 
 // サーバーから自分のデータを削除
@@ -135,16 +138,12 @@ btnSubmit.onclick=(e)=>{
         alert("ユーザー名を入力してください。");
     }
     // 何もなければ /wait/wait.html に遷移
-    else {
-        // socket.emit("update-rooms", {value: {"roomName":roomName, "roomPassword":roomPassword, "roomUsername":roomUsername}});
-    }
 }
 
 socket.on("update-rooms", (data)=>{
-    let clone = roomForRooms.cloneNode(false);
-    roomForRooms.parentNode.replaceChild(clone , roomForRooms);
+    let roomCnt = 0;
     let rooms = data.value;
-    for (let v of rooms){
+    for (let v in rooms){
         let elem = document.createElement("button");
         elem.textContent = v;
         elem.setAttribute("class", "btn-room-select");
@@ -152,7 +151,7 @@ socket.on("update-rooms", (data)=>{
             `width: ${BUTTON_ROOM_SELECT_WIDTH}px;
              font-size: ${Math.min(30, BUTTON_ROOM_SELECT_WIDTH / elem.textContent.length)}px`
         );
-        elem.setAttribute("onclick", `registerUser(${elem.textContent})`);
+        elem.setAttribute("onclick", `registerUser("${elem.textContent}")`);
         roomForRooms.appendChild(elem);
         roomCnt++;
         if (roomCnt%6==0){
@@ -160,8 +159,4 @@ socket.on("update-rooms", (data)=>{
             roomForRooms.appendChild(br);
         }
     }
-});
-
-socket.on("ok", (data)=>{
-    alert(data.value);
 });

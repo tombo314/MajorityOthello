@@ -48,11 +48,6 @@ const COLOR_FIELD_RED = "rgb(255, 50, 50)";
 const COLOR_FIELD_BLUE = "rgb(50, 50, 255)";
 
 // 関数の宣言
-let show=(ary)=>{
-    for (let i=0; i<8; i++){
-        console.log(ary[i]);
-    }
-}
 let getRandomInt=(min, max)=> {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -721,7 +716,6 @@ socket.on("game-finished", (data)=>{
 });
 
 onkeydown=(e)=>{
-    console.log(color);
     // 上下左右に移動させる
     if (e.key=="w"){
         wDown = true;

@@ -61,49 +61,57 @@ let server = http.createServer((req, res)=>{
 }).listen(process.env.PORT || 8000);
 let io = socket(server);
 
+/*
+rooms = {
+    "username1": {
+        "roomName": roomName1,
+        "roomPassward": roomPassword1,
+        "users": [username1, username2, ...]
+    },
+    "username3": {
+        "roomName": roomName2,
+        "roomPassward": roomPassword2,
+        "users": [username3, username4, ...]
+    }
+}
+*/
 let rooms = {}
-let users = {};
-let waiting = [];
 let cntRed = 0;
 let cntBlue = 0;
 let color;
 io.on("connection", (socket)=>{
     socket.on("delete-user", (data)=>{
-        delete users[data.value];
-    });
-    socket.on("update-rooms", (data)=>{
-        io.sockets.emit("update-rooms", {value:rooms});
+        delete rooms[data.value];
     });
     socket.on("need-users", ()=>{
-        io.sockets.emit("need-users", {value: waiting});
+        io.sockets.emit("need-users", {value:rooms});
     });
     socket.on("register-name", (data)=>{
-        // waiting.push(data.value);
-
+        let username = data.value["username"];
+        let roomName = data.value["roomName"];
+        rooms[roomName]["users"].append(username);
     });
     socket.on("waiting-finished", (data)=>{
         io.sockets.emit("waiting-finished", {value: ""});
-        users = {};
-        waiting = [];
         cntRed = 0;
         cntBlue = 0;
     });
     socket.on("user-info-init", (data)=>{
-        let userInfo = data.value;
-        if (userInfo!=null){
-            let username = userInfo["username"];
-            let userX = userInfo["userX"];
-            let userY = userInfo["userY"];
-            if (cntRed<=cntBlue){
-                color = "red";
-                cntRed++;
-            } else {
-                color = "blue";
-                cntBlue++;
-            }
-            users[username] = {"userX":userX, "userY":userY, "color":color};
-        }
-        io.sockets.emit("user-info-init", {value:users});
+        // let userInfo = data.value;
+        // if (userInfo!=null){
+        //     let username = userInfo["username"];
+        //     let userX = userInfo["userX"];
+        //     let userY = userInfo["userY"];
+        //     if (cntRed<=cntBlue){
+        //         color = "red";
+        //         cntRed++;
+        //     } else {
+        //         color = "blue";
+        //         cntBlue++;
+        //     }
+        //     users[username] = {"userX":userX, "userY":userY, "color":color};
+        // }
+        // io.sockets.emit("user-info-init", {value:users});
     });
     socket.on("coordinate-changed", (data)=>{
         io.sockets.emit("coordinate-changed", {value:data.value});
