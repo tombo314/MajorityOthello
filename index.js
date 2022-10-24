@@ -54,7 +54,6 @@ let server = http.createServer((req, res)=>{
                 "roomName":roomName,
                 "roomPassward":roomPassward
             };
-            console.log(rooms);
         });
     }
 }).listen(process.env.PORT || 8000);

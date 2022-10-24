@@ -1,5 +1,5 @@
 let socket = io();
-let btnStart = document.getElementById("btn-start");
+let roomForRooms = document.getElementById("room-for-rooms");
 let blackSheet = document.getElementById("black-sheet");
 let btnMakeRoom = document.getElementById("btn-make-room");
 let btnEnterRoom = document.getElementById("btn-enter-room");
@@ -114,6 +114,7 @@ roomUsername.onkeyup=()=>{
 }
 
 // 「部屋を作る」を完了する
+let roomCnt = 0;
 btnSubmit.onclick=(e)=>{
     if (roomName.value=="部屋名を入力してください。" || roomName.value==""){
         e.preventDefault();
@@ -131,6 +132,20 @@ btnSubmit.onclick=(e)=>{
         e.preventDefault();
         alert("ユーザー名を入力してください。");
     } else {
-        socket.emit("make-room", {value:username});
+        e.preventDefault();
+        const BUTTON_ROOM_SELECT_WIDTH = 120;
+        let elem = document.createElement("button");
+        elem.textContent = roomName.value;
+        elem.setAttribute("class", "btn-room-select");
+        elem.setAttribute("style",
+            `width: ${BUTTON_ROOM_SELECT_WIDTH}px;
+             font-size: ${Math.min(30, BUTTON_ROOM_SELECT_WIDTH / elem.textContent.length)}px`
+        );
+        roomForRooms.appendChild(elem);
+        roomCnt++;
+        if (roomCnt%6==0){
+            let br = document.createElement("br");
+            roomForRooms.appendChild(br);
+        }
     }
 }

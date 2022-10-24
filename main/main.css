@@ -25,23 +25,21 @@ html {
     font-size: 32px;
     color: rgb(255, 50, 50);
   }
-  .wrapper-btn-start {
-    text-align: center;
-    margin-top: 30vh;
+  #room-for-rooms {
+    position: absolute;
+    width: 100vw;
+    margin-left: -100px;
   }
-  .wrapper-btn-start .btn-start {
-    width: 120px;
-    height: 70px;
-    font-size: 30px;
-    border: 2px #555 solid;
+  #room-for-rooms .btn-room-select {
+    height: 50px;
+    margin: 10px;
+    border: 1px solid #333;
     border-radius: 20px;
-    background-color: #eee;
   }
-  .wrapper-btn-start .btn-start:hover {
+  #room-for-rooms .btn-room-select:hover {
     opacity: 0.8;
-    background-color: #ddd;
   }
-  .wrapper-btn-start .btn-start:active {
+  #room-for-rooms .btn-room-select:active {
     opacity: 0.6;
   }
   .wrapper-room {
@@ -67,11 +65,7 @@ html {
   }
   .wrapper-room #btn-make-room {
     position: absolute;
-    left: 10vh;
-  }
-  .wrapper-room #btn-enter-room {
-    position: absolute;
-    left: 50vh;
+    left: 30vh;
   }
   #black-sheet {
     width: 120vw;
@@ -84,7 +78,7 @@ html {
     width: 800px;
     height: 400px;
     border-radius: 30px;
-    background-color: rgba(255, 119, 34, 0.8666666667);
+    background-color: rgba(255, 144, 59, 0.867);
     transform: translate(300px, 120px);
     visibility: hidden;
   }
