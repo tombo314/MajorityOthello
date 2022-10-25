@@ -1,4 +1,3 @@
-// 
 let socket = io();
 let roomForRooms = document.getElementById("room-for-rooms");
 let blackSheet = document.getElementById("black-sheet");
