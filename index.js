@@ -3,11 +3,6 @@ sessionStorage で管理する変数
 
 isHost : 自分が部屋を立てたかどうか
 username : 自分のユーザー名
-roomName : 自分が入っている部屋名
-
-
-全ユーザー通して、ユーザー名を重複なしにする
-rooms に部屋とユーザー名、users にユーザー名と座標を持つ
 */
 
 let http = require("http");
@@ -65,8 +60,11 @@ let server = http.createServer((req, res)=>{
             rooms[username] = {
                 "roomName":roomName,
                 "roomPassward":roomPassward,
-                "users":[username]
+                "users":[username],
+                "cntRed": 0,
+                "cntBlue": 0
             };
+            users["username"] = {};
             io.sockets.emit("update-rooms", {value:rooms});
         });
     }
@@ -74,47 +72,53 @@ let server = http.createServer((req, res)=>{
 let io = socket(server);
 
 /*
-rooms = {
-    "username1": {
-        "roomName": roomName1,
-        "roomPassward": roomPassword1,
-        "users": [username1, username2, ...]
-    },
-    "username3": {
-        "roomName": roomName2,
-        "roomPassward": roomPassword2,
-        "users": [username3, username4, ...]
-    }
+ユーザー情報を管理する連想配列
 
+rooms = {
+    "username": {
+        "roomName": roomName,
+        "roomPassward": roomPassword,
+        "users": [username, username, ...],
+        "cntRed": 0,
+        "cntBlue": 0,
+        "cntStone": 4,
+        "isRed": true,
+        "finished": false,
+        "keysValid" = true
+    },
+    ...
+}
 users = {
-    "username1": {
+    "username": {
         "ownX": ownX,
         "ownY": ownY,
-        "color": color
-    }
-}
+        "color": "red",
+    },
+    ...
 }
 */
 let rooms = {}
-let cntRed = 0;
-let cntBlue = 0;
+let users = {}
 let color;
 io.on("connection", (socket)=>{
+    // 前回作った部屋と前回のユーザー情報を削除する
     socket.on("delete-user", (data)=>{
         delete rooms[data.value];
+        delete users[data.value];
     });
+    // user の情報を返す
     socket.on("need-users", ()=>{
-        io.sockets.emit("need-users", {value:rooms});
+        io.sockets.emit("need-users", {value:users});
     });
+    // 対応する部屋の users にゲストを登録する
     socket.on("register-name", (data)=>{
         let username = data.value["username"];
-        let roomName = data.value["roomName"];
-        rooms[roomName]["users"].push(username);
+        let hostUsername = data.value["hostUsername"];
+        rooms[hostUsername]["users"].push(username);
     });
+    // 
     socket.on("waiting-finished", (data)=>{
         io.sockets.emit("waiting-finished", {value: ""});
-        cntRed = 0;
-        cntBlue = 0;
     });
     socket.on("user-info-init", (data)=>{
         let userInfo = data.value;
@@ -122,14 +126,14 @@ io.on("connection", (socket)=>{
             let username = userInfo["username"];
             let userX = userInfo["userX"];
             let userY = userInfo["userY"];
-            if (cntRed<=cntBlue){
-                color = "red";
-                cntRed++;
-            } else {
-                color = "blue";
-                cntBlue++;
-            }
-            rooms[username] = {"userX":userX, "userY":userY, "color":color};
+            // if (cntRed<=cntBlue){
+            //     color = "red";
+            //     cntRed++;
+            // } else {
+            //     color = "blue";
+            //     cntBlue++;
+            // }
+            users[username] = {"userX":userX, "userY":userY, "color":color};
         }
         io.sockets.emit("user-info-init", {value:users});
     });

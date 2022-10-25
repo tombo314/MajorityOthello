@@ -6,10 +6,15 @@ if (sessionStorage.getItem("isHost")=="true"){
 }
 
 socket.on("waiting-finished", (data)=>{
-    alert("バトル画面に遷移します。");
-    window.location.href = "/battle/battle.html";
+    let roomMember = data.value;
+    // マッチングが完了した部屋に、自分が登録されていたら遷移する
+    if (roomMember.includes(username)){
+        alert("バトル画面に遷移します。");
+        window.location.href = "/battle/battle.html";
+    }
 });
 
 btnStart.onclick=()=>{
-    socket.emit("waiting-finished", {value: ""});
+    // rooms のキーである、ホストの username を送信する
+    socket.emit("waiting-finished", {value: username});
 }

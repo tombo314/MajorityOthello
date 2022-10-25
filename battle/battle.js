@@ -17,11 +17,6 @@ let ownName;
 let xDiff;
 let x = 0;
 let y = 0;
-let cntStone = 4;
-let color = "red";
-let isRed = true;
-let finished = false;
-let keysValid = true;
 
 // 定数の宣言
 const RED = 1;
@@ -608,7 +603,7 @@ let othelloWrapper = document.getElementById("othello-wrapper");
 
 // ユーザー情報送信
 if (username!=null){
-    socket.emit("user-info-init", {value: {"username":username, "roomName":roomName, "userX":ownX, "userY":ownY}});
+    socket.emit("user-info-init", {value: {"username":username, "userX":ownX, "userY":ownY}});
 } else {
     socket.emit("user-info-init", {value: null});
 }

@@ -11,7 +11,7 @@ let btnSubmit = document.getElementById("btn-submit");
 const BUTTON_ROOM_SELECT_WIDTH = 120;
 
 // 部屋に入るときにユーザーを登録する
-let registerUser=(roomName)=>{
+let registerUser=(hostUsername)=>{
     let username = prompt("ユーザー名を入力してください...");
     socket.emit("need-users", {value: ""});
     socket.on("need-users", (data)=>{
@@ -22,10 +22,9 @@ let registerUser=(roomName)=>{
         if (username==null || username==""){
             // キャンセル
         } else if (!users.has(username)){
-            socket.emit("register-name", {value: {"username":username, "roomName":roomName}});
+            socket.emit("register-name", {value: {"username":username, "hostUsername":hostUsername}});
             sessionStorage.setItem("isHost", "false");
             sessionStorage.setItem("username", username);
-            sessionStorage.setItem("roomName", roomName);
             window.location.href = "/wait/wait.html";
         } else {
             alert("そのユーザー名はすでに使われています。");
@@ -143,7 +142,6 @@ btnSubmit.onclick=(e)=>{
     else {
         sessionStorage.setItem("isHost", "true");
         sessionStorage.setItem("username", roomUsername.value);
-        sessionStorage.setItem("roomName", roomName.value)
     }
 }
 
@@ -158,7 +156,7 @@ socket.on("update-rooms", (data)=>{
             `width: ${BUTTON_ROOM_SELECT_WIDTH}px;
              font-size: ${Math.min(30, BUTTON_ROOM_SELECT_WIDTH / elem.textContent.length)}px`
         );
-        elem.setAttribute("onclick", `registerUser('${elem.textContent}')`);
+        elem.setAttribute("onclick", `registerUser('${v}')`);
         roomForRooms.appendChild(elem);
         roomCnt++;
         if (roomCnt%6==0){
