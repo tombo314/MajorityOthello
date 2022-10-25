@@ -3,7 +3,7 @@ sessionStorage で管理する変数
 
 isHost : 自分が部屋を立てたかどうか
 username : 自分のユーザー名
-roomName : 自分が入っている部屋（ホストのユーザー名）
+roomName : 自分が入っている部屋の名前
 samePageLoaded : 同じページを一度読み込んだかどうか
 */
 
@@ -54,11 +54,10 @@ let io = socket(server);
 
 /*
 rooms = {
-    // ホストのユーザー名をキーとする、部屋ごとの連想配列
-    username: {
-        "roomName": roomName,
+    // 部屋名をキーとする、部屋ごとの連想配列
+    roomName: {
         "roomPassword": roomPassword,
-        "users": [username, username, ...],
+        "users": {username, username, ...},
         "cntRed": 0,
         "cntBlue": 0,
         "cntStone": 4,
@@ -82,7 +81,6 @@ let rooms = {}
 let users = {}
 let color;
 io.on("connection", (socket)=>{
-
     /* index.html */
     // 前回作った部屋と前回のユーザー情報を削除する
     socket.on("delete-user", (data)=>{
@@ -99,10 +97,9 @@ io.on("connection", (socket)=>{
         let roomName = roomInfo["roomName"];
         let roomPassword = roomInfo["roomPassword"];
         let roomUsername = roomInfo["roomUsername"];
-        rooms[roomUsername] = {
-            "roomName":roomName,
-            "roomPassword":roomPassword,
-            "users":[roomUsername],
+        rooms[roomName] = {
+            "roomPassword": roomPassword,
+            "users": new Set([roomUsername]),
             "cntRed": 0,
             "cntBlue": 0,
             "cntStone": 4,
@@ -115,11 +112,11 @@ io.on("connection", (socket)=>{
     });
     // 対応する部屋の users にゲストを登録する
     socket.on("register-name", (data)=>{
+        // バグってそう
         let username = data.value["username"];
-        let hostUsername = data.value["hostUsername"];
-        if (Object.keys(rooms).includes(hostUsername)){
-            rooms[hostUsername]["users"].push(username);
-            io.sockets.emit(username, {value: true})
+        let roomName = data.value["roomName"];
+        if (Object.keys(rooms).includes(roomName)){
+            rooms[roomName]["users"].add(username);
         } else {
             // 部屋が存在しない場合
             io.sockets.emit(username, {value: false});
@@ -135,6 +132,8 @@ io.on("connection", (socket)=>{
     /* battle.html */
     // 全ユーザーの情報を、対応する部屋に返す
     socket.on("user-info-init", (data)=>{
+        console.log(rooms);
+        console.log(users);
         let userInfo = data.value;
         if (userInfo!=null){
             let username = userInfo["username"];
@@ -143,6 +142,7 @@ io.on("connection", (socket)=>{
             let userY = userInfo["userY"];
             let cntRed;
             let cntBlue;
+            console.log(Object.keys(rooms));
             if (Object.keys(rooms).includes(roomName)){
                 cntRed = rooms[roomName]["cntRed"];
                 cntBlue = rooms[roomName]["cntBlue"];

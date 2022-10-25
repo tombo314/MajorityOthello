@@ -11,7 +11,7 @@ let btnSubmit = document.getElementById("btn-submit");
 const BUTTON_ROOM_SELECT_WIDTH = 120;
 
 // ゲストが部屋に入るときにユーザーを登録する
-let registerUser=(hostUsername)=>{
+let registerUser=(roomName)=>{
     let username = prompt("ユーザー名を入力してください...");
     socket.emit("need-users", {value: ""});
     socket.on("need-users", (data)=>{
@@ -22,7 +22,10 @@ let registerUser=(hostUsername)=>{
         if (username==null || username==""){
             // キャンセル
         } else if (!users.has(username)){
-            socket.emit("register-name", {value: {"username":username, "hostUsername":hostUsername}});
+            socket.emit("register-name", {value: {
+                "username": username,
+                "roomName": roomName
+            }});
             socket.on(username, (data)=>{
                 if (data.value){
                     sessionStorage.setItem("isHost", "false");
@@ -182,7 +185,7 @@ socket.on("update-rooms", (data)=>{
     let rooms = data.value;
     for (let v in rooms){
         let elem = document.createElement("button");
-        elem.textContent = rooms[v]["roomName"];
+        elem.textContent = v;
         elem.setAttribute("class", "btn-room-select");
         elem.setAttribute("style",
             `width: ${BUTTON_ROOM_SELECT_WIDTH}px;
