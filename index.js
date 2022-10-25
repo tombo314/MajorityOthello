@@ -116,10 +116,11 @@ io.on("connection", (socket)=>{
         let hostUsername = data.value["hostUsername"];
         rooms[hostUsername]["users"].push(username);
     });
-    // 
+    // マッチングが完了した部屋の名前を通知する
     socket.on("waiting-finished", (data)=>{
-        io.sockets.emit("waiting-finished", {value: ""});
+        io.sockets.emit("waiting-finished", {value: data.value});
     });
+    // 全ユーザーの情報を、対応する部屋に返す
     socket.on("user-info-init", (data)=>{
         let userInfo = data.value;
         if (userInfo!=null){
@@ -137,16 +138,24 @@ io.on("connection", (socket)=>{
         }
         io.sockets.emit("user-info-init", {value:users});
     });
+    // プレイヤーの位置が変わったことを通知する
     socket.on("coordinate-changed", (data)=>{
         io.sockets.emit("coordinate-changed", {value:data.value});
     });
+    // オセロの盤面が変わったことを通知する
     socket.on("field-changed", (data)=>{
         io.sockets.emit("field-changed", {value:data.value});
     });
+    // 「赤（青）のターン」の、赤（青）の文字の色が変わったことを通知する
     socket.on("text-color-changed", (data)=>{
         io.sockets.emit("text-color-changed", {value:data.value});
     });
+    // ゲームが終了したことを通知する
     socket.on("game-finished", (data)=>{
         io.sockets.emit("game-finished", {value:data.value});
+    });
+    // rooms の情報を返す
+    socket.on("need-rooms", (data)=>{
+        io.sockets.emit("need-rooms", {value:rooms});
     });
 });
