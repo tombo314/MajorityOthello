@@ -5,7 +5,7 @@ let username = sessionStorage.getItem("username");
 // 同じ画面が一度読み込まれたか
 // -> 読み込まれていた場合はスタート画面に戻る
 if (sessionStorage.getItem("samePageLoaded")=="true"){
-    window.location.href = "/";
+    // window.location.href = "/";
 }
 sessionStorage.setItem("samePageLoaded", "true");
 
