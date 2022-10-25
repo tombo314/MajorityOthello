@@ -53,8 +53,6 @@ let server = http.createServer((req, res)=>{
 let io = socket(server);
 
 /*
-ユーザー情報を管理する連想配列
-
 rooms = {
     // ホストのユーザー名をキーとする、部屋ごとの連想配列
     username: {
@@ -84,6 +82,8 @@ let rooms = {}
 let users = {}
 let color;
 io.on("connection", (socket)=>{
+
+    /* index.html */
     // 前回作った部屋と前回のユーザー情報を削除する
     socket.on("delete-user", (data)=>{
         delete rooms[data.value];
@@ -91,7 +91,7 @@ io.on("connection", (socket)=>{
     });
     // user の情報を返す
     socket.on("need-users", ()=>{
-        io.sockets.emit("need-users", {value:users});
+        io.sockets.emit("need-users", {value: users});
     });
     // rooms に部屋の情報を登録する
     socket.on("room-make-finished", (data)=>{
@@ -117,12 +117,22 @@ io.on("connection", (socket)=>{
     socket.on("register-name", (data)=>{
         let username = data.value["username"];
         let hostUsername = data.value["hostUsername"];
-        rooms[hostUsername]["users"].push(username);
+        if (Object.keys(rooms).includes(hostUsername)){
+            rooms[hostUsername]["users"].push(username);
+            io.sockets.emit(username, {value: true})
+        } else {
+            // 部屋が存在しない場合
+            io.sockets.emit(username, {value: false});
+        }
     });
+
+    /* wait.html */
     // マッチングが完了した部屋の名前を通知する
     socket.on("waiting-finished", (data)=>{
         io.sockets.emit("waiting-finished", {value: rooms[data.value]["users"]});
     });
+
+    /* battle.html */
     // 全ユーザーの情報を、対応する部屋に返す
     socket.on("user-info-init", (data)=>{
         let userInfo = data.value;
@@ -131,14 +141,20 @@ io.on("connection", (socket)=>{
             let roomName = userInfo["roomName"];
             let userX = userInfo["userX"];
             let userY = userInfo["userY"];
-            let cntRed = rooms[roomName]["cntRed"];
-            let cntBlue = rooms[roomName]["cntBlue"];
-            if (cntRed<=cntBlue){
-                color = "red";
-                rooms[roomName]["cntRed"]++;
+            let cntRed;
+            let cntBlue;
+            if (Object.keys(rooms).includes(roomName)){
+                cntRed = rooms[roomName]["cntRed"];
+                cntBlue = rooms[roomName]["cntBlue"];
+                if (cntRed<=cntBlue){
+                    color = "red";
+                    rooms[roomName]["cntRed"]++;
+                } else {
+                    color = "blue";
+                    rooms[roomName]["cntBlue"]++;
+                }
             } else {
-                color = "blue";
-                rooms[roomName]["cntBlue"]++;
+                io.sockets.emit(username, {value: false});
             }
             users[username] = {"userX":userX, "userY":userY, "color":color};
         }

@@ -23,11 +23,17 @@ let registerUser=(hostUsername)=>{
             // キャンセル
         } else if (!users.has(username)){
             socket.emit("register-name", {value: {"username":username, "hostUsername":hostUsername}});
-            sessionStorage.setItem("isHost", "false");
-            sessionStorage.setItem("username", username);
-            sessionStorage.setItem("roomName", roomNameElem.value);
-            sessionStorage.setItem("samePageLoaded", "false");
-            window.location.href = "/wait/wait.html";
+            socket.on(username, (data)=>{
+                if (data.value){
+                    sessionStorage.setItem("isHost", "false");
+                    sessionStorage.setItem("username", username);
+                    sessionStorage.setItem("roomName", roomNameElem.value);
+                    sessionStorage.setItem("samePageLoaded", "false");
+                    window.location.href = "/wait/wait.html";
+                } else {
+                    alert("部屋が存在しません。");
+                }
+            });
         } else {
             // 名前の重複判定が機能していない
             alert("そのユーザー名はすでに使われています。");

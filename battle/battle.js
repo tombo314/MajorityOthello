@@ -716,6 +716,14 @@ socket.on("game-finished", (data)=>{
     }
 });
 
+// 部屋が存在しなかった場合、スタート画面に戻る
+socket.on(username, (data)=>{
+    if (!data.value){
+        alert("部屋が存在しません。");
+        window.location.href = "/";
+    }
+});
+
 onkeydown=(e)=>{
     // 上下左右に移動させる
     if (e.key=="w"){
