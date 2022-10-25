@@ -97,21 +97,21 @@ io.on("connection", (socket)=>{
         cntBlue = 0;
     });
     socket.on("user-info-init", (data)=>{
-        // let userInfo = data.value;
-        // if (userInfo!=null){
-        //     let username = userInfo["username"];
-        //     let userX = userInfo["userX"];
-        //     let userY = userInfo["userY"];
-        //     if (cntRed<=cntBlue){
-        //         color = "red";
-        //         cntRed++;
-        //     } else {
-        //         color = "blue";
-        //         cntBlue++;
-        //     }
-        //     users[username] = {"userX":userX, "userY":userY, "color":color};
-        // }
-        // io.sockets.emit("user-info-init", {value:users});
+        let userInfo = data.value;
+        if (userInfo!=null){
+            let username = userInfo["username"];
+            let userX = userInfo["userX"];
+            let userY = userInfo["userY"];
+            if (cntRed<=cntBlue){
+                color = "red";
+                cntRed++;
+            } else {
+                color = "blue";
+                cntBlue++;
+            }
+            rooms[username] = {"userX":userX, "userY":userY, "color":color};
+        }
+        io.sockets.emit("user-info-init", {value:users});
     });
     socket.on("coordinate-changed", (data)=>{
         io.sockets.emit("coordinate-changed", {value:data.value});

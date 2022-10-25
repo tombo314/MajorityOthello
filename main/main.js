@@ -27,16 +27,16 @@ let registerUser=(roomName)=>{
             sessionStorage.setItem("isHost", "false");
             window.location.href = "/wait/wait.html";
         } else {
-            alert("その名前は既に使われています。");
+            alert("その部屋名は既に使われています。");
         }
     });
 }
 
 // サーバーから自分のデータを削除
 socket.emit("delete-user", {value: sessionStorage.getItem("username")});
+
 // キャッシュをクリア
 sessionStorage.clear();
-
 
 // 周りの暗いところをクリックしてキャンセル
 blackSheet.onclick=()=>{
@@ -150,7 +150,7 @@ socket.on("update-rooms", (data)=>{
     let rooms = data.value;
     for (let v in rooms){
         let elem = document.createElement("button");
-        elem.textContent = v;
+        elem.textContent = rooms[v]["roomName"];
         elem.setAttribute("class", "btn-room-select");
         elem.setAttribute("style",
             `width: ${BUTTON_ROOM_SELECT_WIDTH}px;
