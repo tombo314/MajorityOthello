@@ -1,8 +1,8 @@
-// バトル画面のリロード時にスタート画面に戻る
-if (sessionStorage.getItem("battleAlreadyLoaded")=="true"){
+// 同じページを一度読み込んだかどうか
+if (sessionStorage.getItem("samePageLoaded")=="true"){
     window.location.href = "/";
 } else {
-    sessionStorage.setItem("battleAlreadyLoaded", "true");
+    sessionStorage.setItem("samePageLoaded", "true");
 }
 
 // 変数の宣言・初期化
@@ -603,7 +603,12 @@ let othelloWrapper = document.getElementById("othello-wrapper");
 
 // ユーザー情報送信
 if (username!=null){
-    socket.emit("user-info-init", {value: {"username":username, "userX":ownX, "userY":ownY}});
+    socket.emit("user-info-init", {value: {
+        "username": username,
+        "roomName": roomName,
+        "userX": ownX,
+        "userY": ownY
+    }});
 } else {
     socket.emit("user-info-init", {value: null});
 }

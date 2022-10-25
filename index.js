@@ -4,6 +4,7 @@ sessionStorage で管理する変数
 isHost : 自分が部屋を立てたかどうか
 username : 自分のユーザー名
 roomName : 自分が入っている部屋（ホストのユーザー名）
+samePageLoaded : 同じページを一度読み込んだかどうか
 */
 
 let http = require("http");
@@ -55,9 +56,10 @@ let io = socket(server);
 ユーザー情報を管理する連想配列
 
 rooms = {
+    // ホストのユーザー名をキーとする、部屋ごとの連想配列
     username: {
         "roomName": roomName,
-        "roomPassward": roomPassword,
+        "roomPassword": roomPassword,
         "users": [username, username, ...],
         "cntRed": 0,
         "cntBlue": 0,
@@ -69,6 +71,7 @@ rooms = {
     ...
 }
 users = {
+    // 各ユーザーのユーザー名をキーとする、ユーザー単位の連想配列
     username: {
         "ownX": ownX,
         "ownY": ownY,
@@ -90,14 +93,15 @@ io.on("connection", (socket)=>{
     socket.on("need-users", ()=>{
         io.sockets.emit("need-users", {value:users});
     });
-    socket.on("room-make-finised", (data)=>{
+    // rooms に部屋の情報を登録する
+    socket.on("room-make-finished", (data)=>{
         let roomInfo = data.value;
         let roomName = roomInfo["roomName"];
-        let roomPassward = roomInfo["roomPassword"];
+        let roomPassword = roomInfo["roomPassword"];
         let roomUsername = roomInfo["roomUsername"];
         rooms[roomUsername] = {
             "roomName":roomName,
-            "roomPassword":roomPassward,
+            "roomPassword":roomPassword,
             "users":[roomUsername],
             "cntRed": 0,
             "cntBlue": 0,
@@ -106,7 +110,7 @@ io.on("connection", (socket)=>{
             "finished": false,
             "keysValid": true
         };
-        users[username] = {};
+        users[roomUsername] = {};
         io.sockets.emit("update-rooms", {value: rooms});
     });
     // 対応する部屋の users にゲストを登録する
@@ -124,15 +128,18 @@ io.on("connection", (socket)=>{
         let userInfo = data.value;
         if (userInfo!=null){
             let username = userInfo["username"];
+            let roomName = userInfo["roomName"];
             let userX = userInfo["userX"];
             let userY = userInfo["userY"];
-            // if (cntRed<=cntBlue){
-            //     color = "red";
-            //     cntRed++;
-            // } else {
-            //     color = "blue";
-            //     cntBlue++;
-            // }
+            let cntRed = rooms[roomName]["cntRed"];
+            let cntBlue = rooms[roomName]["cntBlue"];
+            if (cntRed<=cntBlue){
+                color = "red";
+                rooms[roomName]["cntRed"]++;
+            } else {
+                color = "blue";
+                rooms[roomName]["cntBlue"]++;
+            }
             users[username] = {"userX":userX, "userY":userY, "color":color};
         }
         io.sockets.emit("user-info-init", {value:users});
