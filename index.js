@@ -99,7 +99,7 @@ io.on("connection", (socket)=>{
         let roomUsername = roomInfo["roomUsername"];
         rooms[roomName] = {
             "roomPassword": roomPassword,
-            "users": new Set([roomUsername]),
+            "users": [roomUsername],
             "cntRed": 0,
             "cntBlue": 0,
             "cntStone": 4,
@@ -112,11 +112,11 @@ io.on("connection", (socket)=>{
     });
     // 対応する部屋の users にゲストを登録する
     socket.on("register-name", (data)=>{
-        // バグってそう
         let username = data.value["username"];
         let roomName = data.value["roomName"];
         if (Object.keys(rooms).includes(roomName)){
-            rooms[roomName]["users"].add(username);
+            rooms[roomName]["users"].push(username);
+            io.sockets.emit(username, {value: true});
         } else {
             // 部屋が存在しない場合
             io.sockets.emit(username, {value: false});
@@ -132,8 +132,6 @@ io.on("connection", (socket)=>{
     /* battle.html */
     // 全ユーザーの情報を、対応する部屋に返す
     socket.on("user-info-init", (data)=>{
-        console.log(rooms);
-        console.log(users);
         let userInfo = data.value;
         if (userInfo!=null){
             let username = userInfo["username"];
@@ -142,7 +140,6 @@ io.on("connection", (socket)=>{
             let userY = userInfo["userY"];
             let cntRed;
             let cntBlue;
-            console.log(Object.keys(rooms));
             if (Object.keys(rooms).includes(roomName)){
                 cntRed = rooms[roomName]["cntRed"];
                 cntBlue = rooms[roomName]["cntBlue"];

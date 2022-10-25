@@ -1,5 +1,6 @@
 let socket = io();
 let btnStart = document.getElementById("btn-start");
+let username = sessionStorage.getItem("username");
 let roomName = sessionStorage.getItem("roomName");
 
 // 同じ画面が一度読み込まれたか
@@ -23,7 +24,7 @@ btnStart.onclick=()=>{
 socket.on("waiting-finished", (data)=>{
     let roomMember = data.value;
     // マッチングが完了した部屋に自分が登録されていたら遷移する
-    if (roomMember.has(username)){
+    if (roomMember.includes(username)){
         alert("バトル画面に遷移します。");
         sessionStorage.setItem("samePageLoaded", "false");
         window.location.href = "/battle/battle.html";
