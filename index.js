@@ -1,3 +1,15 @@
+/*
+sessionStorage で管理する変数
+
+isHost : 自分が部屋を立てたかどうか
+username : 自分のユーザー名
+roomName : 自分が入っている部屋名
+
+
+全ユーザー通して、ユーザー名を重複なしにする
+rooms に部屋とユーザー名、users にユーザー名と座標を持つ
+*/
+
 let http = require("http");
 let fs = require("fs");
 let socket = require("socket.io");
@@ -73,6 +85,14 @@ rooms = {
         "roomPassward": roomPassword2,
         "users": [username3, username4, ...]
     }
+
+users = {
+    "username1": {
+        "ownX": ownX,
+        "ownY": ownY,
+        "color": color
+    }
+}
 }
 */
 let rooms = {}

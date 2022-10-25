@@ -23,11 +23,12 @@ let registerUser=(roomName)=>{
             // キャンセル
         } else if (!users.has(username)){
             socket.emit("register-name", {value: {"username":username, "roomName":roomName}});
-            sessionStorage.setItem("username", username);
             sessionStorage.setItem("isHost", "false");
+            sessionStorage.setItem("username", username);
+            sessionStorage.setItem("roomName", roomName);
             window.location.href = "/wait/wait.html";
         } else {
-            alert("その部屋名は既に使われています。");
+            alert("そのユーザー名はすでに使われています。");
         }
     });
 }
@@ -142,6 +143,7 @@ btnSubmit.onclick=(e)=>{
     else {
         sessionStorage.setItem("isHost", "true");
         sessionStorage.setItem("username", roomUsername.value);
+        sessionStorage.setItem("roomName", roomName.value)
     }
 }
 
