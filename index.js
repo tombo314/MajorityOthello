@@ -151,7 +151,7 @@ io.on("connection", (socket)=>{
                     rooms[roomName]["cntBlue"]++;
                 }
             } else {
-                io.sockets.emit(username, {value: false});
+                io.sockets.emit(username, {value: false, rooms: rooms});
             }
             users[username] = {"userX":userX, "userY":userY, "color":color};
         }

@@ -30,7 +30,7 @@ let registerUser=(roomName)=>{
                 if (data.value){
                     sessionStorage.setItem("isHost", "false");
                     sessionStorage.setItem("username", username);
-                    sessionStorage.setItem("roomName", roomNameElem.value);
+                    sessionStorage.setItem("roomName", roomName);
                     sessionStorage.setItem("samePageLoaded", "false");
                     window.location.href = "/wait/wait.html";
                 } else {
