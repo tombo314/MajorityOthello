@@ -63,12 +63,11 @@ html{
         }
     }
 
-    .wrapper-room{
+    .wrapper-btn-make-room{
         position: absolute;
         top: 50vh;
-        text-align: center;
         margin-top: 100px;
-        .btn{
+        .btn-make-room{
             width: 160px;
             height: 70px;
             border: 2px #555 solid;
@@ -105,7 +104,7 @@ html{
         transform: translate(300px, 120px);
         visibility: hidden; // ここを消してデバッグ
         .wrapper{
-            margin-left: -260px;
+            margin-left: -290px;
             label{
                 font-size: 22px;
                 font-weight: bold;

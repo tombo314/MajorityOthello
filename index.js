@@ -3,6 +3,7 @@ sessionStorage で管理する変数
 
 isHost : 自分が部屋を立てたかどうか
 username : 自分のユーザー名
+roomName : 自分が入っている部屋（ホストのユーザー名）
 */
 
 let http = require("http");
@@ -47,27 +48,6 @@ let server = http.createServer((req, res)=>{
         res.writeHead(200, {"Content-Type": "img/png"});
         res.end(fs.readFileSync("pictures/othello_field.png"));
     }
-    // index.html から部屋の情報を受け取る
-    if (req.method=="POST"){
-        let data = "";
-        req.on("data", (value)=>{
-            data += value;
-        }).on("end", ()=>{
-            data = data.split("&");
-            let roomName = data[0].slice(10, data[0].length);
-            let roomPassward = data[1].slice(14, data[1].length);
-            let username = data[2].slice(9, data[2].length);
-            rooms[username] = {
-                "roomName":roomName,
-                "roomPassward":roomPassward,
-                "users":[username],
-                "cntRed": 0,
-                "cntBlue": 0
-            };
-            users["username"] = {};
-            io.sockets.emit("update-rooms", {value:rooms});
-        });
-    }
 }).listen(process.env.PORT || 8000);
 let io = socket(server);
 
@@ -75,7 +55,7 @@ let io = socket(server);
 ユーザー情報を管理する連想配列
 
 rooms = {
-    "username": {
+    username: {
         "roomName": roomName,
         "roomPassward": roomPassword,
         "users": [username, username, ...],
@@ -84,12 +64,12 @@ rooms = {
         "cntStone": 4,
         "isRed": true,
         "finished": false,
-        "keysValid" = true
+        "keysValid": true
     },
     ...
 }
 users = {
-    "username": {
+    username: {
         "ownX": ownX,
         "ownY": ownY,
         "color": "red",
@@ -110,6 +90,25 @@ io.on("connection", (socket)=>{
     socket.on("need-users", ()=>{
         io.sockets.emit("need-users", {value:users});
     });
+    socket.on("room-make-finised", (data)=>{
+        let roomInfo = data.value;
+        let roomName = roomInfo["roomName"];
+        let roomPassward = roomInfo["roomPassword"];
+        let roomUsername = roomInfo["roomUsername"];
+        rooms[roomUsername] = {
+            "roomName":roomName,
+            "roomPassword":roomPassward,
+            "users":[roomUsername],
+            "cntRed": 0,
+            "cntBlue": 0,
+            "cntStone": 4,
+            "isRed": true,
+            "finished": false,
+            "keysValid": true
+        };
+        users[username] = {};
+        io.sockets.emit("update-rooms", {value: rooms});
+    });
     // 対応する部屋の users にゲストを登録する
     socket.on("register-name", (data)=>{
         let username = data.value["username"];
@@ -118,7 +117,7 @@ io.on("connection", (socket)=>{
     });
     // マッチングが完了した部屋の名前を通知する
     socket.on("waiting-finished", (data)=>{
-        io.sockets.emit("waiting-finished", {value: data.value});
+        io.sockets.emit("waiting-finished", {value: rooms[data.value]["users"]});
     });
     // 全ユーザーの情報を、対応する部屋に返す
     socket.on("user-info-init", (data)=>{

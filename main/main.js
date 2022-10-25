@@ -27,6 +27,7 @@ let registerUser=(hostUsername)=>{
             sessionStorage.setItem("username", username);
             window.location.href = "/wait/wait.html";
         } else {
+            // 名前の重複判定が機能していない
             alert("そのユーザー名はすでに使われています。");
         }
     });
@@ -58,10 +59,14 @@ btnMakeRoom.onclick=()=>{
 }
 
 // 文字が入力されたら「部屋名を～」をクリア
-roomName.onkeydown=()=>{
-    if (roomName.value=="部屋名を入力してください。"){
-        roomName.value = "";
-        roomName.style.color = "#222";
+roomName.onkeydown=(e)=>{
+    if (e.key!="Enter"){
+        if (roomName.value=="部屋名を入力してください。"){
+            roomName.value = "";
+            roomName.style.color = "#222";
+        }
+    } else if (e.key=="Enter"){
+        makeRoom(e);
     }
 }
 // value が空のとき「部屋名を～」を表示
@@ -72,12 +77,16 @@ roomName.onkeyup=()=>{
     }
 }
 
-let passwordOK;
 // 文字が入力されたら「パスワードを～」をクリア
-roomPassword.onkeydown=()=>{
-    if (roomPassword.value=="パスワードを入力してください。"){
-        roomPassword.value = "";
-        roomPassword.style.color = "#222";
+let passwordOK;
+roomPassword.onkeydown=(e)=>{
+    if (e.key!="Enter"){
+        if (roomPassword.value=="パスワードを入力してください。"){
+            roomPassword.value = "";
+            roomPassword.style.color = "#222";
+        }
+    } else if (e.key=="Enter"){
+        makeRoom(e);
     }
 }
 // value が空のとき「パスワードを～」を表示
@@ -101,10 +110,14 @@ let includesSpace=(str)=>{
 }
 
 // 文字が入力されたら「ユーザー名を～」をクリア
-roomUsername.onkeydown=()=>{
-    if (roomUsername.value=="ユーザー名を入力してください。"){
-        roomUsername.value = "";
-        roomUsername.style.color = "#222";
+roomUsername.onkeydown=(e)=>{
+    if (e.key!="Enter"){
+        if (roomUsername.value=="ユーザー名を入力してください。"){
+            roomUsername.value = "";
+            roomUsername.style.color = "#222";
+        }
+    } else if (e.key=="Enter"){
+        makeRoom(e);
     }
 }
 // value が空のとき「ユーザー名を～」を表示
@@ -115,9 +128,8 @@ roomUsername.onkeyup=()=>{
     }
 }
 
-// 「部屋を作る」を完了する
-let roomCnt = 0;
-btnSubmit.onclick=(e)=>{
+// 部屋の作成を完了する
+let makeRoom=(e)=>{
     // 部屋名が空白
     if (roomName.value=="部屋名を入力してください。" || roomName.value==""){
         e.preventDefault();
@@ -142,9 +154,19 @@ btnSubmit.onclick=(e)=>{
     else {
         sessionStorage.setItem("isHost", "true");
         sessionStorage.setItem("username", roomUsername.value);
+        socket.emit("room-make-finished", {value: {
+            "roomName":roomUsername.value,
+            "roomPassword":roomPassword.value,
+            "username":roomUsername.value}
+        });
+        window.location.href = "/wait/wait.html";
     }
 }
 
+// 「部屋を作る」を完了する
+btnSubmit.onclick=(e)=> makeRoom(e);
+
+// 公開されている部屋の情報を更新する
 socket.on("update-rooms", (data)=>{
     let roomCnt = 0;
     let rooms = data.value;

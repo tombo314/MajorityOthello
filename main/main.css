@@ -42,13 +42,12 @@ html {
   #room-for-rooms .btn-room-select:active {
     opacity: 0.6;
   }
-  .wrapper-room {
+  .wrapper-btn-make-room {
     position: absolute;
     top: 50vh;
-    text-align: center;
     margin-top: 100px;
   }
-  .wrapper-room .btn {
+  .wrapper-btn-make-room .btn-make-room {
     width: 160px;
     height: 70px;
     border: 2px #555 solid;
@@ -56,14 +55,14 @@ html {
     font-size: 22px;
     margin: 0 20px;
   }
-  .wrapper-room .btn:hover {
+  .wrapper-btn-make-room .btn-make-room:hover {
     opacity: 0.8;
     background-color: #ddd;
   }
-  .wrapper-room .btn:active {
+  .wrapper-btn-make-room .btn-make-room:active {
     opacity: 0.6;
   }
-  .wrapper-room #btn-make-room {
+  .wrapper-btn-make-room #btn-make-room {
     position: absolute;
     left: 30vh;
   }
@@ -83,7 +82,7 @@ html {
     visibility: hidden;
   }
   #room-make-window .wrapper {
-    margin-left: -260px;
+    margin-left: -290px;
   }
   #room-make-window .wrapper label {
     font-size: 22px;

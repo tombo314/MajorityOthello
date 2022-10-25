@@ -13,26 +13,26 @@
 
         <div id="room-for-rooms"></div>
 
-        <div class="wrapper-room">
-            <button class="btn" id="btn-make-room">部屋を作る</button>
+        <div class="wrapper-btn-make-room">
+            <button class="btn-make-room" id="btn-make-room">部屋を作る</button>
         </div>
     </div>
 
     <div id="black-sheet"></div>
 
     <div id="room-make-window">
-        <form class="wrapper" method="POST" id="form" action="/wait/wait.html">
-            <label>　　　 　部　屋　名　：</label>
-            <input type="text" id="room-name" name="room-name">
+        <div class="wrapper">
+            <label>　　　 　部　屋　名　　　：</label>
+            <input type="text" id="room-name">
             <br>
-            <label>パスワード(数字４桁) ：</label>
-            <input type="text" id="room-password" name="room-password">
+            <label>パスワード(半角数字４桁) ：</label>
+            <input type="text" id="room-password">
             <br>
-            <label>　　　ユ ー ザ ー 名　：</label>
-            <input type="text" id="username" name="username">
+            <label>　　　ユ ー ザ ー 名　　　：</label>
+            <input type="text" id="username">
             <br>
-            <input type="submit" id="btn-submit" value="作る">
-        </form>
+            <button id="btn-submit">作る</button>
+        </div>
     </div>
 
     <h2 class="too-small-width">横幅が小さすぎます。</h2>
