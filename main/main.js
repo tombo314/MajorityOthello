@@ -38,7 +38,6 @@ let registerUser=(roomName)=>{
                 }
             });
         } else {
-            // 名前の重複判定が機能していない
             alert("そのユーザー名はすでに使われています。");
         }
     });
@@ -163,16 +162,28 @@ let makeRoom=(e)=>{
     }
     // 何もなければ /wait/wait.html に遷移
     else {
-        socket.emit("room-make-finished", {value: {
-            "roomName":roomNameElem.value,
-            "roomPassword":roomPassword.value,
-            "roomUsername":roomUsername.value}
+        socket.emit("need-users", {value: ""});
+        socket.on("need-users", (data)=>{
+            let username = roomUsername.value;
+            let users = data.value;
+            if (username==null || username==""){
+                // キャンセル
+            } else if (!Object.keys(users).includes(username)){
+                socket.emit("room-make-finished", {value: {
+                    "roomName":roomNameElem.value,
+                    "roomPassword":roomPassword.value,
+                    "roomUsername":roomUsername.value
+                }});
+                sessionStorage.setItem("isHost", "true");
+                sessionStorage.setItem("username", roomUsername.value);
+                sessionStorage.setItem("roomName", roomNameElem.value);
+                sessionStorage.setItem("samePageLoaded", "false");
+                window.location.href = "/wait/wait.html";
+            } else {
+                // 機能していない
+                alert("そのユーザー名はすでに使われています。");
+            }
         });
-        sessionStorage.setItem("isHost", "true");
-        sessionStorage.setItem("username", roomUsername.value);
-        sessionStorage.setItem("roomName", roomNameElem.value);
-        sessionStorage.setItem("samePageLoaded", "false");
-        window.location.href = "/wait/wait.html";
     }
 }
 

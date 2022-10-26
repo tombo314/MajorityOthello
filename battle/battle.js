@@ -720,7 +720,7 @@ socket.on("game-finished", (data)=>{
 socket.on(username, (data)=>{
     if (!data.value){
         alert("部屋が存在しません。");
-        // window.location.href = "/";
+        window.location.href = "/";
     }
 });
 

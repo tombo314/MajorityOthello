@@ -18,6 +18,9 @@ let server = http.createServer((req, res)=>{
     } else if (req.url=="/main/main.css"){
         res.writeHead(200, {"Content-Type": "text/css"});
         res.end(fs.readFileSync("main/main.css"));
+    } else if (req.url=="/main/main.css.map"){
+        res.writeHead(200, {"Content-Type": "application/json"});
+        res.end(fs.readFileSync("main/main.css.map"));
     } else if (req.url=="/main/main.js"){
         res.writeHead(200, {"Content-Type": "application/javascript"});
         res.end(fs.readFileSync("main/main.js"));
@@ -29,6 +32,9 @@ let server = http.createServer((req, res)=>{
     } else if(req.url=="/wait/wait.css"){
         res.writeHead(200, {"Content-Type": "text/css"});
         res.end(fs.readFileSync("wait/wait.css"));
+    } else if (req.url=="/wait/wait.css.map"){
+        res.writeHead(200, {"Content-Type": "application/json"});
+        res.end(fs.readFileSync("wait/wait.css.map"));
     } else if(req.url=="/wait/wait.js"){
         res.writeHead(200, {"Content-Type": "application/javascript"});
         res.end(fs.readFileSync("wait/wait.js"));
@@ -40,6 +46,9 @@ let server = http.createServer((req, res)=>{
     } else if(req.url=="/battle/battle.css"){
         res.writeHead(200, {"Content-Type": "text/css"});
         res.end(fs.readFileSync("battle/battle.css"));
+    } else if (req.url=="/battle/battle.css.map"){
+        res.writeHead(200, {"Content-Type": "application/json"});
+        res.end(fs.readFileSync("battle/battle.css.map"));
     } else if(req.url=="/battle/battle.js"){
         res.writeHead(200, {"Content-Type": "application/javascript"});
         res.end(fs.readFileSync("battle/battle.js"));
@@ -49,6 +58,9 @@ let server = http.createServer((req, res)=>{
         res.writeHead(200, {"Content-Type": "img/png"});
         res.end(fs.readFileSync("pictures/othello_field.png"));
     }
+    else if (req.url=="/favicon.ico"){
+        res.end();
+    }
 }).listen(process.env.PORT || 8000);
 let io = socket(server);
 
@@ -57,7 +69,7 @@ rooms = {
     // 部屋名をキーとする、部屋ごとの連想配列
     roomName: {
         "roomPassword": roomPassword,
-        "users": {username, username, ...},
+        "users": [username, username, ...],
         "cntRed": 0,
         "cntBlue": 0,
         "cntStone": 4,
@@ -116,9 +128,10 @@ io.on("connection", (socket)=>{
         let roomName = data.value["roomName"];
         if (Object.keys(rooms).includes(roomName)){
             rooms[roomName]["users"].push(username);
+            users[username] = {};
             io.sockets.emit(username, {value: true});
         } else {
-            // 部屋が存在しない場合
+            // 部屋が存在しない場合はスタート画面に戻る
             io.sockets.emit(username, {value: false});
         }
     });
@@ -151,6 +164,7 @@ io.on("connection", (socket)=>{
                     rooms[roomName]["cntBlue"]++;
                 }
             } else {
+                // 部屋が見つからない場合はスタート画面に戻る
                 io.sockets.emit(username, {value: false, rooms: rooms});
             }
             users[username] = {"userX":userX, "userY":userY, "color":color};
@@ -178,3 +192,10 @@ io.on("connection", (socket)=>{
         io.sockets.emit("need-rooms", {value:rooms});
     });
 });
+
+/*
+To Do
+
+・部屋に入るときに名前が一度重複した場合、２回目の入力で名前が重複していなくても重複していると表示される。その後 /wait/wait.html に遷移する。
+-> ２回目に重複している場合は、前回の表示と合わせて２回表示される。
+*/
