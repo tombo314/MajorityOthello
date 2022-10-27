@@ -12,6 +12,10 @@ let design = document.getElementById("design");
 
 const BUTTON_ROOM_SELECT_WIDTH = 120;
 const RADIUS = 20;
+const CIRCLE_NUM = 10;
+const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
+const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
+const COLOR_PLAYER_PURPLE = "rgb(240, 100, 255)";
 
 // ゲストが部屋に入るときにユーザーを登録する
 let registerUser=(roomName)=>{
@@ -247,26 +251,34 @@ socket.on("update-rooms", (data)=>{
 });
 
 // 初期画面のデザイン
-// for (let i=0; i<1; i++){
-//     let elem = document.createElement("canvas");
-//     elem.setAttribute("width", 1400);
-//     elem.setAttribute("height", 670);
-//     elem.setAttribute("id", `circle${i}`);
-//     let randX = getRandomInt(RADIUS+10, 1340);
-//     let randY = getRandomInt(RADIUS+10, 600);
-//     elem.setAttribute("style", `
-//         position: absolute;
-//         background-color: red;
-//         z-index: 20;
-//     `);
-//     design.appendChild(elem);
-//     let context = elem.getContext("2d");
-//     context.beginPath();
-//     context.fillStyle = "rgb(255, 100, 100)";
-//     context.arc(randX, randY, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
-//     context.fill();
-//     context.stroke();
-// }
+for (let i=0; i<CIRCLE_NUM; i++){
+    let elem = document.createElement("canvas");
+    elem.setAttribute("width", 2*RADIUS);
+    elem.setAttribute("height", 2*RADIUS);
+    elem.setAttribute("id", `circle${i}`);
+    let randX = getRandomInt(RADIUS, 1300);
+    let randY = getRandomInt(RADIUS, 580);
+    elem.setAttribute("style", `
+        position: absolute;
+        border-radius: 100px;
+        transform: translate(${randX}px, ${randY}px);
+        z-index: 20;
+    `);
+    design.appendChild(elem);
+    let context = elem.getContext("2d");
+    context.beginPath();
+    let rand = getRandomInt(0, 100);
+    if (rand==1){
+        context.fillStyle = COLOR_PLAYER_PURPLE;
+    } else if (i%2==0){
+        context.fillStyle = COLOR_PLAYER_RED;
+    } else {
+        context.fillStyle = COLOR_PLAYER_BLUE;
+    }
+    context.arc(RADIUS, RADIUS, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
+    context.fill();
+    context.stroke();
+}
 let x = 0;
 let y = 0;
 let diffX = 2;
