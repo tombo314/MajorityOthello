@@ -244,8 +244,8 @@ socket.on("update-rooms", (data)=>{
     }
 });
 
-let coords = [];
 // 初期画面のデザイン
+let coords = [];
 for (let i=0; i<CIRCLE_NUM; i++){
     let elem = document.createElement("canvas");
     elem.setAttribute("width", 2*RADIUS);
@@ -275,6 +275,7 @@ for (let i=0; i<CIRCLE_NUM; i++){
     context.fill();
     context.stroke();
 }
+// 丸を動かして、壁にぶつかったら跳ね返るようにする
 let x = new Array(CIRCLE_NUM).fill(0, 0, CIRCLE_NUM);
 let y = new Array(CIRCLE_NUM).fill(0, 0, CIRCLE_NUM);
 let diffX = new Array(CIRCLE_NUM).fill(0, 0, CIRCLE_NUM);

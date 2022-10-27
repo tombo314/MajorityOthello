@@ -29,6 +29,21 @@ html{
         box-sizing: border-box;
     }
 
+    #start-end-sheet{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        width: 100vw;
+        height: 100vh;
+        font-size: 40px;
+        font-weight: bold;
+        color: #eee;
+        z-index: 10;
+        background-color: #222;
+        opacity: 0;
+    }
+
     .flex-time{
         display: flex;
         justify-content: space-evenly;
