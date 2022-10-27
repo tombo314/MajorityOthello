@@ -96,10 +96,12 @@ io.on("connection", (socket)=>{
     /* index.html */
     // 前回作った部屋と前回のユーザー情報を削除する
     socket.on("delete-user", (data)=>{
-        delete rooms[data.value];
-        delete users[data.value];
+        let username = data.value["username"];
+        let roomName = data.value["roomName"];
+        delete rooms[roomName];
+        delete users[username];
     });
-    // user の情報を返す
+    // users を返す
     socket.on("need-users", ()=>{
         io.sockets.emit("need-users", {value: users});
     });
@@ -154,6 +156,7 @@ io.on("connection", (socket)=>{
             let cntRed;
             let cntBlue;
             if (Object.keys(rooms).includes(roomName)){
+                //
                 cntRed = rooms[roomName]["cntRed"];
                 cntBlue = rooms[roomName]["cntBlue"];
                 if (cntRed<=cntBlue){
@@ -163,17 +166,25 @@ io.on("connection", (socket)=>{
                     color = "blue";
                     rooms[roomName]["cntBlue"]++;
                 }
+                users[username] = {
+                    "userX":userX,
+                    "userY":userY,
+                    "color":color
+                };
             } else {
                 // 部屋が見つからない場合はスタート画面に戻る
                 io.sockets.emit(username, {value: false, rooms: rooms});
             }
-            users[username] = {"userX":userX, "userY":userY, "color":color};
         }
-        io.sockets.emit("user-info-init", {value:users});
+        // 部屋とユーザーの情報を返す
+        io.sockets.emit("user-info-init", {value: {
+            "rooms": rooms,
+            "users": users
+        }});
     });
     // プレイヤーの位置が変わったことを通知する
-    socket.on("coordinate-changed", (data)=>{
-        io.sockets.emit("coordinate-changed", {value:data.value});
+    socket.on("coordinates-changed", (data)=>{
+        io.sockets.emit("coordinates-changed", {value:data.value});
     });
     // オセロの盤面が変わったことを通知する
     socket.on("field-changed", (data)=>{
@@ -187,15 +198,19 @@ io.on("connection", (socket)=>{
     socket.on("game-finished", (data)=>{
         io.sockets.emit("game-finished", {value:data.value});
     });
-    // rooms の情報を返す
+    // 公開されている部屋を更新する
+    socket.on("update-rooms", (data)=>{
+        io.sockets.emit("update-rooms", {value: rooms});
+    });
+    // rooms を返す
     socket.on("need-rooms", (data)=>{
-        io.sockets.emit("need-rooms", {value:rooms});
+        io.sockets.emit("need-rooms", {value: rooms});
     });
 });
 
 /*
 To Do
 
-・部屋に入るときに名前が一度重複した場合、２回目の入力で名前が重複していなくても重複していると表示される。その後 /wait/wait.html に遷移する。
--> ２回目に重複している場合は、前回の表示と合わせて２回表示される。
+・部屋に入るときに前回までの入室の記録がすべて実行される。（1回 -> 3回 -> 6回）
+・オセロの丸が動かない。
 */

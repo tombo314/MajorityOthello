@@ -615,8 +615,11 @@ if (username!=null){
 
 // 全プレイヤーの情報を取得
 socket.on("user-info-init", (data)=>{
-    let users = data.value;
-    for (let v in users){
+    let rooms = data.value["rooms"];
+    let users = data.value["users"];
+    let roomMember = rooms[roomName]["users"];
+    console.log(roomMember);
+    for (let v of roomMember){
         let playerName = v;
         let playerColorRGB;
         let initX = users[playerName]["userX"];
@@ -628,7 +631,7 @@ socket.on("user-info-init", (data)=>{
             playerColorRGB = COLOR_PLAYER_BLUE;
             initX = Math.min(initX, 350);
             initX = innerWidth - initX;
-            if (username==playerName){
+            if (playerName==username){
                 ownX = Math.min(ownX, 350);
                 ownX = innerWidth - ownX;
                 color = playerColor;
@@ -771,8 +774,8 @@ onkeydown=(e)=>{
     }
 
     // 全員に自分の座標を反映させる
-    socket.emit("coordinate-changed", {value: {"username":username, "userCoord":[x, y], "nameCoord":[ownX+x+xDiff, ownY+y+INIT_Y_DIFF]}});
-    socket.on("coordinate-changed", (data)=>{
+    socket.emit("coordinates-changed", {value: {"username":username, "userCoord":[x, y], "nameCoord":[ownX+x+xDiff, ownY+y+INIT_Y_DIFF]}});
+    socket.on("coordinates-changed", (data)=>{
         let user = data.value;
         let usernameOther = user["username"];
         let userCoord = user["userCoord"];

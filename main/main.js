@@ -15,13 +15,10 @@ let registerUser=(roomName)=>{
     let username = prompt("ユーザー名を入力してください...");
     socket.emit("need-users", {value: ""});
     socket.on("need-users", (data)=>{
-        let users = new Set();
-        for (let v in data.value){
-            users.add(v);
-        }
+        let users = data.value;
         if (username==null || username==""){
             // キャンセル
-        } else if (!users.has(username)){
+        } else if (!Object.keys(users).includes(username)){
             socket.emit("register-name", {value: {
                 "username": username,
                 "roomName": roomName
@@ -39,15 +36,22 @@ let registerUser=(roomName)=>{
             });
         } else {
             alert("そのユーザー名はすでに使われています。");
+            window.location.href = "/";
         }
     });
 }
 
 // サーバーから自分のデータを削除
-socket.emit("delete-user", {value: sessionStorage.getItem("username")});
+socket.emit("delete-user", {value:{
+    "username": sessionStorage.getItem("username"),
+    "roomName": sessionStorage.getItem("roomName")
+}});
 
 // キャッシュをクリア
 sessionStorage.clear();
+
+// 部屋情報を受信
+socket.emit("update-rooms", {value: ""});
 
 // 周りの暗いところをクリックしてキャンセル
 blackSheet.onclick=()=>{
@@ -138,53 +142,67 @@ roomUsername.onkeyup=()=>{
     }
 }
 
-// ホストが部屋の作成を完了する
+// ホストが部屋の作成を完了するとき
 let makeRoom=(e)=>{
-    // 部屋名が空白
-    if (roomNameElem.value=="部屋名を入力してください。" || roomNameElem.value==""){
-        e.preventDefault();
-        alert("部屋名を入力してください。");
-    }
-    // パスワードが空白
-    else if (roomPassword.value=="パスワードを入力してください。" || roomPassword.value==""){
-        e.preventDefault();
-        alert("パスワードを入力してください。");
-    }
-    // パスワードが４桁の数字でない
-    else if (!passwordOK){
-        e.preventDefault();
-        alert("パスワードは4桁の数字で入力してください。");
-    }
-    // ユーザー名が空白
-    else if (roomUsername.value=="ユーザー名を入力してください。" || roomUsername.value==""){
-        e.preventDefault();
-        alert("ユーザー名を入力してください。");
-    }
-    // 何もなければ /wait/wait.html に遷移
-    else {
-        socket.emit("need-users", {value: ""});
-        socket.on("need-users", (data)=>{
-            let username = roomUsername.value;
-            let users = data.value;
-            if (username==null || username==""){
-                // キャンセル
-            } else if (!Object.keys(users).includes(username)){
-                socket.emit("room-make-finished", {value: {
-                    "roomName":roomNameElem.value,
-                    "roomPassword":roomPassword.value,
-                    "roomUsername":roomUsername.value
-                }});
-                sessionStorage.setItem("isHost", "true");
-                sessionStorage.setItem("username", roomUsername.value);
-                sessionStorage.setItem("roomName", roomNameElem.value);
-                sessionStorage.setItem("samePageLoaded", "false");
-                window.location.href = "/wait/wait.html";
-            } else {
-                // 機能していない
-                alert("そのユーザー名はすでに使われています。");
-            }
-        });
-    }
+    // 部屋名の重複を避ける
+    socket.emit("need-rooms", {value: ""});
+    socket.on("need-rooms", (data)=>{
+        let rooms = data.value;
+        // 部屋名がすでに使われている
+        if (Object.keys(rooms).includes(roomNameElem.value)){
+            alert("その部屋名はすでに使われています。");
+            window.location.href = "/";
+        }
+        // 部屋名が空白
+        else if (roomNameElem.value=="部屋名を入力してください。" || roomNameElem.value==""){
+            e.preventDefault();
+            alert("部屋名を入力してください。");
+            window.location.href = "/";
+        }
+        // パスワードが空白
+        else if (roomPassword.value=="パスワードを入力してください。" || roomPassword.value==""){
+            e.preventDefault();
+            alert("パスワードを入力してください。");
+            window.location.href = "/";
+        }
+        // パスワードが４桁の数字でない
+        else if (!passwordOK){
+            e.preventDefault();
+            alert("パスワードは4桁の数字で入力してください。");
+            window.location.href = "/";
+        }
+        // ユーザー名が空白
+        else if (roomUsername.value=="ユーザー名を入力してください。" || roomUsername.value==""){
+            e.preventDefault();
+            alert("ユーザー名を入力してください。");
+            window.location.href = "/";
+        }
+        // 何もなければ /wait/wait.html に遷移
+        else {
+            socket.emit("need-users", {value: ""});
+            socket.on("need-users", (data)=>{
+                let username = roomUsername.value;
+                let users = data.value;
+                if (username==null || username==""){
+                    // キャンセル
+                } else if (!Object.keys(users).includes(username)){
+                    socket.emit("room-make-finished", {value: {
+                        "roomName":roomNameElem.value,
+                        "roomPassword":roomPassword.value,
+                        "roomUsername":roomUsername.value
+                    }});
+                    sessionStorage.setItem("isHost", "true");
+                    sessionStorage.setItem("username", roomUsername.value);
+                    sessionStorage.setItem("roomName", roomNameElem.value);
+                    sessionStorage.setItem("samePageLoaded", "false");
+                    window.location.href = "/wait/wait.html";
+                } else {
+                    alert("そのユーザー名はすでに使われています。");
+                    window.location.href = "/";
+                }
+            });
+        }
+    });
 }
 
 // 「部屋を作る」を完了する
@@ -211,4 +229,3 @@ socket.on("update-rooms", (data)=>{
         }
     }
 });
-
