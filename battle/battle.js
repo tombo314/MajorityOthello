@@ -1,3 +1,9 @@
+// デバッグ
+let keysValid = true;
+let color = "red";
+let isRed = true;
+let finished = false;
+
 // 同じページを一度読み込んだかどうか
 if (sessionStorage.getItem("samePageLoaded")=="true"){
     window.location.href = "/";
