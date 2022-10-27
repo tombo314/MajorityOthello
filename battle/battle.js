@@ -83,7 +83,11 @@ let makeStone=(i, j)=>{
     let stone = document.createElement("canvas");
     stone.setAttribute("width", 550);
     stone.setAttribute("height", 670);
-    stone.setAttribute("style", "position: absolute; transform: translate(-80px, -80px); visibility: hidden;");
+    stone.setAttribute("style", `
+        position: absolute;
+        transform: translate(-80px, -80px);
+        visibility: hidden;
+    `);
     stone.setAttribute("id", `stone${i}${j}${COLOR_FIELD_RED}`);
     othelloWrapper.appendChild(stone);
     let context = stone.getContext("2d");
@@ -97,7 +101,11 @@ let makeStone=(i, j)=>{
     stone = document.createElement("canvas");
     stone.setAttribute("width", 550);
     stone.setAttribute("height", 670);
-    stone.setAttribute("style", "position: absolute; transform: translate(-80px, -80px); visibility: hidden;");
+    stone.setAttribute("style", `
+        position: absolute;
+        transform: translate(-80px, -80px);
+        visibility: hidden;
+    `);
     stone.setAttribute("id", `stone${i}${j}${COLOR_FIELD_BLUE}`);
     othelloWrapper.appendChild(stone);
     context = stone.getContext("2d");
@@ -132,7 +140,11 @@ let makePlayerName=(playerName, initX, initY)=>{
     if (!playerNameUsed.has(playerName)){
         let createName = document.createElement("div");
         createName.textContent = playerName;
-        createName.setAttribute("style", "position: absolute; z-index: 9; font-weight: bold;");
+        createName.setAttribute("style", `
+            position: absolute;
+            z-index: 9;
+            font-weight: bold;
+        `);
         createName.setAttribute("id", `id-${playerName}-name`);
         nodesAlly.appendChild(createName);
         playerNameUsed.add(playerName);
@@ -778,7 +790,11 @@ onkeydown=(e)=>{
     }
 
     // 全員に自分の座標を反映させる
-    socket.emit("coordinates-changed", {value: {"username":username, "userCoord":[x, y], "nameCoord":[ownX+x+xDiff, ownY+y+INIT_Y_DIFF]}});
+    socket.emit("coordinates-changed", {value: {
+        "username":username,
+        "userCoord":[x, y],
+        "nameCoord":[ownX+x+xDiff, ownY+y+INIT_Y_DIFF]
+    }});
     socket.on("coordinates-changed", (data)=>{
         let user = data.value;
         let usernameOther = user["username"];
@@ -827,7 +843,7 @@ onkeydown=(e)=>{
                 } else if (!canPutStone(RED)){
                     finished = true;
                 }
-                socket.emit("field-changed", {value: [username, paintedI, paintedJ, RED]});
+                socket.emit("field-changed", {value:[username, paintedI, paintedJ, RED]});
             }
         } else {
             valid = othello(paintedI, paintedJ, BLUE);
@@ -881,8 +897,7 @@ onkeyup=(e)=>{
 
 
 /*
-・投票システムを作る。-> 工事中
-・部屋システムを作る。
+・投票システムを作る。
 ・(デザイン)/main/index.htmlの背景を、赤と青の丸が動いていて壁にぶつかると跳ね返るデザインにする。
 ・片方のチームが操作しているとき、もう片方のチームは自陣まで下げられて、操作できないようにする。
 

@@ -8,7 +8,10 @@ let roomNameElem = document.getElementById("room-name");
 let roomPassword = document.getElementById("room-password");
 let roomUsername = document.getElementById("username");
 let btnSubmit = document.getElementById("btn-submit");
+let design = document.getElementById("design");
+
 const BUTTON_ROOM_SELECT_WIDTH = 120;
+const RADIUS = 20;
 
 // ゲストが部屋に入るときにユーザーを登録する
 let registerUser=(roomName)=>{
@@ -39,6 +42,13 @@ let registerUser=(roomName)=>{
             window.location.href = "/";
         }
     });
+}
+
+// min 以上 max 未満の乱数を取得
+let getRandomInt=(min, max)=> {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min);
 }
 
 // サーバーから自分のデータを削除
@@ -187,9 +197,9 @@ let makeRoom=(e)=>{
                     // キャンセル
                 } else if (!Object.keys(users).includes(username)){
                     socket.emit("room-make-finished", {value: {
-                        "roomName":roomNameElem.value,
-                        "roomPassword":roomPassword.value,
-                        "roomUsername":roomUsername.value
+                        "roomName": roomNameElem.value,
+                        "roomPassword": roomPassword.value,
+                        "roomUsername": roomUsername.value
                     }});
                     sessionStorage.setItem("isHost", "true");
                     sessionStorage.setItem("username", roomUsername.value);
@@ -229,3 +239,43 @@ socket.on("update-rooms", (data)=>{
         }
     }
 });
+
+// 初期画面のデザイン
+for (let i=0; i<1; i++){
+    let elem = document.createElement("canvas");
+    elem.setAttribute("width", 1400);
+    elem.setAttribute("height", 670);
+    elem.setAttribute("id", `circle${i}`);
+    let randX = getRandomInt(RADIUS+10, 1340);
+    let randY = getRandomInt(RADIUS+10, 600);
+    elem.setAttribute("style", `
+        position: absolute;
+        z-index: 20;
+    `);
+    design.appendChild(elem);
+    let context = elem.getContext("2d");
+    context.beginPath();
+    context.fillStyle = "rgb(255, 100, 100)";
+    context.arc(randX, randY, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
+    context.fill();
+    context.stroke();
+}
+let x = 0;
+let y = 0;
+let moveCircle=()=>{
+    let elem = document.getElementById("circle0");
+    let rand = getRandomInt(0, 2);
+    if (rand){
+        x += 3;
+    } else {
+        x -= 3;
+    }
+    rand = getRandomInt(0, 2);
+    if (rand){
+        y += 3;
+    } else {
+        y -= 3;
+    }
+    elem.style.transform = `translate(${x}px, ${y}px)`;
+}
+// setInterval(moveCircle, 10);
