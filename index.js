@@ -73,10 +73,6 @@ rooms = {
         "cntUsers": 0,
         "cntRed": 0,
         "cntBlue": 0,
-        "cntStone": 4,
-        "isRed": true,
-        "finished": false,
-        "keysValid": true
     },
     ...
 }
@@ -118,10 +114,6 @@ io.on("connection", (socket)=>{
             "cntUsers": 0,
             "cntRed": 0,
             "cntBlue": 0,
-            "cntStone": 4,
-            "isRed": true,
-            "finished": false,
-            "keysValid": true
         };
         users[roomUsername] = {};
         io.sockets.emit("update-rooms", {value: rooms});

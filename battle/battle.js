@@ -1,9 +1,3 @@
-// デバッグ
-let keysValid = true;
-let color = "red";
-let isRed = true;
-let finished = false;
-
 // 同じページを一度読み込んだかどうか
 if (sessionStorage.getItem("samePageLoaded")=="true"){
     window.location.href = "/";
@@ -23,6 +17,10 @@ let ownName;
 let xDiff;
 let x = 0;
 let y = 0;
+let cntStone = 0;
+let keysValid = true;
+let finished = false;
+let isRed = true;
 
 // 定数の宣言
 const RED = 1;
@@ -650,9 +648,10 @@ socket.on("user-info-init", (data)=>{
         makePlayerName(playerName, initX, initY);
     }
 
-    // 自分の情報を取得
+    // 自分の情報を初期化
     own = document.getElementById(`id-${username}`);
     ownName = document.getElementById(`id-${username}-name`);
+    color = users[username]["color"];
 });
 
 // マス選択時に盤面の上に被せるシートを生成
