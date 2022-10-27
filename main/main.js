@@ -277,14 +277,16 @@ for (let i=0; i<CIRCLE_NUM; i++){
 }
 let x = new Array(CIRCLE_NUM).fill(0, 0, CIRCLE_NUM);
 let y = new Array(CIRCLE_NUM).fill(0, 0, CIRCLE_NUM);
-let diffX = new Array(CIRCLE_NUM).fill(4, 0, CIRCLE_NUM);
-let diffY = new Array(CIRCLE_NUM).fill(-2, 0, CIRCLE_NUM);
+let diffX = new Array(CIRCLE_NUM).fill(0, 0, CIRCLE_NUM);
+let diffY = new Array(CIRCLE_NUM).fill(0, 0, CIRCLE_NUM);
 for(let i=0; i<CIRCLE_NUM; i++){
     let elem = document.getElementById(`circle${i}`);
+    diffX[i] = getRandomInt(-4, 5);
+    diffY[i] = getRandomInt(-4, 5);
     let move=()=> setInterval(()=>{
         x[i] += diffX[i];
         y[i] += diffY[i];
-        if (coords[i][0]+x[i]<=RADIUS || coords[i][0]+x[i]>=innerWidth-RADIUS){
+        if (coords[i][0]+x[i]<=0 || coords[i][0]+x[i]>=innerWidth-40){
             diffX[i] *= -1;
             if (getRandomInt(0, 2)){
                 diffX[i] *= 1.1;
@@ -292,7 +294,7 @@ for(let i=0; i<CIRCLE_NUM; i++){
                 diffX[i] *= 0.9;
             }
         }
-        if (coords[i][1]+y[i]<=RADIUS || coords[i][1]+y[i]>=innerHeight-RADIUS){
+        if (coords[i][1]+y[i]<=0 || coords[i][1]+y[i]>=innerHeight-40){
             diffY[i] *= -1;
             if (getRandomInt(0, 2)){
                 diffY[i] *= 1.1;

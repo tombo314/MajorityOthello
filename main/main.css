@@ -74,12 +74,14 @@ html {
     visibility: hidden;
   }
   #room-make-window {
+    position: relative;
     width: 800px;
     height: 400px;
     border-radius: 30px;
     background-color: rgba(255, 144, 59, 0.867);
     transform: translate(300px, 120px);
     visibility: hidden;
+    z-index: 999;
   }
   #room-make-window .wrapper {
     margin-left: -290px;

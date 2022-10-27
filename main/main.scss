@@ -97,12 +97,14 @@ html{
     }
 
     #room-make-window{
+        position: relative;
         width: 800px;
         height: 400px;
         border-radius: 30px;
         background-color: rgba(255, 144, 59, 0.867);
         transform: translate(300px, 120px);
         visibility: hidden; // ここを消してデバッグ
+        z-index: 999;
         .wrapper{
             margin-left: -290px;
             label{
