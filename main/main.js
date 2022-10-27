@@ -51,6 +51,12 @@ let getRandomInt=(min, max)=> {
     return Math.floor(Math.random() * (max - min) + min);
 }
 
+// sleep(ms)
+let sleep=(ms)=>{
+    // let elapsed
+    setInterval(() => {}, ms);
+}
+
 // サーバーから自分のデータを削除
 socket.emit("delete-user", {value:{
     "username": sessionStorage.getItem("username"),
@@ -241,41 +247,31 @@ socket.on("update-rooms", (data)=>{
 });
 
 // 初期画面のデザイン
-for (let i=0; i<1; i++){
-    let elem = document.createElement("canvas");
-    elem.setAttribute("width", 1400);
-    elem.setAttribute("height", 670);
-    elem.setAttribute("id", `circle${i}`);
-    let randX = getRandomInt(RADIUS+10, 1340);
-    let randY = getRandomInt(RADIUS+10, 600);
-    elem.setAttribute("style", `
-        position: absolute;
-        z-index: 20;
-    `);
-    design.appendChild(elem);
-    let context = elem.getContext("2d");
-    context.beginPath();
-    context.fillStyle = "rgb(255, 100, 100)";
-    context.arc(randX, randY, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
-    context.fill();
-    context.stroke();
-}
+// for (let i=0; i<1; i++){
+//     let elem = document.createElement("canvas");
+//     elem.setAttribute("width", 1400);
+//     elem.setAttribute("height", 670);
+//     elem.setAttribute("id", `circle${i}`);
+//     let randX = getRandomInt(RADIUS+10, 1340);
+//     let randY = getRandomInt(RADIUS+10, 600);
+//     elem.setAttribute("style", `
+//         position: absolute;
+//         background-color: red;
+//         z-index: 20;
+//     `);
+//     design.appendChild(elem);
+//     let context = elem.getContext("2d");
+//     context.beginPath();
+//     context.fillStyle = "rgb(255, 100, 100)";
+//     context.arc(randX, randY, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
+//     context.fill();
+//     context.stroke();
+// }
 let x = 0;
 let y = 0;
-let moveCircle=()=>{
-    let elem = document.getElementById("circle0");
-    let rand = getRandomInt(0, 2);
-    if (rand){
-        x += 3;
-    } else {
-        x -= 3;
-    }
-    rand = getRandomInt(0, 2);
-    if (rand){
-        y += 3;
-    } else {
-        y -= 3;
-    }
-    elem.style.transform = `translate(${x}px, ${y}px)`;
-}
-// setInterval(moveCircle, 10);
+let diffX = 2;
+let diffY = -1;
+// let elem = document.getElementById("circle0");
+// x += diffX;
+// y += diffY;
+// elem.style.transform = `translate(${x}px, ${y}px)`;
