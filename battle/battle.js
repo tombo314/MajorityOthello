@@ -624,7 +624,6 @@ socket.on("user-info-init", (data)=>{
     let rooms = data.value["rooms"];
     let users = data.value["users"];
     let roomMember = rooms[roomName]["users"];
-    console.log(roomMember);
     for (let v of roomMember){
         let playerName = v;
         let playerColorRGB;

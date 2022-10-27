@@ -156,7 +156,6 @@ io.on("connection", (socket)=>{
             let cntRed;
             let cntBlue;
             if (Object.keys(rooms).includes(roomName)){
-                //
                 cntRed = rooms[roomName]["cntRed"];
                 cntBlue = rooms[roomName]["cntBlue"];
                 if (cntRed<=cntBlue){
@@ -213,5 +212,5 @@ To Do
 
 ・部屋に入るときに前回までの入室の記録がすべて実行される。（1回 -> 3回 -> 6回）
 ・オセロの丸が動かない。
-・１台のパソコンで２枚のタブを開くときに、アクティブでなかった画面にもう一方のプレイヤーの丸が描画されない。（名前は正しく描画される）
+・１台のパソコンで２枚のタブを開くときに、片方の丸が描画されない。
 */
