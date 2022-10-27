@@ -70,6 +70,7 @@ rooms = {
     roomName: {
         "roomPassword": roomPassword,
         "users": [username, username, ...],
+        "cntUsers": 0,
         "cntRed": 0,
         "cntBlue": 0,
         "cntStone": 4,
@@ -114,6 +115,7 @@ io.on("connection", (socket)=>{
         rooms[roomName] = {
             "roomPassword": roomPassword,
             "users": [roomUsername],
+            "cntUsers": 0,
             "cntRed": 0,
             "cntBlue": 0,
             "cntStone": 4,
@@ -155,9 +157,11 @@ io.on("connection", (socket)=>{
             let userY = userInfo["userY"];
             let cntRed;
             let cntBlue;
+            // 部屋が見つかった場合
             if (Object.keys(rooms).includes(roomName)){
                 cntRed = rooms[roomName]["cntRed"];
                 cntBlue = rooms[roomName]["cntBlue"];
+                rooms[roomName]["cntUsers"]++;
                 if (cntRed<=cntBlue){
                     color = "red";
                     rooms[roomName]["cntRed"]++;
@@ -170,16 +174,19 @@ io.on("connection", (socket)=>{
                     "userY":userY,
                     "color":color
                 };
-            } else {
-                // 部屋が見つからない場合はスタート画面に戻る
+                // 部屋とユーザーの情報を返す
+                if (rooms[roomName]["cntUsers"]>=rooms[roomName]["users"].length){
+                    io.sockets.emit("user-info-init", {value: {
+                        "rooms": rooms,
+                        "users": users
+                    }});
+                }
+            }
+            // 部屋が見つからない場合はスタート画面に戻る
+            else {
                 io.sockets.emit(username, {value: false, rooms: rooms});
             }
         }
-        // 部屋とユーザーの情報を返す
-        io.sockets.emit("user-info-init", {value: {
-            "rooms": rooms,
-            "users": users
-        }});
     });
     // プレイヤーの位置が変わったことを通知する
     socket.on("coordinates-changed", (data)=>{
@@ -212,5 +219,5 @@ To Do
 
 ・部屋に入るときに前回までの入室の記録がすべて実行される。（1回 -> 3回 -> 6回）
 ・オセロの丸が動かない。
-・１台のパソコンで２枚のタブを開くときに、片方の丸が描画されない。
+・２人でプレイするときに片方の丸が描画されない。
 */
