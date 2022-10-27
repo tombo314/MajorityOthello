@@ -12,7 +12,7 @@ let design = document.getElementById("design");
 
 const BUTTON_ROOM_SELECT_WIDTH = 120;
 const RADIUS = 20;
-const CIRCLE_NUM = 10;
+const CIRCLE_NUM = 16;
 const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
 const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
 const COLOR_PLAYER_PURPLE = "rgb(240, 100, 255)";
@@ -53,12 +53,6 @@ let getRandomInt=(min, max)=> {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min);
-}
-
-// sleep(ms)
-let sleep=(ms)=>{
-    // let elapsed
-    setInterval(() => {}, ms);
 }
 
 // サーバーから自分のデータを削除
@@ -250,6 +244,7 @@ socket.on("update-rooms", (data)=>{
     }
 });
 
+let coords = [];
 // 初期画面のデザイン
 for (let i=0; i<CIRCLE_NUM; i++){
     let elem = document.createElement("canvas");
@@ -258,6 +253,7 @@ for (let i=0; i<CIRCLE_NUM; i++){
     elem.setAttribute("id", `circle${i}`);
     let randX = getRandomInt(RADIUS, 1300);
     let randY = getRandomInt(RADIUS, 580);
+    coords.push([randX, randY]);
     elem.setAttribute("style", `
         position: absolute;
         border-radius: 100px;
@@ -279,11 +275,32 @@ for (let i=0; i<CIRCLE_NUM; i++){
     context.fill();
     context.stroke();
 }
-let x = 0;
-let y = 0;
-let diffX = 2;
-let diffY = -1;
-// let elem = document.getElementById("circle0");
-// x += diffX;
-// y += diffY;
-// elem.style.transform = `translate(${x}px, ${y}px)`;
+let x = new Array(CIRCLE_NUM).fill(0, 0, CIRCLE_NUM);
+let y = new Array(CIRCLE_NUM).fill(0, 0, CIRCLE_NUM);
+let diffX = new Array(CIRCLE_NUM).fill(4, 0, CIRCLE_NUM);
+let diffY = new Array(CIRCLE_NUM).fill(-2, 0, CIRCLE_NUM);
+for(let i=0; i<CIRCLE_NUM; i++){
+    let elem = document.getElementById(`circle${i}`);
+    let move=()=> setInterval(()=>{
+        x[i] += diffX[i];
+        y[i] += diffY[i];
+        if (coords[i][0]+x[i]<=RADIUS || coords[i][0]+x[i]>=innerWidth-RADIUS){
+            diffX[i] *= -1;
+            if (getRandomInt(0, 2)){
+                diffX[i] *= 1.1;
+            } else {
+                diffX[i] *= 0.9;
+            }
+        }
+        if (coords[i][1]+y[i]<=RADIUS || coords[i][1]+y[i]>=innerHeight-RADIUS){
+            diffY[i] *= -1;
+            if (getRandomInt(0, 2)){
+                diffY[i] *= 1.1;
+            } else {
+                diffY[i] *= 0.9;
+            }
+        }
+        elem.style.transform = `translate(${coords[i][0]+x[i]}px, ${coords[i][1]+y[i]}px)`;
+    }, 10);
+    move();
+}
