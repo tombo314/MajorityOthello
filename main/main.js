@@ -283,7 +283,18 @@ for(let i=0; i<CIRCLE_NUM; i++){
     let elem = document.getElementById(`circle${i}`);
     diffX[i] = getRandomInt(-4, 5);
     diffY[i] = getRandomInt(-4, 5);
-    let move=()=> setInterval(()=>{
+    let threshold = 1;
+    if (0<=diffX[i] && diffX[i]<threshold){
+        diffX[i]++;
+    } else if (-threshold<diffX[i] && diffX[i]<=0){
+        diffX[i]--;
+    }
+    if (0<=diffY[i] && diffY[i]<threshold){
+        diffY[i]++;
+    } else if (threshold<diffY[i] && diffY[i]<=0){
+        diffY[i]--;
+    }
+    setInterval(()=>{
         x[i] += diffX[i];
         y[i] += diffY[i];
         if (coords[i][0]+x[i]<=0 || coords[i][0]+x[i]>=innerWidth-40){
@@ -293,6 +304,11 @@ for(let i=0; i<CIRCLE_NUM; i++){
             } else {
                 diffX[i] *= 0.9;
             }
+            if (diffX[i]>=8){
+                diffX[i] = 4;
+            } else if (diffX[i]<=-8){
+                diffX[i] = -4;
+            }
         }
         if (coords[i][1]+y[i]<=0 || coords[i][1]+y[i]>=innerHeight-40){
             diffY[i] *= -1;
@@ -301,8 +317,12 @@ for(let i=0; i<CIRCLE_NUM; i++){
             } else {
                 diffY[i] *= 0.9;
             }
+            if (diffY[i]>=8){
+                diffY[i] = 4;
+            } else if (diffY[i]<=-8){
+                diffY[i] = -4;
+            }
         }
         elem.style.transform = `translate(${coords[i][0]+x[i]}px, ${coords[i][1]+y[i]}px)`;
     }, 10);
-    move();
 }
