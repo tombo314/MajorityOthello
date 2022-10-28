@@ -906,7 +906,7 @@ onkeydown=(e)=>{
                 } else if (!canPutStone(RED)){
                     finished = true;
                 }
-                socket.emit("field-changed", {value:[username, paintedI, paintedJ, RED]});
+                socket.emit("field-changed", {value:[username, paintedI, paintedJ, RED, isRed]});
             }
         } else {
             valid = othello(paintedI, paintedJ, BLUE);
@@ -963,5 +963,4 @@ onkeyup=(e)=>{
 ・片方のチームが操作しているとき、もう片方のチームは自陣まで下げられて、操作できないようにする。
 
 ・青の置くところがない場合に、青の手順がスキップされない。
-・青が n-0 で勝利したときに、勝利エフェクトが表示されない。
 */
