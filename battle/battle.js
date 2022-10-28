@@ -42,7 +42,7 @@ const GRID_INIT_LEFT = -40;
 const GRID_INIT_TOP = -65;
 const GRID_DIFF_X = 5.75;
 const GRID_DIFF_Y = 4;
-const STONE_LIMIT = 64;
+const STONE_LIMIT = 8;
 const TURN_DUTATION_SEC = 10;
 const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
 const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
@@ -641,15 +641,6 @@ let finish=()=>{
             }
         }
     }
-    let ownColor;
-    let opponentColor;
-    if (COLOR_FIELD_RED=="rgb(255, 50, 50)"){
-        ownColor = `<span style="color: ${COLOR_FIELD_RED}">赤</span>`;
-        opponentColor = `<span style="color: ${COLOR_FIELD_BLUE}">青</span>`;
-    } else {
-        ownColor = `<span style="color: ${COLOR_FIELD_BLUE}">青</span>`;
-        opponentColor = `<span style="color: ${COLOR_FIELD_RED}">赤</span>`;
-    }
     opacity = 0;
     set = setInterval(()=>{
         opacity += 0.01;
@@ -661,9 +652,9 @@ let finish=()=>{
             let color;
             if (red!=blue){
                 if (red>blue){
-                    color = ownColor;
+                    color = `<span style="color: ${COLOR_FIELD_RED}">赤</span>`;
                 } else if (red<blue){
-                    color = opponentColor;
+                    color = `<span style="color: ${COLOR_FIELD_BLUE}">青</span>`;
                 }
                 startEndSheet.innerHTML = `${color}チームの勝利です`;
             } else {
@@ -971,7 +962,6 @@ onkeyup=(e)=>{
 ・投票システムを作る。
 ・片方のチームが操作しているとき、もう片方のチームは自陣まで下げられて、操作できないようにする。
 
-・置くところがない場合に、ターンのスキップが機能しないことがある
-・finish 時に tmp = STONE_LIMIT-cnt になっているのを、修正する
--> 多分修正できてる
+・青の置くところがない場合に、青の手順がスキップされない。
+・青が n-0 で勝利したときに、勝利エフェクトが表示されない。
 */
