@@ -633,15 +633,17 @@ let eachTurn=(s)=>{
     }, 1000);
 }
 let finish=()=>{
-    let cnt = 0;
+    let red = 0;
+    let blue = 0;
     for (let i=0; i<8; i++){
         for (let j=0; j<8; j++){
-            if (field[i][j]==1){
-                cnt += 1;
+            if (field[i][j]==RED){
+                red++;
+            } else if (field[i][j]==BLUE){
+                blue++;
             }
         }
     }
-    let tmp = STONE_LIMIT-cnt;
     let ownColor;
     let opponentColor;
     if (COLOR_FIELD_RED=="rgb(255, 50, 50)"){
@@ -660,10 +662,10 @@ let finish=()=>{
             startEndSheet.style.backgroundColor = "#2228";
             startEndSheet.style.opacity = 1;
             let color;
-            if (cnt!=tmp){
-                if (cnt>tmp){
+            if (red!=blue){
+                if (red>blue){
                     color = ownColor;
-                } else if (cnt<tmp){
+                } else if (red<blue){
                     color = opponentColor;
                 }
                 startEndSheet.innerHTML = `${color}チームの勝利です`;
@@ -972,4 +974,6 @@ onkeyup=(e)=>{
 ・投票システムを作る。
 ・片方のチームが操作しているとき、もう片方のチームは自陣まで下げられて、操作できないようにする。
 
+・置くところがない場合に、ターンのスキップが機能していない
+・finish 時に tmp = STONE_LIMIT-cnt になっているのを、修正する
 */
