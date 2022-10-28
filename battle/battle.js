@@ -16,9 +16,10 @@ let own;
 let ownName;
 let xDiff;
 let opacity;
+let set;
 let x = 0;
 let y = 0;
-let cntStone = 0;
+let cntStone = 4;
 let keysValid = true;
 let finished = false;
 let isRed = true;
@@ -41,7 +42,7 @@ const GRID_INIT_LEFT = -40;
 const GRID_INIT_TOP = -65;
 const GRID_DIFF_X = 5.75;
 const GRID_DIFF_Y = 4;
-const STONE_LIMIT = 64;
+const STONE_LIMIT = 8;
 const TURN_DUTATION_SEC = 10;
 const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
 const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
@@ -65,18 +66,25 @@ let start=()=>{
         startEndSheet.innerHTML = "<span style='color: rgb(255, 50, 50)'>赤</span>が先手です";
         setTimeout(()=>{
             let cnt = 3;
-            let set1 = setInterval(() => {
+            set = setInterval(() => {
                 startEndSheet.textContent = cnt;
                 if (cnt<=0){
-                    clearInterval(set1);
+                    clearInterval(set);
                     startEndSheet.style.opacity = 0;
                     startEndSheet.style.backgroundColor = "#222";
                     keysValid = true;
-                    countDownTimer(10);
+                    eachTurn(10);
                 }
                 cnt--;
             }, 1000);
         }, 2000);
+    }
+}
+let end=(color)=>{
+    opacity += 0.01;
+    startEndSheet.style.opacity = opacity;
+    if (opacity>=0.6){
+
     }
 }
 let makeSquare=(i, j)=>{
@@ -609,11 +617,25 @@ let canPutStone=(n)=>{
     }
     return false;
 }
-let countDownTimer=(s)=>{
-    let set = setInterval(() => {
-        if (s<=0){ clearInterval(set); }
-        timer.textContent = `00:${("00"+s).slice(-2)}`;
-        s--;
+let eachTurn=(s)=>{
+    set = setInterval(() => {
+        if (s<=0){
+            clearInterval(set);
+            setTimeout(()=>{
+                if(finished){
+                    finish();
+                    keysValid = false;
+                } else {
+                    eachTurn(10);
+                }
+            }, 1000);
+        }
+        if (finished){
+            timer.textContent = "00:00";
+        } else {
+            timer.textContent = `00:${("00"+s).slice(-2)}`;
+            s--;
+        }
     }, 1000);
 }
 let finish=()=>{
@@ -635,12 +657,13 @@ let finish=()=>{
         ownColor = "青";
         opponentColor = "赤";
     }
+    opacity = 0;
     if (cnt>tmp){
-        alert(`${ownColor}の勝利です。`);
+        // end(ownColor);
     } else if (cnt<tmp){
-        alert(`${opponentColor}の勝利です。`);
+        // end(opponentColor);
     } else {
-        alert("引き分けです。");
+        // end(0);
     }
 }
 
@@ -739,7 +762,7 @@ visualizeStone(4, 3, COLOR_FIELD_BLUE);
 
 // バトル開始時の演出
 opacity = 0;
-let set = setInterval(start, 20);
+set = setInterval(start, 20);
 
 // 盤面の変化を共有する
 socket.on("field-changed", (data)=>{
