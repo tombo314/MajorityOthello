@@ -68,7 +68,6 @@ let io = socket(server);
 rooms = {
     // 部屋名をキーとする、部屋ごとの連想配列
     roomName: {
-        "roomPassword": roomPassword,
         "users": [username, username, ...],
         "cntUsers": 0,
         "cntRed": 0,
@@ -106,10 +105,8 @@ io.on("connection", (socket)=>{
     socket.on("room-make-finished", (data)=>{
         let roomInfo = data.value;
         let roomName = roomInfo["roomName"];
-        let roomPassword = roomInfo["roomPassword"];
         let roomUsername = roomInfo["roomUsername"];
         rooms[roomName] = {
-            "roomPassword": roomPassword,
             "users": [roomUsername],
             "cntUsers": 0,
             "cntRed": 0,

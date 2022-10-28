@@ -5,7 +5,6 @@ let btnMakeRoom = document.getElementById("btn-make-room");
 let btnEnterRoom = document.getElementById("btn-enter-room");
 let roomMakeWindow = document.getElementById("room-make-window");
 let roomNameElem = document.getElementById("room-name");
-let roomPassword = document.getElementById("room-password");
 let roomUsername = document.getElementById("username");
 let btnSubmit = document.getElementById("btn-submit");
 let design = document.getElementById("design");
@@ -78,10 +77,8 @@ btnMakeRoom.onclick=()=>{
     blackSheet.style.visibility = "visible";
     roomMakeWindow.style.visibility = "visible";
     roomNameElem.value = "部屋名を入力してください。";
-    roomPassword.value = "パスワードを入力してください。";
     roomUsername.value = "ユーザー名を入力してください。"
     roomNameElem.style.color = "#2227";
-    roomPassword.style.color = "#2227";
     roomUsername.style.color = "#2227";
     roomNameElem.focus();
 }
@@ -103,38 +100,6 @@ roomNameElem.onkeyup=()=>{
         roomNameElem.value = "部屋名を入力してください。";
         roomNameElem.style.color = "#2227";
     }
-}
-
-// 文字が入力されたら「パスワードを～」をクリア
-let passwordOK;
-roomPassword.onkeydown=(e)=>{
-    if (e.key!="Enter"){
-        if (roomPassword.value=="パスワードを入力してください。"){
-            roomPassword.value = "";
-            roomPassword.style.color = "#222";
-        }
-    } else if (e.key=="Enter"){
-        makeRoom(e);
-    }
-}
-// value が空のとき「パスワードを～」を表示
-roomPassword.onkeyup=()=>{
-    if (roomPassword.value==""){
-        roomPassword.value = "パスワードを入力してください。";
-        roomPassword.style.color = "#2227";
-    }
-    if (roomPassword.value.length=="4" && !isNaN(roomPassword.value) && !includesSpace(roomPassword.value)){
-        passwordOK = true;
-    } else {
-        passwordOK = false;
-    }
-}
-// 全半角のスペースを含んでいるか
-let includesSpace=(str)=>{
-    if (str.includes(" ") || str.includes("　")){
-        return true;
-    }
-    return false;
 }
 
 // 文字が入力されたら「ユーザー名を～」をクリア
@@ -173,18 +138,6 @@ let makeRoom=(e)=>{
             alert("部屋名を入力してください。");
             window.location.href = "/";
         }
-        // パスワードが空白
-        else if (roomPassword.value=="パスワードを入力してください。" || roomPassword.value==""){
-            e.preventDefault();
-            alert("パスワードを入力してください。");
-            window.location.href = "/";
-        }
-        // パスワードが４桁の数字でない
-        else if (!passwordOK){
-            e.preventDefault();
-            alert("パスワードは4桁の数字で入力してください。");
-            window.location.href = "/";
-        }
         // ユーザー名が空白
         else if (roomUsername.value=="ユーザー名を入力してください。" || roomUsername.value==""){
             e.preventDefault();
@@ -202,7 +155,6 @@ let makeRoom=(e)=>{
                 } else if (!Object.keys(users).includes(username)){
                     socket.emit("room-make-finished", {value: {
                         "roomName": roomNameElem.value,
-                        "roomPassword": roomPassword.value,
                         "roomUsername": roomUsername.value
                     }});
                     sessionStorage.setItem("isHost", "true");

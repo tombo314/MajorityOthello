@@ -64,19 +64,19 @@ let start=()=>{
         startEndSheet.style.opacity = 1;
         startEndSheet.innerHTML = "<span style='color: rgb(255, 50, 50)'>赤</span>が先手です";
         setTimeout(()=>{
-            // ２秒間表示する
+            let cnt = 3;
+            let set1 = setInterval(() => {
+                startEndSheet.textContent = cnt;
+                if (cnt<=0){
+                    clearInterval(set1);
+                    startEndSheet.style.opacity = 0;
+                    startEndSheet.style.backgroundColor = "#222";
+                    keysValid = true;
+                    countDownTimer(10);
+                }
+                cnt--;
+            }, 1000);
         }, 2000);
-        let cnt = 3;
-        let set1 = setInterval(() => {
-            startEndSheet.textContent = cnt;
-            if (cnt<=0){
-                clearInterval(set1);
-                startEndSheet.style.opacity = 0;
-                startEndSheet.style.backgroundColor = "#222";
-                keysValid = true;
-            }
-            cnt--;
-        }, 1000);
     }
 }
 let makeSquare=(i, j)=>{
@@ -614,7 +614,7 @@ let countDownTimer=(s)=>{
         if (s<=0){ clearInterval(set); }
         timer.textContent = `00:${("00"+s).slice(-2)}`;
         s--;
-    }, 1000);
+    }, 500);
 }
 let finish=()=>{
     let cnt = 0;
