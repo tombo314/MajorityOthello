@@ -614,7 +614,7 @@ let countDownTimer=(s)=>{
         if (s<=0){ clearInterval(set); }
         timer.textContent = `00:${("00"+s).slice(-2)}`;
         s--;
-    }, 500);
+    }, 1000);
 }
 let finish=()=>{
     let cnt = 0;
@@ -787,17 +787,17 @@ socket.on(username, (data)=>{
 });
 
 onkeydown=(e)=>{
-    // 上下左右に移動させる
-    if (e.key=="w"){
-        wDown = true;
-    } else if (e.key=="a"){
-        aDown = true;
-    } else if (e.key=="s"){
-        sDown = true;
-    } else if (e.key=="d"){
-        dDown = true;
-    }
     if (keysValid){
+        // 上下左右に移動させる
+        if (e.key=="w"){
+            wDown = true;
+        } else if (e.key=="a"){
+            aDown = true;
+        } else if (e.key=="s"){
+            sDown = true;
+        } else if (e.key=="d"){
+            dDown = true;
+        }
         // 上
         if (wDown && ownY+y>=35){
             y -= DISPLACEMENT;
