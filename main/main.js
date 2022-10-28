@@ -12,7 +12,7 @@ let design = document.getElementById("design");
 
 const BUTTON_ROOM_SELECT_WIDTH = 120;
 const RADIUS = 20;
-const CIRCLE_NUM = 16;
+const CIRCLE_NUM = 10;
 const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
 const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
 const COLOR_PLAYER_PURPLE = "rgb(240, 100, 255)";
@@ -263,7 +263,7 @@ for (let i=0; i<CIRCLE_NUM; i++){
     design.appendChild(elem);
     let context = elem.getContext("2d");
     context.beginPath();
-    let rand = getRandomInt(0, 100);
+    let rand = getRandomInt(0, 20);
     if (rand==1){
         context.fillStyle = COLOR_PLAYER_PURPLE;
     } else if (i%2==0){
@@ -282,8 +282,8 @@ let diffX = new Array(CIRCLE_NUM).fill(0, 0, CIRCLE_NUM);
 let diffY = new Array(CIRCLE_NUM).fill(0, 0, CIRCLE_NUM);
 for(let i=0; i<CIRCLE_NUM; i++){
     let elem = document.getElementById(`circle${i}`);
-    diffX[i] = getRandomInt(-4, 5);
-    diffY[i] = getRandomInt(-4, 5);
+    diffX[i] = getRandomInt(-3, 4);
+    diffY[i] = getRandomInt(-3, 4);
     let threshold = 1;
     if (0<=diffX[i] && diffX[i]<threshold){
         diffX[i]++;
@@ -305,10 +305,10 @@ for(let i=0; i<CIRCLE_NUM; i++){
             } else {
                 diffX[i] *= 0.9;
             }
-            if (diffX[i]>=8){
-                diffX[i] = 4;
-            } else if (diffX[i]<=-8){
-                diffX[i] = -4;
+            if (diffX[i]>=6){
+                diffX[i] = 3;
+            } else if (diffX[i]<=-6){
+                diffX[i] = -3;
             }
         }
         if (coords[i][1]+y[i]<=0 || coords[i][1]+y[i]>=innerHeight-40){

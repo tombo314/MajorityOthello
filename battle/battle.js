@@ -54,6 +54,31 @@ let getRandomInt=(min, max)=> {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min);
 }
+let start=()=>{
+    keysValid = false;
+    opacity += 0.01;
+    startEndSheet.style.opacity = opacity;
+    if (opacity>=0.6){
+        clearInterval(set);
+        startEndSheet.style.backgroundColor = "#2228";
+        startEndSheet.style.opacity = 1;
+        startEndSheet.innerHTML = "<span style='color: rgb(255, 50, 50)'>赤</span>が先手です";
+        setTimeout(()=>{
+            // ２秒間表示する
+        }, 2000);
+        let cnt = 3;
+        let set1 = setInterval(() => {
+            startEndSheet.textContent = cnt;
+            if (cnt<=0){
+                clearInterval(set1);
+                startEndSheet.style.opacity = 0;
+                startEndSheet.style.backgroundColor = "#222";
+                keysValid = true;
+            }
+            cnt--;
+        }, 1000);
+    }
+}
 let makeSquare=(i, j)=>{
     let sheet = document.createElement("div");
     sheet.setAttribute("id", `square${i}${j}`);
@@ -123,7 +148,10 @@ let makePlayerCircle=(playerName, initX, initY, playerColor)=>{
         let canvas = document.createElement("canvas");
         canvas.setAttribute("width", 1400);
         canvas.setAttribute("height", 670);
-        canvas.setAttribute("style", "position: absolute; z-index: 999;");
+        canvas.setAttribute("style", `
+            position: absolute;
+            z-index: 30;
+        `);
         let context = canvas.getContext("2d");
         canvas.setAttribute("id", `id-${playerName}`);
         context.fillStyle = playerColor;
@@ -581,6 +609,13 @@ let canPutStone=(n)=>{
     }
     return false;
 }
+let countDownTimer=(s)=>{
+    let set = setInterval(() => {
+        if (s<=0){ clearInterval(set); }
+        timer.textContent = `00:${("00"+s).slice(-2)}`;
+        s--;
+    }, 1000);
+}
 let finish=()=>{
     let cnt = 0;
     for (let i=0; i<8; i++){
@@ -615,6 +650,7 @@ let username = sessionStorage.getItem("username");
 let roomName = sessionStorage.getItem("roomName");
 let ownX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
 let ownY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
+let timer = document.getElementById("timer");
 let nodesAlly = document.getElementById("nodes-ally");
 let nodesOpponent = document.getElementById("nodes-opponent");
 let othelloWrapper = document.getElementById("othello-wrapper");
@@ -702,29 +738,6 @@ visualizeStone(3, 4, COLOR_FIELD_BLUE);
 visualizeStone(4, 3, COLOR_FIELD_BLUE);
 
 // バトル開始時の演出
-let start=()=>{
-    opacity += 0.01;
-    startEndSheet.style.opacity = opacity;
-    if (opacity>=0.6){
-        clearInterval(set);
-        startEndSheet.style.backgroundColor = "#2228";
-        startEndSheet.style.opacity = 1;
-        startEndSheet.innerHTML = "<span style='color: rgb(255, 50, 50)'>赤</span>が先手です";
-        setTimeout(()=>{
-            // ２秒間表示する
-        }, 2000);
-        let cnt = 3;
-        let set1 = setInterval(() => {
-            startEndSheet.textContent = cnt;
-            if (cnt<=0){
-                clearInterval(set1);
-                startEndSheet.style.opacity = 0;
-                startEndSheet.style.backgroundColor = "#222";
-            }
-            cnt--;
-        }, 1000);
-    }
-}
 opacity = 0;
 let set = setInterval(start, 20);
 
@@ -784,37 +797,37 @@ onkeydown=(e)=>{
     } else if (e.key=="d"){
         dDown = true;
     }
-    // 上
-    if (wDown && ownY+y>=35){
-        y -= DISPLACEMENT;
-    }
-    // 左
-    if (color=="red"){
-        if (aDown && ownX+x>=40){
-            x -= DISPLACEMENT;
-        }
-    } else if (color=="blue") {
-        if (aDown && ownX+x>=430){
-            x -= DISPLACEMENT;
-        }
-    }
-    // 下
-    if (sDown && ownY+y<=innerHeight-148){
-        y += DISPLACEMENT;
-    }
-    // 右
-    if (color=="red"){
-        if (dDown && ownX+x<=innerWidth-430){
-            x += DISPLACEMENT;
-        }
-    } else if (color=="blue"){
-        if (dDown && ownX+x<=innerWidth-40){
-            x += DISPLACEMENT;
-        }
-    }
-
-    // 自分に自分の座標を反映させる
     if (keysValid){
+        // 上
+        if (wDown && ownY+y>=35){
+            y -= DISPLACEMENT;
+        }
+        // 左
+        if (color=="red"){
+            if (aDown && ownX+x>=40){
+                x -= DISPLACEMENT;
+            }
+        } else if (color=="blue") {
+            if (aDown && ownX+x>=430){
+                x -= DISPLACEMENT;
+            }
+        }
+        // 下
+        if (sDown && ownY+y<=innerHeight-148){
+            y += DISPLACEMENT;
+        }
+        // 右
+        if (color=="red"){
+            if (dDown && ownX+x<=innerWidth-430){
+                x += DISPLACEMENT;
+            }
+        } else if (color=="blue"){
+            if (dDown && ownX+x<=innerWidth-40){
+                x += DISPLACEMENT;
+            }
+        }
+
+        // 自分に自分の座標を反映させる
         own.style.transform = `translate(${x}px, ${y}px)`;
         ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
     }
