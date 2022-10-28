@@ -63,7 +63,7 @@ let start=()=>{
         clearInterval(set);
         startEndSheet.style.backgroundColor = "#2228";
         startEndSheet.style.opacity = 1;
-        startEndSheet.innerHTML = "<span style='color: rgb(255, 50, 50)'>赤</span>が先手です";
+        startEndSheet.innerHTML = `<span style='color: ${COLOR_FIELD_RED}'>赤</span>が先手です`;
         setTimeout(()=>{
             let cnt = 3;
             set = setInterval(() => {
@@ -72,19 +72,13 @@ let start=()=>{
                     clearInterval(set);
                     startEndSheet.style.opacity = 0;
                     startEndSheet.style.backgroundColor = "#222";
+                    startEndSheet.textContent = "";
                     keysValid = true;
                     eachTurn(10);
                 }
                 cnt--;
             }, 1000);
         }, 2000);
-    }
-}
-let end=(color)=>{
-    opacity += 0.01;
-    startEndSheet.style.opacity = opacity;
-    if (opacity>=0.6){
-
     }
 }
 let makeSquare=(i, j)=>{
@@ -651,20 +645,33 @@ let finish=()=>{
     let ownColor;
     let opponentColor;
     if (COLOR_FIELD_RED=="rgb(255, 50, 50)"){
-        ownColor = "赤";
-        opponentColor = "青";
+        ownColor = `<span style="color: ${COLOR_FIELD_RED}">赤</span>`;
+        opponentColor = `<span style="color: ${COLOR_FIELD_BLUE}">青</span>`;
     } else {
-        ownColor = "青";
-        opponentColor = "赤";
+        ownColor = `<span style="color: ${COLOR_FIELD_BLUE}">青</span>`;
+        opponentColor = `<span style="color: ${COLOR_FIELD_RED}">赤</span>`;
     }
     opacity = 0;
-    if (cnt>tmp){
-        // end(ownColor);
-    } else if (cnt<tmp){
-        // end(opponentColor);
-    } else {
-        // end(0);
-    }
+    set = setInterval(()=>{
+        opacity += 0.01;
+        startEndSheet.style.opacity = opacity;
+        if (opacity>=0.6){
+            clearInterval(set);
+            startEndSheet.style.backgroundColor = "#2228";
+            startEndSheet.style.opacity = 1;
+            let color;
+            if (cnt!=tmp){
+                if (cnt>tmp){
+                    color = ownColor;
+                } else if (cnt<tmp){
+                    color = opponentColor;
+                }
+                startEndSheet.innerHTML = `${color}チームの勝利です`;
+            } else {
+                startEndSheet.textContent = "引き分けです";
+            }
+        }
+    }, 20);
 }
 
 // 関数を用いた変数の初期化
