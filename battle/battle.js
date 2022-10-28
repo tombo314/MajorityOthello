@@ -150,10 +150,7 @@ let makePlayerCircle=(playerName, initX, initY, playerColor)=>{
         let canvas = document.createElement("canvas");
         canvas.setAttribute("width", 1400);
         canvas.setAttribute("height", 670);
-        canvas.setAttribute("style", `
-            position: absolute;
-            z-index: 30;
-        `);
+        canvas.setAttribute("style", "position: absolute");
         let context = canvas.getContext("2d");
         canvas.setAttribute("id", `id-${playerName}`);
         context.fillStyle = playerColor;
@@ -974,6 +971,7 @@ onkeyup=(e)=>{
 ・投票システムを作る。
 ・片方のチームが操作しているとき、もう片方のチームは自陣まで下げられて、操作できないようにする。
 
-・置くところがない場合に、ターンのスキップが機能していない
+・置くところがない場合に、ターンのスキップが機能しないことがある
 ・finish 時に tmp = STONE_LIMIT-cnt になっているのを、修正する
+-> 多分修正できてる
 */
