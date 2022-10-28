@@ -19,8 +19,8 @@ let opacity;
 let set;
 let x = 0;
 let y = 0;
+let keysValid;
 let cntStone = 4;
-let keysValid = true;
 let finished = false;
 let isRed = true;
 
@@ -73,7 +73,9 @@ let start=()=>{
                     startEndSheet.style.opacity = 0;
                     startEndSheet.style.backgroundColor = "#222";
                     startEndSheet.textContent = "";
-                    keysValid = true;
+                    if (isRed && color=="red" || !isRed && color!="red"){
+                        keysValid = true;
+                    }
                     eachTurn(10);
                 }
                 cnt--;
@@ -767,12 +769,32 @@ socket.on("field-changed", (data)=>{
     let usernameOther = tmp[0];
     let paintedI = tmp[1];
     let paintedJ = tmp[2];
-    let color = tmp[3];
-    let isR = tmp[4];
+    let stoneColor = tmp[3];
+    isRed = tmp[4];
     if (usernameOther!=username){
-        othello(paintedI, paintedJ, color);
+        othello(paintedI, paintedJ, stoneColor);
     }
-    isRed = isR;
+    if (color=="red"){
+        if (!isRed){
+            x = 0;
+            y = 0;
+            own.style.transform = `translate(${x}px, ${y}px)`;
+            ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
+            keysValid = false;
+        } else {
+            keysValid = true;
+        }
+    } else if (color=="blue"){
+        if (isRed){
+            x = 0;
+            y = 0;
+            own.style.transform = `translate(${x}px, ${y}px)`;
+            ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
+            keysValid = false;
+        } else {
+            keysValid = true;
+        }
+    }
 });
 
 // 赤・青の文字の変化を共有する
@@ -923,19 +945,21 @@ onkeydown=(e)=>{
                 socket.emit("field-changed", {value: [username, paintedI, paintedJ, BLUE, isRed]});
            }
         }
-    }
-    let turn = document.getElementById("turn");
-    let turnColor;
-    if (isRed){
-        turn.innerHTML = "<span id='turn-color'>赤</span>のターン";
-        turnColor = document.getElementById("turn-color");
-        turnColor.style.color = COLOR_FIELD_RED;
-        socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>赤</span>のターン", COLOR_FIELD_RED]});
-    } else {
-        turn.innerHTML = "<span id='turn-color'>青</span>のターン";
-        turnColor = document.getElementById("turn-color");
-        turnColor.style.color = COLOR_FIELD_BLUE;
-        socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>青</span>のターン", COLOR_FIELD_BLUE]});
+        if (valid){
+            let turn = document.getElementById("turn");
+            let turnColor;
+            if (isRed){
+                turn.innerHTML = "<span id='turn-color'>赤</span>のターン";
+                turnColor = document.getElementById("turn-color");
+                turnColor.style.color = COLOR_FIELD_RED;
+                socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>赤</span>のターン", COLOR_FIELD_RED]});
+            } else {
+                turn.innerHTML = "<span id='turn-color'>青</span>のターン";
+                turnColor = document.getElementById("turn-color");
+                turnColor.style.color = COLOR_FIELD_BLUE;
+                socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>青</span>のターン", COLOR_FIELD_BLUE]});
+            }
+        }
     }
 }
 
@@ -962,5 +986,4 @@ onkeyup=(e)=>{
 ・投票システムを作る。
 ・片方のチームが操作しているとき、もう片方のチームは自陣まで下げられて、操作できないようにする。
 
-・青の置くところがない場合に、青の手順がスキップされない。
 */

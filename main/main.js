@@ -35,7 +35,7 @@ let registerUser=(roomName)=>{
                     sessionStorage.setItem("username", username);
                     sessionStorage.setItem("roomName", roomName);
                     sessionStorage.setItem("samePageLoaded", "false");
-                    window.location.href = "/wait/wait.html";
+                    window.location.href = "/wait";
                 } else {
                     alert("部屋が存在しません。");
                 }
@@ -161,7 +161,7 @@ let makeRoom=(e)=>{
                     sessionStorage.setItem("username", roomUsername.value);
                     sessionStorage.setItem("roomName", roomNameElem.value);
                     sessionStorage.setItem("samePageLoaded", "false");
-                    window.location.href = "/wait/wait.html";
+                    window.location.href = "/wait";
                 } else {
                     alert("そのユーザー名はすでに使われています。");
                     window.location.href = "/";

@@ -26,7 +26,7 @@ let server = http.createServer((req, res)=>{
         res.end(fs.readFileSync("main/main.js"));
     }
     // wait
-    else if(req.url=="/wait/wait.html"){
+    else if(req.url=="/wait"){
         res.writeHead(200, {"Content-Type": "text/html"});
         res.end(fs.readFileSync("wait/wait.html"));
     } else if(req.url=="/wait/wait.css"){
@@ -40,7 +40,7 @@ let server = http.createServer((req, res)=>{
         res.end(fs.readFileSync("wait/wait.js"));
     }
     // battle
-    else if (req.url=="/battle/battle.html"){
+    else if (req.url=="/battle"){
         res.writeHead(200, {"Content-Type": "text/html"});
         res.end(fs.readFileSync("battle/battle.html"));
     } else if(req.url=="/battle/battle.css"){

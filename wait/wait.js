@@ -27,6 +27,6 @@ socket.on("waiting-finished", (data)=>{
     if (roomMember.includes(username)){
         alert("バトル画面に遷移します。");
         sessionStorage.setItem("samePageLoaded", "false");
-        window.location.href = "/battle/battle.html";
+        window.location.href = "/battle";
     }
 });
