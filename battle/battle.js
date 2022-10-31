@@ -438,9 +438,15 @@ let othello=(p, q, oneOrTwo)=>{
     }
     return false;
 }
-let vote=()=>{
+let vote=(i, j, oneOrTwo)=>{
+    if (CanPutStoneThere(i, j, oneOrTwo)){
+        socket.emit("voted", {value: ""});
+        // 工事中
+        // 強制的に自陣に戻して keysValid = false にする
+    }
 }
-let search=(p, q, n)=>{
+let CanPutStoneThere=(p, q, oneOrTwo)=>{
+    let n = oneOrTwo;
     let m;
     if (n==1){
         m = 2;
@@ -448,6 +454,11 @@ let search=(p, q, n)=>{
         m = 1;
     }
     
+    // その場
+    if (field[p][q]!=0){
+        return false;
+    }
+
     // 上
     let ok = false;
     if (p-1>=0 && field[p-1][q]==m){
@@ -599,13 +610,13 @@ let search=(p, q, n)=>{
 
     return false;
 }
-let canPutStone=(n)=>{
+let CanPutStoneAll=(n)=>{
     for (let i=0; i<8; i++){
         for (let j=0; j<8; j++){
             if (field[i][j]!=0){
                 continue;
             }
-            if (search(i, j, n)){
+            if (CanPutStoneThere(i, j, n)){
                 return true;
             }
         }
@@ -614,9 +625,9 @@ let canPutStone=(n)=>{
 }
 let eachTurn=(s)=>{
     if (isRed){
-        visualizeCanPutStone(RED);
+        visualizeCanPutStoneAll(RED);
     } else {
-        visualizeCanPutStone(BLUE);
+        visualizeCanPutStoneAll(BLUE);
     }
     set = setInterval(() => {
         if (s<=0){
@@ -640,16 +651,16 @@ let eachTurn=(s)=>{
         }
     }, 1000);
 }
-let setCanPutStone = new Set();
-let visualizeCanPutStone=(n)=>{
+let setCanPutStoneAll = new Set();
+let visualizeCanPutStoneAll=(n)=>{
     for (let i=0; i<8; i++){
         for (let j=0; j<8; j++){
-            if (search(i, j, n) && field[i][j]==EMPTY){
+            if (CanPutStoneThere(i, j, n)){
                 paintSquare(i, j);
-                setCanPutStone.add(`${i}, ${j}`);
+                setCanPutStoneAll.add(`${i}, ${j}`);
             } else {
                 unPaintSquare(i, j);
-                setCanPutStone.delete(`${i}, ${j}`);
+                setCanPutStoneAll.delete(`${i}, ${j}`);
             }
         }
     }
@@ -806,6 +817,7 @@ socket.on("coordinates-changed", (data)=>{
 
 // 盤面の変化を共有する
 // 工事中
+// vote に統合する
 socket.on("field-changed", (data)=>{
     let tmp = data.value;
     let usernameOther = tmp[0];
@@ -842,6 +854,7 @@ socket.on("field-changed", (data)=>{
 
 // 赤・青の文字の変化を共有する
 // 工事中
+// vote に統合する
 socket.on("text-color-changed", (data)=>{
     // let tmp = data.value;
     // let usernameOther = tmp[0];
@@ -872,9 +885,9 @@ socket.on("voted", (data)=>{
         if (cntStone>=STONE_LIMIT){
             finished = true;
         }
-        if (canPutStone(color)){
+        if (CanPutStoneAll(color)){
             isRed = false;
-        } else if (!canPutStone(otherColor)){
+        } else if (!CanPutStoneAll(otherColor)){
             finished = true;
         }
         // socket.emit("field-changed", {value:[username, i, j, color, isRed]});
@@ -967,8 +980,6 @@ onkeydown=(e)=>{
         "nameCoord":[ownX+x+xDiff, ownY+y+INIT_Y_DIFF]
     }});
     
-    // 「データの流れをたどる」ここまで
-    // 工事中
     // シートをマスにかぶせる・マスから取り除く
     let coordX = ownX+x;
     let coordY = ownY+y;
@@ -977,7 +988,7 @@ onkeydown=(e)=>{
     const DIFF_X = 62;
     const DIFF_Y = 58;
     if (paintedI!=null){
-        if (!setCanPutStone.has(`${paintedI}, ${paintedJ}`)){
+        if (!setCanPutStoneAll.has(`${paintedI}, ${paintedJ}`)){
             unPaintSquare(paintedI, paintedJ);
         }
     }
@@ -989,7 +1000,6 @@ onkeydown=(e)=>{
 
     // そのマスに石を置く
     if (e.key=="Enter"){
-        // 工事中
         if (isRed){
             vote(paintedI, paintedJ, RED);
         } else {
