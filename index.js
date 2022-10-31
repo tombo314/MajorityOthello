@@ -173,9 +173,9 @@ io.on("connection", (socket)=>{
                     rooms[roomName]["cntBlue"]++;
                 }
                 users[username] = {
-                    "userX":userX,
-                    "userY":userY,
-                    "color":color
+                    "userX": userX,
+                    "userY": userY,
+                    "color": color
                 };
                 // 部屋とユーザーの情報を返す
                 if (rooms[roomName]["cntUsers"]>=rooms[roomName]["users"].length){
@@ -187,7 +187,7 @@ io.on("connection", (socket)=>{
             }
             // 部屋が見つからない場合はスタート画面に戻る
             else {
-                io.sockets.emit(username, {value: false, rooms: rooms});
+                io.sockets.emit(username, {value: false});
             }
         }
     });
@@ -208,6 +208,7 @@ io.on("connection", (socket)=>{
     socket.on("voted", (data)=>{
         color = "";
         // 投票結果を返す
+        // -> ０票の場合は置ける場所からランダムに
         if (false){
             let h = 0;
             let w = 0;
@@ -242,9 +243,13 @@ io.on("connection", (socket)=>{
 To Do
 main
 ・design の丸が画面端から出てこない
+・form タグを使って getElementById().onclick から name.onclick に変更する
+-> 授業が終わったら getElementById().onclick に戻す
 
 battle
 ・投票システムを作る
+・もう一度最初からデータの流れをたどって確認する
+-> socket の text-color-changed と field-changed を voted に統合する
 ・１ターンの秒数が過ぎたら強制的に拠点に戻して、相手のターンにする
 ・順番に石がひっくり返るようにする（rotate でアニメーションも作れそう）
 ・２人以上いないとバトル画面に遷移できないようにする

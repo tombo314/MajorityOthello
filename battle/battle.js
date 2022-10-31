@@ -708,7 +708,8 @@ if (username!=null){
         "userY": ownY
     }});
 } else {
-    socket.emit("user-info-init", {value: null});
+    alert("ユーザー情報が登録されていません。");
+    window.location.href = "/";
 }
 
 // 全プレイヤーの情報を取得
@@ -785,6 +786,7 @@ opacity = 0;
 set = setInterval(start, 20);
 
 // 盤面の変化を共有する
+// 工事中
 socket.on("field-changed", (data)=>{
     let tmp = data.value;
     let usernameOther = tmp[0];
@@ -796,15 +798,16 @@ socket.on("field-changed", (data)=>{
         othello(paintedI, paintedJ, stoneColor);
     }
     if (color=="red"){
-        if (!isRed){
-            x = 0;
-            y = 0;
-            own.style.transform = `translate(${x}px, ${y}px)`;
-            ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
-            keysValid = false;
-        } else {
-            keysValid = true;
-        }
+        // ここだけ使う
+        // if (!isRed){
+        //     x = 0;
+        //     y = 0;
+        //     own.style.transform = `translate(${x}px, ${y}px)`;
+        //     ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
+        //     keysValid = false;
+        // } else {
+        //     keysValid = true;
+        // }
     } else if (color=="blue"){
         if (isRed){
             x = 0;
@@ -819,15 +822,58 @@ socket.on("field-changed", (data)=>{
 });
 
 // 赤・青の文字の変化を共有する
+// 工事中
 socket.on("text-color-changed", (data)=>{
-    let tmp = data.value;
-    let usernameOther = tmp[0];
-    let text = tmp[1];
-    let color = tmp[2];
-    if (usernameOther!=username){
-        turn.innerHTML = text;
-        turnColor = document.getElementById("turn-color");
-        turnColor.style.color = color;
+    // let tmp = data.value;
+    // let usernameOther = tmp[0];
+    // let text = tmp[1];
+    // let color = tmp[2];
+    // if (usernameOther!=username){
+    //     turn.innerHTML = text;
+    //     turnColor = document.getElementById("turn-color");
+    //     turnColor.style.color = color;
+    // }
+});
+
+// 投票結果を受け取る
+socket.on("voted", (data)=>{
+    let i = data.value[0];
+    let j = data.value[1];
+    let color = data.value[2]; // 1:RED, 2:BLUE
+    let otherColor;
+    if (color==RED){
+        otherColor = BLUE;
+    } else {
+        otherColor = RED;
+    }
+    let valid;
+    valid = othello(i, j, color);
+    if (valid){
+        cntStone += 1;
+        if (cntStone>=STONE_LIMIT){
+            finished = true;
+        }
+        if (canPutStone(color)){
+            isRed = false;
+        } else if (!canPutStone(otherColor)){
+            finished = true;
+        }
+        // socket.emit("field-changed", {value:[username, i, j, color, isRed]});
+    }
+    if (valid){
+        let turn = document.getElementById("turn");
+        let turnColor;
+        if (color==RED){
+            turn.innerHTML = "<span id='turn-color'>赤</span>のターン";
+            turnColor = document.getElementById("turn-color");
+            turnColor.style.color = COLOR_FIELD_RED;
+            // socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>赤</span>のターン", COLOR_FIELD_RED]});
+        } else if (color==BLUE) {
+            turn.innerHTML = "<span id='turn-color'>青</span>のターン";
+            turnColor = document.getElementById("turn-color");
+            turnColor.style.color = COLOR_FIELD_BLUE;
+            // socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>青</span>のターン", COLOR_FIELD_BLUE]});
+        }
     }
 });
 
@@ -939,57 +985,11 @@ onkeydown=(e)=>{
     // そのマスに石を置く
     if (e.key=="Enter"){
         // 工事中
-        // 自分が Enter を押したら、から（全員の投票が終わる or 自分のチームのターンが終わる）に変更
         if (isRed){
             vote(paintedI, paintedJ, RED);
         } else {
             vote(paintedI, paintedJ, BLUE);
         }
-        // let valid;
-        // if (isRed){
-        //     valid = othello(paintedI, paintedJ, RED);
-        //     if (valid){
-        //         cntStone += 1;
-        //         if (cntStone>=STONE_LIMIT){
-        //             finished = true;
-        //         }
-        //         if (canPutStone(BLUE)){
-        //             isRed = false;
-        //         } else if (!canPutStone(RED)){
-        //             finished = true;
-        //         }
-        //         socket.emit("field-changed", {value:[username, paintedI, paintedJ, RED, isRed]});
-        //     }
-        // } else {
-        //     valid = othello(paintedI, paintedJ, BLUE);
-        //     if (valid){
-        //         cntStone += 1;
-        //         if (cntStone>=STONE_LIMIT){
-        //             finished = true;
-        //         }
-        //         if (canPutStone(RED)){
-        //             isRed = true;
-        //         } else if (!canPutStone(BLUE)){
-        //             finished = true;
-        //         }
-        //         socket.emit("field-changed", {value: [username, paintedI, paintedJ, BLUE, isRed]});
-        //    }
-        // }
-        // if (valid){
-        //     let turn = document.getElementById("turn");
-        //     let turnColor;
-        //     if (isRed){
-        //         turn.innerHTML = "<span id='turn-color'>赤</span>のターン";
-        //         turnColor = document.getElementById("turn-color");
-        //         turnColor.style.color = COLOR_FIELD_RED;
-        //         socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>赤</span>のターン", COLOR_FIELD_RED]});
-        //     } else {
-        //         turn.innerHTML = "<span id='turn-color'>青</span>のターン";
-        //         turnColor = document.getElementById("turn-color");
-        //         turnColor.style.color = COLOR_FIELD_BLUE;
-        //         socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>青</span>のターン", COLOR_FIELD_BLUE]});
-        //     }
-        // }
     }
 }
 
