@@ -31,8 +31,9 @@ html {
   }
   #room-for-rooms {
     position: absolute;
-    width: 100vw;
-    margin-left: -100px;
+    width: 63vw;
+    top: 20vh;
+    left: 20vw;
   }
   #room-for-rooms .btn-room-select {
     height: 50px;
