@@ -136,7 +136,6 @@ io.on("connection", (socket)=>{
         if (Object.keys(rooms).includes(roomName)){
             rooms[roomName]["users"].push(username);
             users[username] = {};
-            io.sockets.emit(username, {value: true});
         } else {
             // 部屋が存在しない場合はスタート画面に戻る
             io.sockets.emit(username, {value: false});
@@ -241,6 +240,9 @@ io.on("connection", (socket)=>{
 
 /* 
 To Do
+全体
+・BGM と SE を入れる
+
 main
 ・design の丸が画面端から出てこない
 ・form タグを使って getElementById().onclick から name.onclick に変更する

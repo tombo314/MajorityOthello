@@ -73,7 +73,7 @@ let start=()=>{
                     startEndSheet.style.opacity = 0;
                     startEndSheet.style.backgroundColor = "#222";
                     startEndSheet.textContent = "";
-                    if (isRed && color=="red" || !isRed && color!="red"){
+                    if (isRed && color=="red" || !isRed && color=="blue"){
                         keysValid = true;
                     }
                     eachTurn(10);
@@ -626,6 +626,8 @@ let eachTurn=(s)=>{
                     finish();
                     keysValid = false;
                 } else {
+                    // 工事中
+                    // 相手のターンに移るときに強制的に自分の陣地へ戻される
                     eachTurn(10);
                 }
             }, 1000);
@@ -729,11 +731,6 @@ socket.on("user-info-init", (data)=>{
             playerColorRGB = COLOR_PLAYER_BLUE;
             initX = Math.min(initX, 350);
             initX = innerWidth - initX;
-            if (playerName==username){
-                ownX = Math.min(ownX, 350);
-                ownX = innerWidth - ownX;
-                color = playerColor;
-            }
         }
 
         // 全プレイヤーの円を描画
@@ -747,6 +744,10 @@ socket.on("user-info-init", (data)=>{
     own = document.getElementById(`id-${username}`);
     ownName = document.getElementById(`id-${username}-name`);
     color = users[username]["color"];
+    if (color=="blue"){
+        ownX = Math.min(ownX, 350);
+        ownX = innerWidth - ownX;
+    }
 });
 
 // マス選択時に盤面の上に被せるシートを生成
@@ -784,6 +785,24 @@ visualizeStone(4, 3, COLOR_FIELD_BLUE);
 // バトル開始時の演出
 opacity = 0;
 set = setInterval(start, 20);
+
+// 他のプレイヤーの座標の変化を受け取る
+socket.on("coordinates-changed", (data)=>{
+    let user = data.value;
+    let usernameOther = user["username"];
+    let userCoord = user["userCoord"];
+    let userX = userCoord[0];
+    let userY = userCoord[1];
+    let nameCoord = user["nameCoord"];
+    let nameX = nameCoord[0];
+    let nameY = nameCoord[1];
+    let userElem = document.getElementById(`id-${usernameOther}`);
+    let nameElem = document.getElementById(`id-${usernameOther}-name`);
+    if (usernameOther!=username){
+        userElem.style.transform = `translate(${userX}px, ${userY}px)`;
+        nameElem.style.transform = `translate(${nameX}px, ${nameY}px)`;
+    }
+});
 
 // 盤面の変化を共有する
 // 工事中
@@ -947,23 +966,9 @@ onkeydown=(e)=>{
         "userCoord":[x, y],
         "nameCoord":[ownX+x+xDiff, ownY+y+INIT_Y_DIFF]
     }});
-    socket.on("coordinates-changed", (data)=>{
-        let user = data.value;
-        let usernameOther = user["username"];
-        let userCoord = user["userCoord"];
-        let userX = userCoord[0];
-        let userY = userCoord[1];
-        let nameCoord = user["nameCoord"];
-        let nameX = nameCoord[0];
-        let nameY = nameCoord[1];
-        let userElem = document.getElementById(`id-${usernameOther}`);
-        let nameElem = document.getElementById(`id-${usernameOther}-name`);
-        if (usernameOther!=username){
-            userElem.style.transform = `translate(${userX}px, ${userY}px)`;
-            nameElem.style.transform = `translate(${nameX}px, ${nameY}px)`;
-        }
-    });
     
+    // 「データの流れをたどる」ここまで
+    // 工事中
     // シートをマスにかぶせる・マスから取り除く
     let coordX = ownX+x;
     let coordY = ownY+y;
