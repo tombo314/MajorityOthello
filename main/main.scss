@@ -39,8 +39,14 @@ html{
         width: 100vw;
         margin-top: 70px;
         text-align: center;
-        font-size: 28px;
+        font-size: 32px;
         color: #333;
+        .red{
+            color: rgb(255, 50, 50);
+        }
+        .blue{
+            color: rgb(50, 50, 255);
+        }
     }
 
     #room-for-rooms{
