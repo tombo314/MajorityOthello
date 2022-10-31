@@ -64,6 +64,18 @@ let server = http.createServer((req, res)=>{
 }).listen(process.env.PORT || 8000);
 let io = socket(server);
 
+// 関数の宣言
+let initVoted=()=>{
+    voted = [];
+    for (let i=0; i<8; i++){
+        let tmp = [];
+        for (let j=0; j<8; j++){
+            tmp.push(0)
+        }
+        voted.push(tmp);
+    }
+}
+
 /*
 rooms = {
     // 部屋名をキーとする、部屋ごとの連想配列
@@ -85,8 +97,10 @@ users = {
     ...
 }
 */
-let rooms = {}
-let users = {}
+let rooms = {};
+let users = {};
+let voted = [];
+initVoted();
 let color;
 io.on("connection", (socket)=>{
     /* index.html */
@@ -189,6 +203,27 @@ io.on("connection", (socket)=>{
     socket.on("text-color-changed", (data)=>{
         io.sockets.emit("text-color-changed", {value:data.value});
     });
+    // 工事中
+    // 投票を受け付ける
+    socket.on("voted", (data)=>{
+        color = "";
+        // 投票結果を返す
+        if (false){
+            let h = 0;
+            let w = 0;
+            let max = 0;
+            for (let i=0; i<8; i++){
+                for (let j=0; j<8; j++){
+                    if (max<voted[i][j]){
+                        max = voted[i][j];
+                        h = i;
+                        w = j;
+                    }
+                }
+            }
+            io.sockets.emit("voted", {value: [i, j, color]});
+        }
+    });
     // ゲームが終了したことを通知する
     socket.on("game-finished", (data)=>{
         io.sockets.emit("game-finished", {value:data.value});
@@ -210,5 +245,9 @@ main
 
 battle
 ・投票システムを作る
-・１ターンの秒数が過ぎたら強制的に拠点に戻す
+・１ターンの秒数が過ぎたら強制的に拠点に戻して、相手のターンにする
+・順番に石がひっくり返るようにする（rotate でアニメーションも作れそう）
+・２人以上いないとバトル画面に遷移できないようにする
+
+// 工事中　<-を参照
 */
