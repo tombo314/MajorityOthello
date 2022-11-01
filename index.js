@@ -84,6 +84,7 @@ rooms = {
         "cntUsers": 0,
         "cntRed": 0,
         "cntBlue": 0,
+        "cntTmp": 0
     },
     ...
 }
@@ -125,6 +126,7 @@ io.on("connection", (socket)=>{
             "cntUsers": 0,
             "cntRed": 0,
             "cntBlue": 0,
+            "cntTmp": 0
         };
         users[roomUsername] = {};
         io.sockets.emit("update-rooms", {value: rooms});
@@ -205,10 +207,13 @@ io.on("connection", (socket)=>{
     // 工事中
     // 投票を受け付ける
     socket.on("voted", (data)=>{
-        color = "";
+        let i = data.value[0];
+        let j = data.value[1];
+        let oneOrTwo = data.value[2];
+        let roomName = data.value[3];
         // 投票結果を返す
         // -> ０票の場合は置ける場所からランダムに
-        if (false){
+        if (true){
             let h = 0;
             let w = 0;
             let max = 0;
@@ -221,7 +226,8 @@ io.on("connection", (socket)=>{
                     }
                 }
             }
-            io.sockets.emit("voted", {value: [i, j, color]});
+            initVoted();
+            io.sockets.emit("voted", {value: [i, j, ]});
         }
     });
     // ゲームが終了したことを通知する
@@ -255,6 +261,108 @@ battle
 ・１ターンの秒数が過ぎたら強制的に拠点に戻して、相手のターンにする
 ・順番に石がひっくり返るようにする（rotate でアニメーションも作れそう）
 ・２人以上いないとバトル画面に遷移できないようにする
+・部屋間で独立した情報を扱うときは、roomName をソケット通信に乗せなければならない
+・部屋ごとに cntTmp をインクリメントしながら、投票が終わったか確認する。
+-> TURN_DURATION_SEC(秒) 経過したら強制的に投票を締め切る
 
 // 工事中　<-を参照
+*/
+
+/*
+投票の流れ
+
+// 投票する
+このタイミングで isRed && color=="red" || !isRed && color=="blue" に当てはまらない人は操作できない
+if (e.key=="Enter"){
+    if (isRed){
+        vote(paintedI, paintedJ, RED);
+        isRed = false;
+    } else {
+        vote(paintedI, paintedJ, BLUE);
+        isRed = true;
+    }
+}
+
+let vote=(i, j, oneOrTwo)=>{
+    if (CanPutStoneThere(i, j, oneOrTwo)){
+        socket.emit("voted", {value: ""});
+        // 工事中
+        if (isRed && color=="red" || !isRed && color=="blue"){
+            x = 0;
+            y = 0;
+            own.style.transform = `translate(${x}px, ${y}px)`;
+            ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
+            keysValid = false;
+        } else {
+            keysValid = true;
+        }
+    }
+}
+
+// 投票を受け付ける
+socket.on("voted", (data)=>{
+    color = "";
+    // 投票結果を返す
+    voted 配列を初期化する
+    // -> ０票の場合は置ける場所からランダムに
+    if (false){
+        let h = 0;
+        let w = 0;
+        let max = 0;
+        for (let i=0; i<8; i++){
+            for (let j=0; j<8; j++){
+                if (max<voted[i][j]){
+                    max = voted[i][j];
+                    h = i;
+                    w = j;
+                }
+            }
+        }
+        io.sockets.emit("voted", {value: [i, j, color]});
+    }
+});
+
+// 投票結果を受け取る
+socket.on("voted", (data)=>{
+    let i = data.value[0];
+    let j = data.value[1];
+    let color = data.value[2]; // 1:RED, 2:BLUE
+    let otherColor;
+    if (color==RED){
+        otherColor = BLUE;
+    } else {
+        otherColor = RED;
+    }
+    let valid;
+    valid = othello(i, j, color);
+    if (valid){
+        cntStone += 1;
+        if (cntStone>=STONE_LIMIT){
+            finished = true;
+        }
+        if (CanPutStoneAll(color)){
+            isRed = false;
+        } else if (!CanPutStoneAll(otherColor)){
+            finished = true;
+        }
+        // socket.emit("field-changed", {value:[username, i, j, color, isRed]});
+    }
+    if (valid){
+        let turn = document.getElementById("turn");
+        let turnColor;
+        if (color==RED){
+            turn.innerHTML = "<span id='turn-color'>赤</span>のターン";
+            turnColor = document.getElementById("turn-color");
+            turnColor.style.color = COLOR_FIELD_RED;
+            // socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>赤</span>のターン", COLOR_FIELD_RED]});
+        } else if (color==BLUE) {
+            turn.innerHTML = "<span id='turn-color'>青</span>のターン";
+            turnColor = document.getElementById("turn-color");
+            turnColor.style.color = COLOR_FIELD_BLUE;
+            // socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>青</span>のターン", COLOR_FIELD_BLUE]});
+        }
+    }
+});
+
+
 */

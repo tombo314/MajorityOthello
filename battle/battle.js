@@ -17,6 +17,7 @@ let ownName;
 let xDiff;
 let opacity;
 let set;
+let color;
 let x = 0;
 let y = 0;
 let keysValid;
@@ -440,9 +441,18 @@ let othello=(p, q, oneOrTwo)=>{
 }
 let vote=(i, j, oneOrTwo)=>{
     if (CanPutStoneThere(i, j, oneOrTwo)){
-        socket.emit("voted", {value: ""});
+        socket.emit("voted", {value: [i, j, oneOrTwo, roomName]});
         // 工事中
-        // 強制的に自陣に戻して keysValid = false にする
+        // 強制的に自陣に戻される
+        if (isRed && color=="red" || !isRed && color=="blue"){
+            x = 0;
+            y = 0;
+            own.style.transform = `translate(${x}px, ${y}px)`;
+            ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
+            keysValid = false;
+        } else {
+            keysValid = true;
+        }
     }
 }
 let CanPutStoneThere=(p, q, oneOrTwo)=>{
@@ -637,8 +647,6 @@ let eachTurn=(s)=>{
                     finish();
                     keysValid = false;
                 } else {
-                    // 工事中
-                    // 相手のターンに移るときに強制的に自分の陣地へ戻される
                     eachTurn(10);
                 }
             }, 1000);
@@ -819,37 +827,28 @@ socket.on("coordinates-changed", (data)=>{
 // 工事中
 // vote に統合する
 socket.on("field-changed", (data)=>{
-    let tmp = data.value;
-    let usernameOther = tmp[0];
-    let paintedI = tmp[1];
-    let paintedJ = tmp[2];
-    let stoneColor = tmp[3];
-    isRed = tmp[4];
-    if (usernameOther!=username){
-        othello(paintedI, paintedJ, stoneColor);
-    }
-    if (color=="red"){
-        // ここだけ使う
-        // if (!isRed){
-        //     x = 0;
-        //     y = 0;
-        //     own.style.transform = `translate(${x}px, ${y}px)`;
-        //     ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
-        //     keysValid = false;
-        // } else {
-        //     keysValid = true;
-        // }
-    } else if (color=="blue"){
-        if (isRed){
-            x = 0;
-            y = 0;
-            own.style.transform = `translate(${x}px, ${y}px)`;
-            ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
-            keysValid = false;
-        } else {
-            keysValid = true;
-        }
-    }
+    // let tmp = data.value;
+    // let usernameOther = tmp[0];
+    // let paintedI = tmp[1];
+    // let paintedJ = tmp[2];
+    // let stoneColor = tmp[3];
+    // isRed = tmp[4];
+    // if (usernameOther!=username){
+    //     othello(paintedI, paintedJ, stoneColor);
+    // }
+    // if (color=="red"){
+        
+    // } else if (color=="blue"){
+    //     if (isRed){
+    //         x = 0;
+    //         y = 0;
+    //         own.style.transform = `translate(${x}px, ${y}px)`;
+    //         ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
+    //         keysValid = false;
+    //     } else {
+    //         keysValid = true;
+    //     }
+    // }
 });
 
 // 赤・青の文字の変化を共有する
@@ -871,11 +870,14 @@ socket.on("text-color-changed", (data)=>{
 socket.on("voted", (data)=>{
     let i = data.value[0];
     let j = data.value[1];
-    let color = data.value[2]; // 1:RED, 2:BLUE
+    let oneOrTwo = data.value[2];
+    let color;
     let otherColor;
-    if (color==RED){
+    if (oneOrTwo==RED){
+        color = RED;
         otherColor = BLUE;
     } else {
+        color = BLUE;
         otherColor = RED;
     }
     let valid;
@@ -998,12 +1000,14 @@ onkeydown=(e)=>{
         paintSquare(paintedI, paintedJ);
     }
 
-    // そのマスに石を置く
+    // 投票する
     if (e.key=="Enter"){
         if (isRed){
             vote(paintedI, paintedJ, RED);
+            isRed = false;
         } else {
             vote(paintedI, paintedJ, BLUE);
+            isRed = true;
         }
     }
 }
