@@ -64,18 +64,6 @@ let server = http.createServer((req, res)=>{
 }).listen(process.env.PORT || 8000);
 let io = socket(server);
 
-// 関数の宣言
-let initVoted=()=>{
-    voted = [];
-    for (let i=0; i<8; i++){
-        let tmp = [];
-        for (let j=0; j<8; j++){
-            tmp.push(0)
-        }
-        voted.push(tmp);
-    }
-}
-
 /*
 rooms = {
     // 部屋名をキーとする、部屋ごとの連想配列
@@ -84,7 +72,8 @@ rooms = {
         "cntUsers": 0,
         "cntRed": 0,
         "cntBlue": 0,
-        "cntTmp": 0
+        "cntTmp": 0,
+        "voted": [[0]*8 for _ in range(8)]
     },
     ...
 }
@@ -100,8 +89,6 @@ users = {
 */
 let rooms = {};
 let users = {};
-let voted = [];
-initVoted();
 let color;
 io.on("connection", (socket)=>{
     /* index.html */
@@ -121,12 +108,23 @@ io.on("connection", (socket)=>{
         let roomInfo = data.value;
         let roomName = roomInfo["roomName"];
         let roomUsername = roomInfo["roomUsername"];
+        let voted = [];
+        // voted 配列を初期化
+        for (let i=0; i<8; i++){
+            let tmp = [];
+            for (let j=0; j<8; j++){
+                tmp.push(0);
+            }
+            voted.push(tmp);
+        }
+        // rooms 連想配列を初期化
         rooms[roomName] = {
             "users": [roomUsername],
             "cntUsers": 0,
             "cntRed": 0,
             "cntBlue": 0,
-            "cntTmp": 0
+            "cntTmp": 0,
+            "voted": voted
         };
         users[roomUsername] = {};
         io.sockets.emit("update-rooms", {value: rooms});
@@ -210,24 +208,31 @@ io.on("connection", (socket)=>{
         let i = data.value[0];
         let j = data.value[1];
         let oneOrTwo = data.value[2];
+        // 投票する
+        rooms[roomName]["voted"][i][j]++;
+        let color = oneOrTwo==1 ? "cntRed" : "cntBlue";
         let roomName = data.value[3];
+        let timeout = data.value[4];
+        // TURN_DURATION_SEC を超えたら、強制的にターンを終了する
+        if (timeout){
+            rooms[roomName]["cntTmp"] = 9999;
+        }
         // 投票結果を返す
         // -> ０票の場合は置ける場所からランダムに
-        if (true){
+        if (rooms[roomName]["cntTmp"]>=rooms[roomName][color]){
             let h = 0;
             let w = 0;
             let max = 0;
             for (let i=0; i<8; i++){
                 for (let j=0; j<8; j++){
-                    if (max<voted[i][j]){
-                        max = voted[i][j];
+                    if (max<rooms[roomName]["voted"][i][j]){
+                        max = rooms[roomName]["voted"][i][j];
                         h = i;
                         w = j;
                     }
                 }
             }
-            initVoted();
-            io.sockets.emit("voted", {value: [i, j, ]});
+            io.sockets.emit("voted", {value: [h, w, oneOrTwo, roomName]});
         }
     });
     // ゲームが終了したことを通知する
@@ -363,6 +368,5 @@ socket.on("voted", (data)=>{
         }
     }
 });
-
 
 */

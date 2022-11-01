@@ -441,7 +441,10 @@ let othello=(p, q, oneOrTwo)=>{
 }
 let vote=(i, j, oneOrTwo)=>{
     if (CanPutStoneThere(i, j, oneOrTwo)){
-        socket.emit("voted", {value: [i, j, oneOrTwo, roomName]});
+        socket.emit("voted", {value: [
+            i, j, oneOrTwo, roomName,
+            false // TURN_DURATION_SEC を過ぎたかどうか
+        ]});
         // 工事中
         // 強制的に自陣に戻される
         if (isRed && color=="red" || !isRed && color=="blue"){
@@ -871,6 +874,7 @@ socket.on("voted", (data)=>{
     let i = data.value[0];
     let j = data.value[1];
     let oneOrTwo = data.value[2];
+    let roomNameTmp = data.value[3];
     let color;
     let otherColor;
     if (oneOrTwo==RED){
@@ -880,6 +884,7 @@ socket.on("voted", (data)=>{
         color = BLUE;
         otherColor = RED;
     }
+    // if (roomNameTmp==roomName){
     let valid;
     valid = othello(i, j, color);
     if (valid){
