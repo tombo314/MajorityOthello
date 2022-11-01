@@ -265,24 +265,27 @@ To Do
 main
 ・design の丸が画面端から出てこない
 ・form タグを使って getElementById().onclick から name.onclick に変更する
--> 授業が終わったら getElementById().onclick に戻す
+    -> 授業が終わったら getElementById().onclick に戻す
 
 battle
 ・投票システムを作る
 ・もう一度最初からデータの流れをたどって確認する
--> socket の text-color-changed と field-changed を voted に統合する
+    -> socket の text-color-changed と field-changed を voted に統合する
 ・１ターンの秒数が過ぎたら強制的に拠点に戻して、相手のターンにする
 ・順番に石がひっくり返るようにする（rotate でアニメーションも作れそう）
 ・２人以上いないとバトル画面に遷移できないようにする
 ・部屋ごとに cntTmp をインクリメントしながら、投票が終わったか確認する
--> TURN_DURATION_SEC(秒) 経過したら強制的に投票を締め切る
+    -> TURN_DURATION_SEC(秒) 経過したら強制的に投票を締め切る
 ・すべての socket.on() が部屋間で独立しているかを確認する
--> 必要なソケット通信の箇所に roomName を付け加える
+    -> 必要なソケット通信の箇所に roomName を付け加える
+・ゲーム終了の流れが上手く動いていない
 
-// 工事中　<-を参照
+// 工事中 <-を参照
 */
 
 /*
+battle.html
+
 // 投票結果を受け取る
 socket.on("voted", (data)=>{
     let i = data.value[0];

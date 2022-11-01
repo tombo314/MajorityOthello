@@ -826,34 +826,6 @@ socket.on("coordinates-changed", (data)=>{
     }
 });
 
-// 盤面の変化を共有する
-// 工事中
-// vote に統合する
-socket.on("field-changed", (data)=>{
-    // let tmp = data.value;
-    // let usernameOther = tmp[0];
-    // let paintedI = tmp[1];
-    // let paintedJ = tmp[2];
-    // let stoneColor = tmp[3];
-    // isRed = tmp[4];
-    // if (usernameOther!=username){
-    //     othello(paintedI, paintedJ, stoneColor);
-    // }
-    // if (color=="red"){
-        
-    // } else if (color=="blue"){
-    //     if (isRed){
-    //         x = 0;
-    //         y = 0;
-    //         own.style.transform = `translate(${x}px, ${y}px)`;
-    //         ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
-    //         keysValid = false;
-    //     } else {
-    //         keysValid = true;
-    //     }
-    // }
-});
-
 // 赤・青の文字の変化を共有する
 // 工事中
 // vote に統合する
@@ -887,28 +859,37 @@ socket.on("voted", (data)=>{
     if (roomNameTmp!=roomName){
         return false;
     }
+    // 投票結果を盤面に反映させる
     let valid = othello(i, j, color);
     if (valid){
         cntStone += 1;
         if (cntStone>=STONE_LIMIT){
             finished = true;
         }
+        // 反対側の手番が回ってきたら
         if (CanPutStoneAll(color)){
-            isRed = false;
+            if (color==RED){
+                isRed = false;
+            } else if (color==BLUE){
+                isRed = true;
+            }
+        // どちらも手がなくなったら
         } else if (!CanPutStoneAll(otherColor)){
             finished = true;
         }
-        // socket.emit("field-changed", {value:[username, i, j, color, isRed]});
     }
+
+    // 工事中
+    // 元 socket.on("text-color-changed", (data)=>{});
     if (valid){
         let turn = document.getElementById("turn");
         let turnColor;
-        if (color==RED){
+        if (isRed){
             turn.innerHTML = "<span id='turn-color'>赤</span>のターン";
             turnColor = document.getElementById("turn-color");
             turnColor.style.color = COLOR_FIELD_RED;
             // socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>赤</span>のターン", COLOR_FIELD_RED]});
-        } else if (color==BLUE) {
+        } else if (!isRed) {
             turn.innerHTML = "<span id='turn-color'>青</span>のターン";
             turnColor = document.getElementById("turn-color");
             turnColor.style.color = COLOR_FIELD_BLUE;
