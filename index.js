@@ -64,6 +64,20 @@ let server = http.createServer((req, res)=>{
 }).listen(process.env.PORT || 8000);
 let io = socket(server);
 
+// 関数宣言
+// 部屋名が roomName である部屋の voted 配列を初期化する
+let initVoted=(roomName)=>{
+    let voted = [];
+    for (let i=0; i<8; i++){
+        let tmp = [];
+        for (let j=0; j<8; j++){
+            tmp.push(0);
+        }
+        voted.push(tmp);
+    }
+    rooms[roomName]["voted"] = voted;
+}
+
 /*
 rooms = {
     // 部屋名をキーとする、部屋ごとの連想配列
@@ -108,15 +122,6 @@ io.on("connection", (socket)=>{
         let roomInfo = data.value;
         let roomName = roomInfo["roomName"];
         let roomUsername = roomInfo["roomUsername"];
-        let voted = [];
-        // voted 配列を初期化
-        for (let i=0; i<8; i++){
-            let tmp = [];
-            for (let j=0; j<8; j++){
-                tmp.push(0);
-            }
-            voted.push(tmp);
-        }
         // rooms 連想配列を初期化
         rooms[roomName] = {
             "users": [roomUsername],
@@ -124,8 +129,10 @@ io.on("connection", (socket)=>{
             "cntRed": 0,
             "cntBlue": 0,
             "cntTmp": 0,
-            "voted": voted
+            "voted": null
         };
+        // voted 配列を初期化
+        initVoted(roomName);
         users[roomUsername] = {};
         io.sockets.emit("update-rooms", {value: rooms});
     });
@@ -208,11 +215,11 @@ io.on("connection", (socket)=>{
         let i = data.value[0];
         let j = data.value[1];
         let oneOrTwo = data.value[2];
-        // 投票する
-        rooms[roomName]["voted"][i][j]++;
-        let color = oneOrTwo==1 ? "cntRed" : "cntBlue";
         let roomName = data.value[3];
         let timeout = data.value[4];
+        let color = oneOrTwo==1 ? "cntRed" : "cntBlue";
+        // 投票する
+        rooms[roomName]["voted"][i][j]++;
         // TURN_DURATION_SEC を超えたら、強制的にターンを終了する
         if (timeout){
             rooms[roomName]["cntTmp"] = 9999;
@@ -232,6 +239,7 @@ io.on("connection", (socket)=>{
                     }
                 }
             }
+            initVoted(roomName);
             io.sockets.emit("voted", {value: [h, w, oneOrTwo, roomName]});
         }
     });
@@ -266,80 +274,34 @@ battle
 ・１ターンの秒数が過ぎたら強制的に拠点に戻して、相手のターンにする
 ・順番に石がひっくり返るようにする（rotate でアニメーションも作れそう）
 ・２人以上いないとバトル画面に遷移できないようにする
-・部屋間で独立した情報を扱うときは、roomName をソケット通信に乗せなければならない
-・部屋ごとに cntTmp をインクリメントしながら、投票が終わったか確認する。
+・部屋ごとに cntTmp をインクリメントしながら、投票が終わったか確認する
 -> TURN_DURATION_SEC(秒) 経過したら強制的に投票を締め切る
+・すべての socket.on() が部屋間で独立しているかを確認する
+-> 必要なソケット通信の箇所に roomName を付け加える
 
 // 工事中　<-を参照
 */
 
 /*
-投票の流れ
-
-// 投票する
-このタイミングで isRed && color=="red" || !isRed && color=="blue" に当てはまらない人は操作できない
-if (e.key=="Enter"){
-    if (isRed){
-        vote(paintedI, paintedJ, RED);
-        isRed = false;
-    } else {
-        vote(paintedI, paintedJ, BLUE);
-        isRed = true;
-    }
-}
-
-let vote=(i, j, oneOrTwo)=>{
-    if (CanPutStoneThere(i, j, oneOrTwo)){
-        socket.emit("voted", {value: ""});
-        // 工事中
-        if (isRed && color=="red" || !isRed && color=="blue"){
-            x = 0;
-            y = 0;
-            own.style.transform = `translate(${x}px, ${y}px)`;
-            ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
-            keysValid = false;
-        } else {
-            keysValid = true;
-        }
-    }
-}
-
-// 投票を受け付ける
-socket.on("voted", (data)=>{
-    color = "";
-    // 投票結果を返す
-    voted 配列を初期化する
-    // -> ０票の場合は置ける場所からランダムに
-    if (false){
-        let h = 0;
-        let w = 0;
-        let max = 0;
-        for (let i=0; i<8; i++){
-            for (let j=0; j<8; j++){
-                if (max<voted[i][j]){
-                    max = voted[i][j];
-                    h = i;
-                    w = j;
-                }
-            }
-        }
-        io.sockets.emit("voted", {value: [i, j, color]});
-    }
-});
-
 // 投票結果を受け取る
 socket.on("voted", (data)=>{
     let i = data.value[0];
     let j = data.value[1];
-    let color = data.value[2]; // 1:RED, 2:BLUE
+    let oneOrTwo = data.value[2];
+    let roomNameTmp = data.value[3];
+    let color;
     let otherColor;
-    if (color==RED){
+    if (oneOrTwo==RED){
+        color = RED;
         otherColor = BLUE;
     } else {
+        color = BLUE;
         otherColor = RED;
     }
-    let valid;
-    valid = othello(i, j, color);
+    if (roomNameTmp!=roomName){
+        return false;
+    }
+    let valid = othello(i, j, color);
     if (valid){
         cntStone += 1;
         if (cntStone>=STONE_LIMIT){

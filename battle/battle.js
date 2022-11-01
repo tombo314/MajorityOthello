@@ -884,9 +884,10 @@ socket.on("voted", (data)=>{
         color = BLUE;
         otherColor = RED;
     }
-    // if (roomNameTmp==roomName){
-    let valid;
-    valid = othello(i, j, color);
+    if (roomNameTmp!=roomName){
+        return false;
+    }
+    let valid = othello(i, j, color);
     if (valid){
         cntStone += 1;
         if (cntStone>=STONE_LIMIT){
