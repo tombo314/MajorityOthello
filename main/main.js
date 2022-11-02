@@ -17,6 +17,13 @@ const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
 const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
 const COLOR_PLAYER_PURPLE = "rgb(240, 100, 255)";
 
+// min 以上 max 未満の乱数を取得
+let getRandomInt=(min, max)=> {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min);
+}
+
 // ゲストが部屋に入るときにユーザーを登録する
 let registerUser=(roomName)=>{
     let username = prompt("ユーザー名を入力してください...");
@@ -46,13 +53,6 @@ let registerUser=(roomName)=>{
             window.location.href = "/";
         }
     });
-}
-
-// min 以上 max 未満の乱数を取得
-let getRandomInt=(min, max)=> {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min);
 }
 
 // ホストが部屋の作成を完了するとき

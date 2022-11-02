@@ -65,7 +65,6 @@ let server = http.createServer((req, res)=>{
 let io = socket(server);
 
 // 関数宣言
-// 部屋名が roomName である部屋の voted 配列を初期化する
 let initVoted=(roomName)=>{
     let voted = [];
     for (let i=0; i<8; i++){
@@ -76,6 +75,177 @@ let initVoted=(roomName)=>{
         voted.push(tmp);
     }
     rooms[roomName]["voted"] = voted;
+}
+let getRandomInt=(min, max)=> {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min);
+}
+// 工事中
+let canPutStoneThere=(p, q, oneOrTwo)=>{
+    let n = oneOrTwo;
+    let m;
+    if (n==1){
+        m = 2;
+    } else {
+        m = 1;
+    }
+    
+    // その場
+    if (field[p][q]!=0){
+        return false;
+    }
+
+    // 上
+    let ok = false;
+    if (p-1>=0 && field[p-1][q]==m){
+        for (let i=p-1; i>=0; i--){
+            if (field[i][q]==n){
+                ok = true;
+                break
+            } else if (field[i][q]==0){
+                ok = false;
+                break;
+            }
+        }
+    }
+    if (ok){
+        return true;
+    }
+    // 下
+    ok = false;
+    if (p+1<8 && field[p+1][q]==m){
+        for (let i=p+1; i<8; i++){
+            if (field[i][q]==n){
+                ok = true;
+                break
+            } else if (field[i][q]==0){
+                ok = false;
+                break;
+            }
+        }
+    }
+    if (ok){
+        return true;
+    }
+    // 左
+    ok = false;
+    if (q-1>=0 && field[p][q-1]==m){
+        for (let j=q-1; j>=0; j--){
+            if (field[p][j]==n){
+                ok = true;
+                break
+            } else if (field[p][j]==0){
+                ok = false;
+                break;
+            }
+        }
+    }
+    if (ok){
+        return true;
+    }
+    // 右
+    ok = false;
+    if (q+1<8 && field[p][q+1]==m){
+        for (let j=q+1; j<8; j++){
+            if (field[p][j]==n){
+                ok = true;
+                break
+            } else if (field[p][j]==0){
+                ok = false;
+                break;
+            }
+        }
+    }
+    if (ok){
+        return true;
+    }
+    // 左上
+    ok = false;
+    if (p-1>=0 && q-1>=0 && field[p-1][q-1]==m){
+        j = q-1;
+        for (let i=p-1; i>=0; i--){
+            if (j<0){
+                break;
+            }
+            if (field[i][j]==n){
+                ok = true;
+                break;
+            } else if (field[i][j]==0){
+                ok = false;
+                break;
+            }
+            j--;
+        }
+    }
+    if (ok){
+        return true;
+    }
+    // 右上
+    ok = false;
+    if (p-1>=0 && q+1<8 && field[p-1][q+1]==m){
+        j = q+1;
+        for (let i=p-1; i>=0; i--){
+            if (j>=8){
+                break;
+            }
+            if (field[i][j]==n){
+                ok = true;
+                break;
+            } else if (field[i][j]==0){
+                ok = false;
+                break;
+            }
+            j++;
+        }
+    }
+    if (ok){
+        return true;
+    }
+    // 左下
+    ok = false;
+    if (p+1<8 && q-1>=0 && field[p+1][q-1]==m){
+        j = q-1;
+        for (let i=p+1; i<8; i++){
+            if (j<0){
+                break;
+            }
+            if (field[i][j]==n){
+                ok = true;
+                break;
+            } else if (field[i][j]==0){
+                ok = false;
+                break;
+            }
+            j--;
+        }
+    }
+    if (ok){
+        return true;
+    }
+    // 右下
+    ok = false;
+    if (p+1<8 && q+1<8 && field[p+1][q+1]==m){
+        j = q+1;
+        for (let i=p+1; i<8; i++){
+            if (j>=8){
+                break;
+            }
+            if (field[i][j]==n){
+                ok = true;
+                break;
+            } else if (field[i][j]==0){
+                ok = false;
+                break;
+            }
+            j++;
+        }
+    }
+    if (ok){
+        return true;
+    }
+
+    return false;
 }
 
 /*
@@ -143,6 +313,7 @@ io.on("connection", (socket)=>{
         if (Object.keys(rooms).includes(roomName)){
             rooms[roomName]["users"].push(username);
             users[username] = {};
+            io.sockets.emit(username, {value: true});
         } else {
             // 部屋が存在しない場合はスタート画面に戻る
             io.sockets.emit(username, {value: false});
@@ -209,23 +380,23 @@ io.on("connection", (socket)=>{
     socket.on("text-color-changed", (data)=>{
         io.sockets.emit("text-color-changed", {value:data.value});
     });
-    // 工事中
     // 投票を受け付ける
     socket.on("voted", (data)=>{
         let i = data.value[0];
         let j = data.value[1];
         let oneOrTwo = data.value[2];
         let roomName = data.value[3];
-        let timeout = data.value[4];
+        let field = data.value[4];
+        let timeout = data.value[5];
         let color = oneOrTwo==1 ? "cntRed" : "cntBlue";
-        // 投票する
-        rooms[roomName]["voted"][i][j]++;
-        // TURN_DURATION_SEC を超えたら、強制的にターンを終了する
         if (timeout){
+            // TURN_DURATION_SEC を超えたら、強制的にターンを終了する
             rooms[roomName]["cntTmp"] = 9999;
+        } else {
+            // 投票する
+            rooms[roomName]["voted"][i][j]++;
         }
         // 投票結果を返す
-        // -> ０票の場合は置ける場所からランダムに
         if (rooms[roomName]["cntTmp"]>=rooms[roomName][color]){
             let h = 0;
             let w = 0;
@@ -240,7 +411,25 @@ io.on("connection", (socket)=>{
                 }
             }
             initVoted(roomName);
-            io.sockets.emit("voted", {value: [h, w, oneOrTwo, roomName]});
+            if (max>0){
+                // 1 票以上の投票があった場合
+                io.sockets.emit("voted", {value: [h, w, oneOrTwo, roomName]});
+            } else if(max==0) {
+                // 工事中
+                // 0 票の場合は置ける場所からランダムに置く
+                let candidateRandom = [];
+                for (let i=0; i<8; i++){
+                    for (let j=0; j<8; j++){
+                        if (canPutStoneThere(i, j, oneOrTwo)){
+                            candidateRandom.push([i, j]);
+                        }
+                    }
+                }
+                let r = getRandomInt(0, candidateRandom.length);
+                h = candidateRandom[r][0];
+                w = candidateRandom[r][1];
+                io.sockets.emit("voted", {value: [h, w, oneOrTwo]});
+            }
         }
     });
     // ゲームが終了したことを通知する
@@ -269,8 +458,6 @@ main
 
 battle
 ・投票システムを作る
-・もう一度最初からデータの流れをたどって確認する
-    -> socket の text-color-changed と field-changed を voted に統合する
 ・１ターンの秒数が過ぎたら強制的に拠点に戻して、相手のターンにする
 ・順番に石がひっくり返るようにする（rotate でアニメーションも作れそう）
 ・２人以上いないとバトル画面に遷移できないようにする
@@ -281,57 +468,4 @@ battle
 ・ゲーム終了の流れが上手く動いていない
 
 // 工事中 <-を参照
-*/
-
-/*
-battle.html
-
-// 投票結果を受け取る
-socket.on("voted", (data)=>{
-    let i = data.value[0];
-    let j = data.value[1];
-    let oneOrTwo = data.value[2];
-    let roomNameTmp = data.value[3];
-    let color;
-    let otherColor;
-    if (oneOrTwo==RED){
-        color = RED;
-        otherColor = BLUE;
-    } else {
-        color = BLUE;
-        otherColor = RED;
-    }
-    if (roomNameTmp!=roomName){
-        return false;
-    }
-    let valid = othello(i, j, color);
-    if (valid){
-        cntStone += 1;
-        if (cntStone>=STONE_LIMIT){
-            finished = true;
-        }
-        if (CanPutStoneAll(color)){
-            isRed = false;
-        } else if (!CanPutStoneAll(otherColor)){
-            finished = true;
-        }
-        // socket.emit("field-changed", {value:[username, i, j, color, isRed]});
-    }
-    if (valid){
-        let turn = document.getElementById("turn");
-        let turnColor;
-        if (color==RED){
-            turn.innerHTML = "<span id='turn-color'>赤</span>のターン";
-            turnColor = document.getElementById("turn-color");
-            turnColor.style.color = COLOR_FIELD_RED;
-            // socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>赤</span>のターン", COLOR_FIELD_RED]});
-        } else if (color==BLUE) {
-            turn.innerHTML = "<span id='turn-color'>青</span>のターン";
-            turnColor = document.getElementById("turn-color");
-            turnColor.style.color = COLOR_FIELD_BLUE;
-            // socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>青</span>のターン", COLOR_FIELD_BLUE]});
-        }
-    }
-});
-
 */

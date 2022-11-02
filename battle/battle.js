@@ -58,13 +58,13 @@ let getRandomInt=(min, max)=> {
 }
 let start=()=>{
     keysValid = false;
-    // opacity += 0.01;
-    // startEndSheet.style.opacity = opacity;
-    if (opacity>=0.6 || true){
+    opacity += 0.01;
+    startEndSheet.style.opacity = opacity;
+    if (opacity>=0.6){
         clearInterval(set);
-        // startEndSheet.style.backgroundColor = "#2228";
-        // startEndSheet.style.opacity = 1;
-        // startEndSheet.innerHTML = `<span style='color: ${COLOR_FIELD_RED}'>赤</span>が先手です`;
+        startEndSheet.style.backgroundColor = "#2228";
+        startEndSheet.style.opacity = 1;
+        startEndSheet.innerHTML = `<span style='color: ${COLOR_FIELD_RED}'>赤</span>が先手です`;
         setTimeout(()=>{
             let cnt = 3;
             set = setInterval(() => {
@@ -74,16 +74,15 @@ let start=()=>{
                     startEndSheet.style.opacity = 0;
                     startEndSheet.style.backgroundColor = "#222";
                     startEndSheet.textContent = "";
+                    // 工事中
                     if (isRed && color=="red" || !isRed && color=="blue"){
                         keysValid = true;
                     }
                     eachTurn(10);
                 }
                 cnt--;
-            // }, 1000);
-            }, 0);
-        // }, 2000);
-        }, 0);
+            }, 1000);
+        }, 2000);
     }
 }
 let makeSquare=(i, j)=>{
@@ -439,11 +438,11 @@ let othello=(p, q, oneOrTwo)=>{
     }
     return false;
 }
-let vote=(i, j, oneOrTwo)=>{
-    if (CanPutStoneThere(i, j, oneOrTwo)){
+let vote=(i, j, oneOrTwo, timeout)=>{
+    if (canPutStoneThere(i, j, oneOrTwo)){
         socket.emit("voted", {value: [
-            i, j, oneOrTwo, roomName,
-            false // TURN_DURATION_SEC を過ぎたかどうか
+            i, j, oneOrTwo, roomName, field,
+            timeout // TURN_DURATION_SEC を過ぎたかどうか
         ]});
         // 工事中
         // 強制的に自陣に戻される
@@ -458,7 +457,7 @@ let vote=(i, j, oneOrTwo)=>{
         }
     }
 }
-let CanPutStoneThere=(p, q, oneOrTwo)=>{
+let canPutStoneThere=(p, q, oneOrTwo)=>{
     let n = oneOrTwo;
     let m;
     if (n==1){
@@ -623,13 +622,13 @@ let CanPutStoneThere=(p, q, oneOrTwo)=>{
 
     return false;
 }
-let CanPutStoneAll=(n)=>{
+let canPutStoneAll=(n)=>{
     for (let i=0; i<8; i++){
         for (let j=0; j<8; j++){
             if (field[i][j]!=0){
                 continue;
             }
-            if (CanPutStoneThere(i, j, n)){
+            if (canPutStoneThere(i, j, n)){
                 return true;
             }
         }
@@ -650,6 +649,16 @@ let eachTurn=(s)=>{
                     finish();
                     keysValid = false;
                 } else {
+                    // // 工事中
+                    // if (!alreadyVoted){
+                    //     let c;
+                    //     if (color=="red"){
+                    //         c = RED;
+                    //     } else {
+                    //         c = BLUE;
+                    //     }
+                    //     vote(0, 0, c, true);
+                    // }
                     eachTurn(10);
                 }
             }, 1000);
@@ -666,7 +675,7 @@ let setCanPutStoneAll = new Set();
 let visualizeCanPutStoneAll=(n)=>{
     for (let i=0; i<8; i++){
         for (let j=0; j<8; j++){
-            if (CanPutStoneThere(i, j, n)){
+            if (canPutStoneThere(i, j, n)){
                 paintSquare(i, j);
                 setCanPutStoneAll.add(`${i}, ${j}`);
             } else {
@@ -826,21 +835,6 @@ socket.on("coordinates-changed", (data)=>{
     }
 });
 
-// 赤・青の文字の変化を共有する
-// 工事中
-// vote に統合する
-socket.on("text-color-changed", (data)=>{
-    // let tmp = data.value;
-    // let usernameOther = tmp[0];
-    // let text = tmp[1];
-    // let color = tmp[2];
-    // if (usernameOther!=username){
-    //     turn.innerHTML = text;
-    //     turnColor = document.getElementById("turn-color");
-    //     turnColor.style.color = color;
-    // }
-});
-
 // 投票結果を受け取る
 socket.on("voted", (data)=>{
     let i = data.value[0];
@@ -867,33 +861,32 @@ socket.on("voted", (data)=>{
             finished = true;
         }
         // 反対側の手番が回ってきたら
-        if (CanPutStoneAll(color)){
+        if (canPutStoneAll(color)){
             if (color==RED){
                 isRed = false;
             } else if (color==BLUE){
                 isRed = true;
             }
         // どちらも手がなくなったら
-        } else if (!CanPutStoneAll(otherColor)){
+        } else if (!canPutStoneAll(otherColor)){
             finished = true;
         }
     }
 
-    // 工事中
-    // 元 socket.on("text-color-changed", (data)=>{});
+    // 「赤（青）のターン」の文字の色を反映させる
     if (valid){
         let turn = document.getElementById("turn");
         let turnColor;
+        // 次に赤のターン
         if (isRed){
             turn.innerHTML = "<span id='turn-color'>赤</span>のターン";
             turnColor = document.getElementById("turn-color");
             turnColor.style.color = COLOR_FIELD_RED;
-            // socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>赤</span>のターン", COLOR_FIELD_RED]});
+        // 次に青のターン
         } else if (!isRed) {
             turn.innerHTML = "<span id='turn-color'>青</span>のターン";
             turnColor = document.getElementById("turn-color");
             turnColor.style.color = COLOR_FIELD_BLUE;
-            // socket.emit("text-color-changed", {value: [username, "<span id='turn-color'>青</span>のターン", COLOR_FIELD_BLUE]});
         }
     }
 });
@@ -991,10 +984,8 @@ onkeydown=(e)=>{
     if (e.key=="Enter"){
         if (isRed){
             vote(paintedI, paintedJ, RED);
-            isRed = false;
         } else {
             vote(paintedI, paintedJ, BLUE);
-            isRed = true;
         }
     }
 }
