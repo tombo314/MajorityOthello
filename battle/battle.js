@@ -452,8 +452,6 @@ let vote=(i, j, oneOrTwo, timeout)=>{
         own.style.transform = `translate(${x}px, ${y}px)`;
         ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
         keysValid = false;
-    } else {
-        keysValid = true;
     }
 }
 let canPutStoneThere=(p, q, oneOrTwo)=>{
@@ -839,33 +837,33 @@ socket.on("coordinates-changed", (data)=>{
 socket.on("voted", (data)=>{
     let i = data.value[0];
     let j = data.value[1];
-    let colorOneOrTwo = data.value[2];
+    let oneOrTwo = data.value[2];
     let roomNameTmp = data.value[3];
-    let otherColorOneOrTwo;
+    let otherOneOrTwo;
     if (colorOneOrTwo==RED){
-        otherColorOneOrTwo = BLUE;
+        otherOneOrTwo = BLUE;
     } else if (colorOneOrTwo==BLUE) {
-        otherColorOneOrTwo = RED;
+        otherOneOrTwo = RED;
     }
     if (roomNameTmp!=roomName){
         return false;
     }
     // 投票結果を盤面に反映させる
-    let valid = othello(i, j, colorOneOrTwo);
+    let valid = othello(i, j, oneOrTwo);
     if (valid){
         cntStone += 1;
         if (cntStone>=STONE_LIMIT){
             finished = true;
         }
         // 反対側の手番が回ってきたら
-        if (canPutStoneAll(colorOneOrTwo)){
+        if (canPutStoneAll(oneOrTwo)){
             if (colorOneOrTwo==RED){
                 turnOneOrTwo ^= 3;
             } else if (colorOneOrTwo==BLUE){
                 turnOneOrTwo ^= 3;
             }
         // どちらも手がなくなったら
-        } else if (!canPutStoneAll(otherColorOneOrTwo)){
+        } else if (!canPutStoneAll(otherOneOrTwo)){
             finished = true;
         }
     }
@@ -885,6 +883,10 @@ socket.on("voted", (data)=>{
             turnColor = document.getElementById("turn-color");
             turnColor.style.color = COLOR_FIELD_BLUE;
         }
+    }
+
+    if (oneOrTwo!=colorOneOrTwo){
+        keysValid = true;
     }
 });
 
