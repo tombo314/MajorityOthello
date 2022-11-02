@@ -274,6 +274,7 @@ users = {
 let rooms = {};
 let users = {};
 let color;
+let field;
 io.on("connection", (socket)=>{
     /* index.html */
     // 前回作った部屋と前回のユーザー情報を削除する
@@ -386,7 +387,7 @@ io.on("connection", (socket)=>{
         let j = data.value[1];
         let oneOrTwo = data.value[2];
         let roomName = data.value[3];
-        let field = data.value[4];
+        field = data.value[4];
         let timeout = data.value[5];
         let color = oneOrTwo==1 ? "cntRed" : "cntBlue";
         if (timeout){
@@ -395,6 +396,7 @@ io.on("connection", (socket)=>{
         } else {
             // 投票する
             rooms[roomName]["voted"][i][j]++;
+            rooms[roomName]["cntTmp"]++;
         }
         // 投票結果を返す
         if (rooms[roomName]["cntTmp"]>=rooms[roomName][color]){
@@ -468,4 +470,38 @@ battle
 ・ゲーム終了の流れが上手く動いていない
 
 // 工事中 <-を参照
+*/
+
+/*
+問題：othello() が実行されない
+
+othello() 周辺の流れ
+1. プレイヤーは 10 秒間動くことができる
+2. cntTmp>=cntRed(blue) になると強制的にターンエンドになる
+    -> 残り時間の表示が 10 秒ぴったりに更新されている
+        -> socket.on("voted", ()=>{}); のタイミングで残り時間を 0 にし、ターンエンドする
+3. 最初の赤は動けるが、その次の青が操作できない
+    -> デバッグ
+*/
+
+/*
+let vote=(i, j, oneOrTwo, timeout)=>{
+    if (canPutStoneThere(i, j, oneOrTwo)){
+        socket.emit("voted", {value: [
+            i, j, oneOrTwo, roomName, field,
+            timeout // TURN_DURATION_SEC を過ぎたかどうか
+        ]});
+        // 工事中
+        // 強制的に自陣に戻される
+        if (turnOneOrTwo==1 && color=="red" || turnOneOrTwo==2 && color=="blue"){
+            x = 0;
+            y = 0;
+            own.style.transform = `translate(${x}px, ${y}px)`;
+            ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
+            keysValid = false;
+        } else {
+            keysValid = true;
+        }
+    }
+}
 */

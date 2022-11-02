@@ -440,22 +440,20 @@ let othello=(p, q, oneOrTwo)=>{
     return false;
 }
 let vote=(i, j, oneOrTwo, timeout)=>{
-    if (canPutStoneThere(i, j, oneOrTwo)){
-        socket.emit("voted", {value: [
-            i, j, oneOrTwo, roomName, field,
-            timeout // TURN_DURATION_SEC を過ぎたかどうか
-        ]});
-        // 工事中
-        // 強制的に自陣に戻される
-        if (turnOneOrTwo==1 && color=="red" || turnOneOrTwo==2 && color=="blue"){
-            x = 0;
-            y = 0;
-            own.style.transform = `translate(${x}px, ${y}px)`;
-            ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
-            keysValid = false;
-        } else {
-            keysValid = true;
-        }
+    socket.emit("voted", {value: [
+        i, j, oneOrTwo, roomName, field,
+        timeout // TURN_DURATION_SEC を過ぎたかどうか
+    ]});
+    // 工事中
+    // 強制的に自陣に戻される
+    if (turnOneOrTwo==1 && color=="red" || turnOneOrTwo==2 && color=="blue"){
+        x = 0;
+        y = 0;
+        own.style.transform = `translate(${x}px, ${y}px)`;
+        ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
+        keysValid = false;
+    } else {
+        keysValid = true;
     }
 }
 let canPutStoneThere=(p, q, oneOrTwo)=>{
@@ -761,7 +759,7 @@ socket.on("user-info-init", (data)=>{
 
         // 全プレイヤーの円を描画
         makePlayerCircle(playerName, initX, initY, playerColorRGB);
-        
+
         // プレイヤーの名前を表示
         makePlayerName(playerName, initX, initY);
     }
@@ -853,7 +851,7 @@ socket.on("voted", (data)=>{
         return false;
     }
     // 投票結果を盤面に反映させる
-    let valid = othello(i, j, color);
+    let valid = othello(i, j, colorOneOrTwo);
     if (valid){
         cntStone += 1;
         if (cntStone>=STONE_LIMIT){
@@ -982,7 +980,7 @@ onkeydown=(e)=>{
     // 投票する
     if (e.key=="Enter"){
         if (canPutStoneThere(paintedI, paintedJ, colorOneOrTwo)){
-            vote(paintedI, paintedJ, colorOneOrTwo);
+            vote(paintedI, paintedJ, colorOneOrTwo, false);
         }
     }
 }
