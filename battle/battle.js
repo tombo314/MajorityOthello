@@ -18,12 +18,13 @@ let xDiff;
 let opacity;
 let set;
 let color;
+let colorOneOrTwo;
+let keysValid;
 let x = 0;
 let y = 0;
-let keysValid;
 let cntStone = 4;
+let turnOneOrTwo = 1;
 let finished = false;
-let isRed = true;
 
 // 定数の宣言
 const RED = 1;
@@ -75,7 +76,7 @@ let start=()=>{
                     startEndSheet.style.backgroundColor = "#222";
                     startEndSheet.textContent = "";
                     // 工事中
-                    if (isRed && color=="red" || !isRed && color=="blue"){
+                    if (turnOneOrTwo==1 && color=="red" || turnOneOrTwo==2 && color=="blue"){
                         keysValid = true;
                     }
                     eachTurn(10);
@@ -446,7 +447,7 @@ let vote=(i, j, oneOrTwo, timeout)=>{
         ]});
         // 工事中
         // 強制的に自陣に戻される
-        if (isRed && color=="red" || !isRed && color=="blue"){
+        if (turnOneOrTwo==1 && color=="red" || turnOneOrTwo==2 && color=="blue"){
             x = 0;
             y = 0;
             own.style.transform = `translate(${x}px, ${y}px)`;
@@ -636,33 +637,27 @@ let canPutStoneAll=(n)=>{
     return false;
 }
 let eachTurn=(s)=>{
-    if (isRed){
-        visualizeCanPutStoneAll(RED);
-    } else {
-        visualizeCanPutStoneAll(BLUE);
-    }
+    // ターン開始時に置ける場所を表示する
+    visualizeCanPutStoneAll(turnOneOrTwo);
     set = setInterval(() => {
         if (s<=0){
             clearInterval(set);
             setTimeout(()=>{
+                // ターンの合間に 1000ms の間隔を空ける
                 if(finished){
                     finish();
                     keysValid = false;
                 } else {
                     // // 工事中
                     // if (!alreadyVoted){
-                    //     let c;
-                    //     if (color=="red"){
-                    //         c = RED;
-                    //     } else {
-                    //         c = BLUE;
-                    //     }
-                    //     vote(0, 0, c, true);
+                    //     vote(0, 0, colorOneOrTwo, true);
                     // }
+                    // 次のターンへ
                     eachTurn(10);
                 }
             }, 1000);
         }
+        // 残り時間を更新する
         if (finished){
             timer.textContent = "00:00";
         } else {
@@ -775,9 +770,16 @@ socket.on("user-info-init", (data)=>{
     own = document.getElementById(`id-${username}`);
     ownName = document.getElementById(`id-${username}-name`);
     color = users[username]["color"];
+    // 自分が青の場合に画面の右側に配置する
     if (color=="blue"){
         ownX = Math.min(ownX, 350);
         ownX = innerWidth - ownX;
+    }
+    // 色を red:1, blue:2 で保持する
+    if (color=="red"){
+        colorOneOrTwo = RED;
+    } else if (color=="blue"){
+        colorOneOrTwo = BLUE;
     }
 });
 
@@ -839,16 +841,13 @@ socket.on("coordinates-changed", (data)=>{
 socket.on("voted", (data)=>{
     let i = data.value[0];
     let j = data.value[1];
-    let oneOrTwo = data.value[2];
+    let colorOneOrTwo = data.value[2];
     let roomNameTmp = data.value[3];
-    let color;
-    let otherColor;
-    if (oneOrTwo==RED){
-        color = RED;
-        otherColor = BLUE;
-    } else {
-        color = BLUE;
-        otherColor = RED;
+    let otherColorOneOrTwo;
+    if (colorOneOrTwo==RED){
+        otherColorOneOrTwo = BLUE;
+    } else if (colorOneOrTwo==BLUE) {
+        otherColorOneOrTwo = RED;
     }
     if (roomNameTmp!=roomName){
         return false;
@@ -861,14 +860,14 @@ socket.on("voted", (data)=>{
             finished = true;
         }
         // 反対側の手番が回ってきたら
-        if (canPutStoneAll(color)){
-            if (color==RED){
-                isRed = false;
-            } else if (color==BLUE){
-                isRed = true;
+        if (canPutStoneAll(colorOneOrTwo)){
+            if (colorOneOrTwo==RED){
+                turnOneOrTwo ^= 3;
+            } else if (colorOneOrTwo==BLUE){
+                turnOneOrTwo ^= 3;
             }
         // どちらも手がなくなったら
-        } else if (!canPutStoneAll(otherColor)){
+        } else if (!canPutStoneAll(otherColorOneOrTwo)){
             finished = true;
         }
     }
@@ -878,12 +877,12 @@ socket.on("voted", (data)=>{
         let turn = document.getElementById("turn");
         let turnColor;
         // 次に赤のターン
-        if (isRed){
+        if (turnOneOrTwo==1){
             turn.innerHTML = "<span id='turn-color'>赤</span>のターン";
             turnColor = document.getElementById("turn-color");
             turnColor.style.color = COLOR_FIELD_RED;
         // 次に青のターン
-        } else if (!isRed) {
+        } else if (turnOneOrTwo==2) {
             turn.innerHTML = "<span id='turn-color'>青</span>のターン";
             turnColor = document.getElementById("turn-color");
             turnColor.style.color = COLOR_FIELD_BLUE;
@@ -982,10 +981,8 @@ onkeydown=(e)=>{
 
     // 投票する
     if (e.key=="Enter"){
-        if (isRed){
-            vote(paintedI, paintedJ, RED);
-        } else {
-            vote(paintedI, paintedJ, BLUE);
+        if (canPutStoneThere(paintedI, paintedJ, colorOneOrTwo)){
+            vote(paintedI, paintedJ, colorOneOrTwo);
         }
     }
 }
