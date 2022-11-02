@@ -74,7 +74,9 @@ let initVoted=(roomName)=>{
         }
         voted.push(tmp);
     }
-    rooms[roomName]["voted"] = voted;
+    if (Object.keys(rooms).includes(roomName)){
+        rooms[roomName]["voted"] = voted;
+    }
 }
 let getRandomInt=(min, max)=> {
     min = Math.ceil(min);
@@ -324,7 +326,9 @@ io.on("connection", (socket)=>{
     /* wait.html */
     // マッチングが完了した部屋の名前を通知する
     socket.on("waiting-finished", (data)=>{
-        io.sockets.emit("waiting-finished", {value: rooms[data.value]["users"]});
+        if (Object.keys(rooms).includes(data.value)){
+            io.sockets.emit("waiting-finished", {value: rooms[data.value]["users"]});
+        }
     });
 
     /* battle.html */
@@ -373,14 +377,6 @@ io.on("connection", (socket)=>{
     socket.on("coordinates-changed", (data)=>{
         io.sockets.emit("coordinates-changed", {value:data.value});
     });
-    // オセロの盤面が変わったことを通知する
-    socket.on("field-changed", (data)=>{
-        io.sockets.emit("field-changed", {value:data.value});
-    });
-    // 「赤（青）のターン」の、赤（青）の文字の色が変わったことを通知する
-    socket.on("text-color-changed", (data)=>{
-        io.sockets.emit("text-color-changed", {value:data.value});
-    });
     // 投票を受け付ける
     socket.on("voted", (data)=>{
         let i = data.value[0];
@@ -390,6 +386,9 @@ io.on("connection", (socket)=>{
         field = data.value[4];
         let timeout = data.value[5];
         let color = oneOrTwo==1 ? "cntRed" : "cntBlue";
+        if (!Object.keys(rooms).includes(roomName)){
+            return false;
+        }
         if (timeout){
             // TURN_DURATION_SEC を超えたら、強制的にターンを終了する
             rooms[roomName]["cntTmp"] = 9999;
@@ -413,6 +412,7 @@ io.on("connection", (socket)=>{
                 }
             }
             initVoted(roomName);
+            rooms[roomName]["cntTmp"] = 0;
             if (max>0){
                 // 1 票以上の投票があった場合
                 io.sockets.emit("voted", {value: [h, w, oneOrTwo, roomName]});
