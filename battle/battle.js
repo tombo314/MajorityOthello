@@ -734,7 +734,6 @@ let nodesAlly = document.getElementById("nodes-ally");
 let nodesOpponent = document.getElementById("nodes-opponent");
 let othelloWrapper = document.getElementById("othello-wrapper");
 let startEndSheet = document.getElementById("start-end-sheet");
-// turnDurationSec をサーバ―から受け取る
 socket.emit("need-turn-duration-sec", {value: roomName});
 socket.on("need-turn-duration-sec", (data)=>{
     let roomNameTmp = data.value["roomName"];
@@ -743,7 +742,6 @@ socket.on("need-turn-duration-sec", (data)=>{
         turnDurationSec = turnDurationSecTmp;
     }
 });
-console.log(turnDurationSec);
 
 // ユーザー情報送信
 if (username!=null){
@@ -921,7 +919,8 @@ socket.on("voted", (data)=>{
 
 // カウントダウンを管理する
 socket.on("countdown", (data)=>{
-    let roomNameTmp = data.value;
+    let roomNameTmp = data.value["roomName"];
+    turnDurationSec = data.value["turnDurationSec"];
     if (roomNameTmp==roomName){
         eachTurn(parseInt(turnDurationSec));
     }

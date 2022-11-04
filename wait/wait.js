@@ -6,7 +6,6 @@ let roomName = sessionStorage.getItem("roomName");
 let isHostStr = sessionStorage.getItem("isHostStr");
 
 // 「トップに戻る」ボタンのレイアウト
-console.log(isHostStr);
 if (isHostStr=="false"){
     btnToTop.style.transform = "translateX(400px)";
 }

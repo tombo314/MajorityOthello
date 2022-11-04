@@ -472,20 +472,27 @@ io.on("connection", (socket)=>{
     // カウントダウンを管理する
     socket.on("countdown-start", (data)=>{
         let roomName = data.value["roomName"];
-        if (Object.keys(rooms).includes(roomName)){
-            rooms[roomName]["cntSec"] = 0;
-            rooms[roomName]["set"] = setInterval(()=>{
-                // そのターンが終わったら次のターンを始める
-                if (rooms[roomName]["cntSec"]>=rooms[roomName]["turnDurationSec"]){
-                    rooms[roomName]["cntSec"] = 0;
-                    io.sockets.emit("countdown", {value: roomName});
-                } else {
-                    rooms[roomName]["cntSec"]++;
-                }
-            }, 1000);
-        } else {
+        if (!Object.keys(rooms).includes(roomName)){
             io.sockets.emit("room-not-exist", {value: roomName});
+            return false;
         }
+        rooms[roomName]["cntSec"] = 0;
+        rooms[roomName]["set"] = setInterval(()=>{
+            if (!Object.keys(rooms).includes(roomName)){
+                io.sockets.emit("room-not-exist", {value: roomName});
+                return false;
+            }
+            // そのターンが終わったら次のターンを始める
+            if (rooms[roomName]["cntSec"]>=rooms[roomName]["turnDurationSec"]){
+                rooms[roomName]["cntSec"] = 0;
+                io.sockets.emit("countdown", {value: {
+                    "roomName": roomName,
+                    "turnDurationSec": rooms[roomName]["turnDurationSec"]
+                }});
+            } else {
+                rooms[roomName]["cntSec"]++;
+            }
+        }, 1000);
     });
     // ゲームが終了したことを通知する
     socket.on("game-finished", (data)=>{ 
