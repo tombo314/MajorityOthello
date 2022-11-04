@@ -24,8 +24,8 @@ let x = 0;
 let y = 0;
 let cntStone = 4;
 let turnOneOrTwo = 1;
-// debug
-// let turnDurationSec = 10;
+let eachTurnStarted = false;
+let alreadyVoted = false;
 let finished = false;
 
 // 定数の宣言
@@ -47,8 +47,6 @@ const GRID_INIT_TOP = -65;
 const GRID_DIFF_X = 5.75;
 const GRID_DIFF_Y = 4;
 const STONE_LIMIT = 64;
-// debug
-// const STONE_LIMIT = 8;
 const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
 const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
 const COLOR_FIELD_RED = "rgb(255, 50, 50)";
@@ -80,6 +78,7 @@ let start=()=>{
                     startEndSheet.textContent = "";
                     if (turnOneOrTwo==1 && color=="red" || turnOneOrTwo==2 && color=="blue"){
                         keysValid = true;
+                        eachTurnStarted = true;
                         eachTurn(parseInt(turnDurationSec));
                     }
                     if (isHostStr=="true"){
@@ -654,10 +653,14 @@ let canPutStoneAll=(n)=>{
 }
 let eachTurn=(s)=>{
     // ターン開始時に置ける場所を表示する
+    eachTurnStarted = true;
     visualizeCanPutStoneAll(turnOneOrTwo);
     set = setInterval(() => {
         if (s<=0){
+            // ターン終了
             clearInterval(set);
+            eachTurnStarted = false;
+            // ゲームが終わったとき
             if(finished){
                 finish();
                 keysValid = false;
@@ -918,10 +921,10 @@ socket.on("voted", (data)=>{
 });
 
 // カウントダウンを管理する
-socket.on("countdown", (data)=>{
+socket.on("countdown-restart", (data)=>{
     let roomNameTmp = data.value["roomName"];
     turnDurationSec = data.value["turnDurationSec"];
-    if (roomNameTmp==roomName){
+    if (roomNameTmp==roomName && !eachTurnStarted){
         eachTurn(parseInt(turnDurationSec));
     }
 });
