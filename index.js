@@ -349,7 +349,6 @@ io.on("connection", (socket)=>{
                 "roomName": roomName,
                 "usersLength": rooms[roomName]["users"].length
             }});
-            console.log(rooms[roomName]["users"]);
         }
         // 部屋が存在しない場合
         else {
@@ -449,20 +448,6 @@ io.on("connection", (socket)=>{
             initVoted(roomName);
             rooms[roomName]["cntVoted"] = 0;
             io.sockets.emit("voted", {value: [maxI, maxJ, oneOrTwo, roomName]});
-            // // 工事中
-            // // 0 票の場合は置ける場所からランダムに置く
-            // let candidateRandom = [];
-            // for (let i=0; i<8; i++){
-            //     for (let j=0; j<8; j++){
-            //         if (canPutStoneThere(i, j, oneOrTwo)){
-            //             candidateRandom.push([i, j]);
-            //         }
-            //     }
-            // }
-            // let r = getRandomInt(0, candidateRandom.length);
-            // h = candidateRandom[r][0];
-            // w = candidateRandom[r][1];
-            // io.sockets.emit("voted", {value: [h, w, oneOrTwo]});
         }
     });
     // カウントダウンを管理する
@@ -489,6 +474,31 @@ io.on("connection", (socket)=>{
                 rooms[roomName]["cntSec"]++;
             }
         }, 1000);
+    });
+    // ターン内に投票が間に合わなかったとき
+    socket.on("time-is-up", (data)=>{
+        let roomName = data.value["roomName"];
+        let oneOrTwo = data.value["oneOrTwo"];
+        field = data.value["field"];
+        initVoted(roomName);
+        if (!Object.keys(rooms).includes(roomName)){
+            io.sockets.emit("room-not-exist", {value: roomName});
+            return false;
+        }
+        rooms[roomName]["cntVoted"] = 0;
+        // 0 票の場合は置ける場所からランダムに置く
+        let candidateRandom = [];
+        for (let i=0; i<8; i++){
+            for (let j=0; j<8; j++){
+                if (canPutStoneThere(i, j, oneOrTwo)){
+                    candidateRandom.push([i, j]);
+                }
+            }
+        }
+        let r = getRandomInt(0, candidateRandom.length);
+        randI = candidateRandom[r][0];
+        randJ = candidateRandom[r][1];
+        io.sockets.emit("voted", {value: [randI, randJ, oneOrTwo, roomName]});
     });
     // ゲームが終了したことを通知する
     socket.on("game-finished", (data)=>{ 

@@ -464,6 +464,7 @@ let vote=(i, j, oneOrTwo)=>{
     socket.emit("voted", {value: [
         i, j, oneOrTwo, roomName, field
     ]});
+    alreadyVoted = true;
     // 強制的に自陣に戻される
     if (turnOneOrTwo==1 && color=="red" || turnOneOrTwo==2 && color=="blue"){
         x = 0;
@@ -654,12 +655,20 @@ let canPutStoneAll=(n)=>{
 let eachTurn=(s)=>{
     // ターン開始時に置ける場所を表示する
     eachTurnStarted = true;
+    alreadyVoted = false;
     visualizeCanPutStoneAll(turnOneOrTwo);
     set = setInterval(() => {
         if (s<=0){
             // ターン終了
             clearInterval(set);
             eachTurnStarted = false;
+            if (!alreadyVoted){
+                socket.emit("time-is-up", {value: {
+                    "roomName": roomName,
+                    "oneOrTwo": turnOneOrTwo,
+                    "field": field
+                }});
+            }
             // ゲームが終わったとき
             if(finished){
                 finish();
