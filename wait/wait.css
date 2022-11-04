@@ -16,21 +16,33 @@ html {
     text-align: center;
     color: #333;
   }
-  .btn-start {
+  .wrapper-btns {
+    display: flex;
     position: absolute;
+    width: 100vw;
+    height: 100px;
+    transform: translateY(120px);
+  }
+  .wrapper-btns .btn-start, .wrapper-btns .btn-to-top {
     width: 180px;
     height: 60px;
     font-size: 20px;
     border: 1px solid #333;
     border-radius: 20px;
-    transform: translate(580px, 120px);
     visibility: hidden;
   }
-  .btn-start:hover {
+  .wrapper-btns .btn-start:hover, .wrapper-btns .btn-to-top:hover {
     opacity: 0.7;
   }
-  .btn-start:active {
+  .wrapper-btns .btn-start:active, .wrapper-btns .btn-to-top:active {
     opacity: 0.5;
+  }
+  .wrapper-btns .btn-start {
+    transform: translateX(470px);
+  }
+  .wrapper-btns .btn-to-top {
+    transform: translateX(530px);
+    visibility: visible;
   }
   .loader {
     color: #f5a;

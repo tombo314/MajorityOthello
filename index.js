@@ -298,6 +298,7 @@ io.on("connection", (socket)=>{
         let roomInfo = data.value;
         let roomName = roomInfo["roomName"];
         let roomUsername = roomInfo["roomUsername"];
+        let turnDurationSec = roomInfo["turnDurationSec"];
         // rooms 連想配列を初期化
         rooms[roomName] = {
             "users": [roomUsername],
@@ -305,7 +306,7 @@ io.on("connection", (socket)=>{
             "cntRed": 0,
             "cntBlue": 0,
             "cntVoted": 0,
-            "turnDurationSec": 0,
+            "turnDurationSec": turnDurationSec,
             "cntSec": 0,
             "set": null,
             "voted": null
@@ -338,6 +339,17 @@ io.on("connection", (socket)=>{
             io.sockets.emit("room-not-exist", {value: roomName});
         }
     });
+    // 部屋で待機中の人数を返す
+    socket.on("need-users-length", (data)=>{
+        let roomName = data.value;
+        if (Object.keys(rooms).includes(roomName)){
+            io.sockets.emit("need-users-length", {value: rooms[roomName]["users"].length});
+        }
+        // 部屋が存在しない場合
+        else {
+            io.sockets.emit("room-not-exist", {value: roomName});
+        }
+    });
     // マッチングが完了した部屋の名前を通知する
     socket.on("waiting-finished", (data)=>{
         if (Object.keys(rooms).includes(data.value)){
@@ -346,10 +358,13 @@ io.on("connection", (socket)=>{
     });
 
     /* battle.html */
-    // ホストから turnDurationSec を受け取る
-    socket.on("turn-duration-sec", (data)=>{
-        let roomName = data.value["roomName"];
-        rooms[roomName]["turnDurationSec"] = data.value["turnDuratoinSec"];
+    // turnDurationSec を返す
+    socket.on("need-turn-duration-sec", (data)=>{
+        let roomName = data.value;
+        io.sockets.emit("need-turn-duration-sec", {value: {
+            "roomName": roomName,
+            "turnDurationSec": rooms[roomName]["turnDurationSec"]
+        }});
     });
     // 全ユーザーの情報を、対応する部屋に返す
     socket.on("user-info-init", (data)=>{
@@ -490,6 +505,8 @@ main
     -> 授業が終わったら getElementById().onclick に戻す
 
 battle
+・ターンが終わるまでは、何回でも投票できるようにする
+    -> 一番最後に投票した場所が自分の投票した場所になる
 ・投票したマスが分かるように着色する
 ・投票時に confirm などで Yes or No を聞く
 〇投票システムを作る
@@ -499,8 +516,7 @@ battle
     -> 必要なソケット通信の箇所に roomName を付け加える
 ・ゲーム終了の流れが上手く動いていない
 ・全員が投票し終わっても turnDurationSec 秒経つまではターンが変わらないようにする
-    -> サーバー側で時間を数える。部屋ごとに秒数を持つ
-    -> 時間が経ったらクライアントに返す。クライアントは socket.on で受け取る
+    -> 盤面の変化、文字の色の変化、keysValid の変化などはすべてターンの終わりに反映させるようにする
 
 // 工事中 <-を参照
 */

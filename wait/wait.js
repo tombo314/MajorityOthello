@@ -1,14 +1,8 @@
 let socket = io();
 let btnStart = document.getElementById("btn-start");
+let btnToTop = document.getElementById("btn-to-top");
 let username = sessionStorage.getItem("username");
 let roomName = sessionStorage.getItem("roomName");
-
-// 同じ画面が一度読み込まれたか
-// -> 読み込まれていた場合はスタート画面に戻る
-if (sessionStorage.getItem("samePageLoaded")=="true"){
-    window.location.href = "/";
-}
-sessionStorage.setItem("samePageLoaded", "true");
 
 // 部屋が存在しない場合はスタート画面に戻る
 socket.emit("confirm-room", {value: roomName});
@@ -18,9 +12,27 @@ if (sessionStorage.getItem("isHostStr")=="true"){
     document.getElementById("btn-start").style.visibility = "visible";
 }
 
+// マッチングを完了する
 btnStart.onclick=()=>{
-    // 自分が立てた部屋の名前を送信する
-    socket.emit("waiting-finished", {value: roomName});
+    // 部屋で待機中の人数を得る
+    socket.emit("need-users-length", {value: roomName});
+    socket.on("need-users-length", (data)=>{
+        let roomNameTmp = data.value["roomName"];
+        let usersLength = data.value["usersLength"];
+        if (roomNameTmp==roomName && usersLength>=2){
+            socket.emit("waiting-finished", {value: roomName});
+        }
+        // １人以下の場合
+        else {
+            alert("２人以上いないと開始できません。");
+            window.location.href = "/wait";
+        }
+    });
+}
+
+// トップに戻る
+btnToTop.onclick=()=>{
+    window.location.href = "/";
 }
 
 // いずれかの部屋のマッチングが終了した

@@ -38,18 +38,11 @@ let registerUser=(roomName)=>{
                 "username": username,
                 "roomName": roomName
             }});
-            socket.on(username, (data)=>{
-                if (data.value){
-                    sessionStorage.setItem("isHost", "false");
-                    sessionStorage.setItem("username", username);
-                    sessionStorage.setItem("roomName", roomName);
-                    sessionStorage.setItem("samePageLoaded", "false");
-                    window.location.href = "/wait";
-                } else {
-                    // /wait/wait.html に遷移してから戻ることでリロードする
-                    window.location.href = "/wait";
-                }
-            });
+            sessionStorage.setItem("isHost", "false");
+            sessionStorage.setItem("username", username);
+            sessionStorage.setItem("roomName", roomName);
+            sessionStorage.setItem("samePageLoaded", "false");
+            window.location.href = "/wait";
         } else {
             alert("そのユーザー名はすでに使われています。");
             window.location.href = "/";
@@ -104,12 +97,12 @@ let makeRoom=(e)=>{
                 } else if (!Object.keys(users).includes(username)){
                     socket.emit("room-make-finished", {value: {
                         "roomName": roomNameElem.value,
-                        "roomUsername": roomUsername.value
+                        "roomUsername": roomUsername.value,
+                        "turnDurationSec": turnDurationSecElem.value
                     }});
                     sessionStorage.setItem("isHostStr", "true");
                     sessionStorage.setItem("username", roomUsername.value);
                     sessionStorage.setItem("roomName", roomNameElem.value);
-                    sessionStorage.setItem("turnDurationSec", turnDurationSecElem.value);
                     sessionStorage.setItem("samePageLoaded", "false");
                     window.location.href = "/wait";
                 } else {
@@ -125,6 +118,13 @@ let makeRoom=(e)=>{
 blackSheet.onclick=()=>{
     blackSheet.style.visibility = "hidden";
     roomMakeWindow.style.visibility = "hidden";
+}
+// Escキーを押してキャンセル
+onkeydown=(e)=>{
+    if (e.key=="Escape"){
+        blackSheet.style.visibility = "hidden";
+        roomMakeWindow.style.visibility = "hidden";
+    }
 }
 
 // 「部屋を作る」を押してフォームを表示

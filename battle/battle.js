@@ -712,8 +712,7 @@ let socket = io();
 let username = sessionStorage.getItem("username");
 let roomName = sessionStorage.getItem("roomName");
 let isHostStr = sessionStorage.getItem("isHostStr");
-let turnDurationSec = sessionStorage.getItem("turnDurationSec");
-console.log(parseInt(turnDurationSec));
+let turnDurationSec;
 let ownX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
 let ownY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
 let timer = document.getElementById("timer");
@@ -721,6 +720,16 @@ let nodesAlly = document.getElementById("nodes-ally");
 let nodesOpponent = document.getElementById("nodes-opponent");
 let othelloWrapper = document.getElementById("othello-wrapper");
 let startEndSheet = document.getElementById("start-end-sheet");
+// turnDurationSec をサーバ―から受け取る
+socket.emit("need-turn-duration-sec", {value: roomName});
+socket.on("need-turn-duration-sec", (data)=>{
+    let roomNameTmp = data.value["roomName"];
+    let turnDurationSecTmp = data.value["turnDurationSec"];
+    if (roomNameTmp==roomName){
+        turnDurationSec = turnDurationSecTmp;
+    }
+});
+console.log(turnDurationSec);
 
 // ユーザー情報送信
 if (username!=null){
