@@ -99,7 +99,7 @@ html{
         height: 120vh;
         position: absolute;
         background-color: #2226;
-        visibility: hidden; // ここを消してデバッグ
+        // visibility: hidden; // ここを消してデバッグ
     }
 
     #room-make-window{
@@ -109,7 +109,7 @@ html{
         border-radius: 30px;
         background-color: rgba(255, 144, 59, 0.867);
         transform: translate(300px, 120px);
-        visibility: hidden; // ここを消してデバッグ
+        // visibility: hidden; // ここを消してデバッグ
         z-index: 999;
         .wrapper{
             margin-left: -330px;
@@ -131,7 +131,7 @@ html{
                 width: 200px;
                 height: 60px;
                 font-size: 24px;
-                margin-top: 90px;
+                margin-top: 40px;
                 margin-left: 240px;
                 border: 2px #555 solid;
                 border-radius: 20px;
@@ -143,8 +143,11 @@ html{
                     opacity: 0.6;
                 }
             }
-            #room-name, #username{
+            #room-name, #username, #turn-duration-sec{
                 margin-top: 50px;
+            }
+            #turn-duration-sec{
+                width: 70px;
             }
         }
     }

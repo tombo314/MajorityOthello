@@ -24,6 +24,8 @@ let x = 0;
 let y = 0;
 let cntStone = 4;
 let turnOneOrTwo = 1;
+// debug
+// let turnDurationSec = 10;
 let finished = false;
 
 // 定数の宣言
@@ -44,9 +46,9 @@ const GRID_INIT_LEFT = -40;
 const GRID_INIT_TOP = -65;
 const GRID_DIFF_X = 5.75;
 const GRID_DIFF_Y = 4;
-// const STONE_LIMIT = 64;
-const STONE_LIMIT = 8;
-const TURN_DUTATION_SEC = 10;
+const STONE_LIMIT = 64;
+// debug
+// const STONE_LIMIT = 8;
 const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
 const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
 const COLOR_FIELD_RED = "rgb(255, 50, 50)";
@@ -82,7 +84,10 @@ let start=()=>{
                     // 工事中
                     // eachTurn() はsocket.on() のときに呼び出す
                     if (isHostStr=="true"){
-                        socket.emit("countdown", {value: roomName});
+                        // socket.emit("countdown", {value: {
+                        //     "roomName": roomName,
+                        //     "turnDurationSec": turnDurationSec
+                        // }});
                     }
                 }
                 cnt--;
@@ -446,9 +451,8 @@ let othello=(p, q, oneOrTwo)=>{
 let vote=(i, j, oneOrTwo, timeout)=>{
     socket.emit("voted", {value: [
         i, j, oneOrTwo, roomName, field,
-        timeout // TURN_DURATION_SEC を過ぎたかどうか
+        timeout // turnDurationSec を過ぎたかどうか
     ]});
-    // 工事中
     // 強制的に自陣に戻される
     if (turnOneOrTwo==1 && color=="red" || turnOneOrTwo==2 && color=="blue"){
         x = 0;
@@ -640,7 +644,6 @@ let eachTurn=(s)=>{
     // ターン開始時に置ける場所を表示する
     visualizeCanPutStoneAll(turnOneOrTwo);
     set = setInterval(() => {
-        // 工事中
         if (s<=0){
             clearInterval(set);
             if(finished){
@@ -710,7 +713,8 @@ let finish=()=>{
 let socket = io();
 let username = sessionStorage.getItem("username");
 let roomName = sessionStorage.getItem("roomName");
-let isHostStr = sessionStorage.getItem("isHost");
+let isHostStr = sessionStorage.getItem("isHostStr");
+let turnDurationSec = sessionStorage.getItem("turnDurationSec");
 let ownX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
 let ownY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
 let timer = document.getElementById("timer");
@@ -730,6 +734,13 @@ if (username!=null){
 } else {
     alert("ユーザー情報が登録されていません。");
     window.location.href = "/";
+}
+
+if (isHostStr=="true"){
+    socket.emit("turn-duration-sec", {value: {
+        "roomName": roomName,
+        "turnDurationSec": turnDurationSec
+    }});
 }
 
 // 全プレイヤーの情報を取得
@@ -884,6 +895,11 @@ socket.on("voted", (data)=>{
     if (oneOrTwo!=colorOneOrTwo){
         keysValid = true;
     }
+});
+
+// カウントダウンを管理する
+socket.on("countdown", (data)=>{
+
 });
 
 // ゲームの終了を認識する

@@ -11,7 +11,7 @@ if (sessionStorage.getItem("samePageLoaded")=="true"){
 sessionStorage.setItem("samePageLoaded", "true");
 
 // 自分がホストだったら、バトル画面に遷移するボタンを表示
-if (sessionStorage.getItem("isHost")=="true"){
+if (sessionStorage.getItem("isHostStr")=="true"){
     document.getElementById("btn-start").style.visibility = "visible";
 }
 

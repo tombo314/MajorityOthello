@@ -260,6 +260,7 @@ rooms = {
         "cntBlue": 0,
         "cntTmp": 0,
         "cntSec": 0,
+        "set": null,
         "voted": [[0]*8 for _ in range(8)]
     },
     ...
@@ -303,7 +304,9 @@ io.on("connection", (socket)=>{
             "cntRed": 0,
             "cntBlue": 0,
             "cntTmp": 0,
+            "turnDurationSec": 0,
             "cntSec": 0,
+            "set": null,
             "voted": null
         };
         // voted 配列を初期化
@@ -334,6 +337,11 @@ io.on("connection", (socket)=>{
     });
 
     /* battle.html */
+    // ホストから turnDurationSec を受け取る
+    socket.on("turn-duration-sec", (data)=>{
+        let roomName = data.value["roomName"];
+        rooms[roomName]["turnDurationSec"] = data.value["turnDuratoinSec"];
+    });
     // 全ユーザーの情報を、対応する部屋に返す
     socket.on("user-info-init", (data)=>{
         let userInfo = data.value;
@@ -391,6 +399,8 @@ io.on("connection", (socket)=>{
         if (!Object.keys(rooms).includes(roomName)){
             return false;
         }
+        // 工事中
+        // battle.js にまだ timeout = true の場合を入れていない
         if (timeout){
             // TURN_DURATION_SEC を超えたら、強制的にターンを終了する
             rooms[roomName]["cntTmp"] = 9999;
@@ -437,8 +447,15 @@ io.on("connection", (socket)=>{
         }
     });
     // カウントダウンを管理する
+    // 工事中
     socket.on("countdown", (data)=>{
-        let roomName = data.value;
+        let roomName = data.value["roomName"];
+        rooms[roomName]["set"] = setInterval(()=>{
+            if (rooms[roomName]["turnDurationSec"]<=0){
+                clearInterval(rooms[roomName]["set"]);
+            }
+            rooms[roomName]["turnDurationSec"]--;
+        }, rooms[roomName]["turnDurationSec"]);
     });
     // ゲームが終了したことを通知する
     socket.on("game-finished", (data)=>{ 
@@ -460,20 +477,21 @@ To Do
 ・BGM と SE を入れる
 
 main
+・１ターンの秒数の elem.value の値を制御する
 ・design の丸が画面端から出てこない
 ・form タグを使って getElementById().onclick から name.onclick に変更する
     -> 授業が終わったら getElementById().onclick に戻す
 
 battle
 ・投票システムを作る
-・順番に石がひっくり返るようにする（rotate でアニメーションも作れそう）
+・visualizeStone をずらしてに呼んで、順番にひっくり返るようにする
 ・２人以上いないとバトル画面に遷移できないようにする
 ・すべての socket.on() が部屋間で独立しているかを確認する
     -> 必要なソケット通信の箇所に roomName を付け加える
 ・ゲーム終了の流れが上手く動いていない
 ・全員が投票し終わっても 10 秒経つまではターンが変わらないようにする
     -> サーバー側で時間を数える。部屋ごとに秒数を持つ
-    -> 時間が経ったらクライアントに返す。クライアントは soket.on で受け取る
+    -> 時間が経ったらクライアントに返す。クライアントは socket.on で受け取る
 
 // 工事中 <-を参照
 */

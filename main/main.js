@@ -9,6 +9,7 @@ let roomNameElem = document.getElementById("room-name");
 let roomUsername = document.getElementById("username");
 let btnSubmit = document.getElementById("btn-submit");
 let design = document.getElementById("design");
+let turnDurationSecElem = document.getElementById("turn-duration-sec");
 
 const BUTTON_ROOM_SELECT_WIDTH = 120;
 const RADIUS = 20;
@@ -78,6 +79,13 @@ let makeRoom=(e)=>{
             alert("ユーザー名を入力してください。");
             window.location.href = "/";
         }
+        // １ターンの秒数が１～６０の範囲の整数でない
+        // 工事中
+        else if (false){
+            e.preventDefault();
+            alert("１ターンの秒数は１～６０の範囲の整数を入力して下さい。");
+            window.location.href = "/";
+        }
         // 何もなければ /wait/wait.html に遷移
         else {
             socket.emit("need-users", {value: ""});
@@ -91,9 +99,10 @@ let makeRoom=(e)=>{
                         "roomName": roomNameElem.value,
                         "roomUsername": roomUsername.value
                     }});
-                    sessionStorage.setItem("isHost", "true");
+                    sessionStorage.setItem("isHostStr", "true");
                     sessionStorage.setItem("username", roomUsername.value);
                     sessionStorage.setItem("roomName", roomNameElem.value);
+                    sessionStorage.setItem("turnDurationSec", turnDurationSecElem.value);
                     sessionStorage.setItem("samePageLoaded", "false");
                     window.location.href = "/wait";
                 } else {
