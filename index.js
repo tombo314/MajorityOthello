@@ -83,7 +83,7 @@ let getRandomInt=(min, max)=> {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min);
 }
-// 工事中
+
 let canPutStoneThere=(p, q, oneOrTwo)=>{
     let n = oneOrTwo;
     let m;
@@ -259,6 +259,7 @@ rooms = {
         "cntRed": 0,
         "cntBlue": 0,
         "cntTmp": 0,
+        "cntSec": 0,
         "voted": [[0]*8 for _ in range(8)]
     },
     ...
@@ -302,6 +303,7 @@ io.on("connection", (socket)=>{
             "cntRed": 0,
             "cntBlue": 0,
             "cntTmp": 0,
+            "cntSec": 0,
             "voted": null
         };
         // voted 配列を初期化
@@ -434,8 +436,12 @@ io.on("connection", (socket)=>{
             }
         }
     });
+    // カウントダウンを管理する
+    socket.on("countdown", (data)=>{
+        let roomName = data.value;
+    });
     // ゲームが終了したことを通知する
-    socket.on("game-finished", (data)=>{
+    socket.on("game-finished", (data)=>{ 
         io.sockets.emit("game-finished", {value:data.value});
     });
     // 公開されている部屋を更新する
@@ -460,48 +466,14 @@ main
 
 battle
 ・投票システムを作る
-・１ターンの秒数が過ぎたら強制的に拠点に戻して、相手のターンにする
 ・順番に石がひっくり返るようにする（rotate でアニメーションも作れそう）
 ・２人以上いないとバトル画面に遷移できないようにする
-・部屋ごとに cntTmp をインクリメントしながら、投票が終わったか確認する
-    -> TURN_DURATION_SEC(秒) 経過したら強制的に投票を締め切る
 ・すべての socket.on() が部屋間で独立しているかを確認する
     -> 必要なソケット通信の箇所に roomName を付け加える
 ・ゲーム終了の流れが上手く動いていない
+・全員が投票し終わっても 10 秒経つまではターンが変わらないようにする
+    -> サーバー側で時間を数える。部屋ごとに秒数を持つ
+    -> 時間が経ったらクライアントに返す。クライアントは soket.on で受け取る
 
 // 工事中 <-を参照
-*/
-
-/*
-問題：othello() が実行されない
-
-othello() 周辺の流れ
-1. プレイヤーは 10 秒間動くことができる
-2. cntTmp>=cntRed(blue) になると強制的にターンエンドになる
-    -> 残り時間の表示が 10 秒ぴったりに更新されている
-        -> socket.on("voted", ()=>{}); のタイミングで残り時間を 0 にし、ターンエンドする
-3. 最初の赤は動けるが、その次の青が操作できない
-    -> デバッグ
-*/
-
-/*
-let vote=(i, j, oneOrTwo, timeout)=>{
-    if (canPutStoneThere(i, j, oneOrTwo)){
-        socket.emit("voted", {value: [
-            i, j, oneOrTwo, roomName, field,
-            timeout // TURN_DURATION_SEC を過ぎたかどうか
-        ]});
-        // 工事中
-        // 強制的に自陣に戻される
-        if (turnOneOrTwo==1 && color=="red" || turnOneOrTwo==2 && color=="blue"){
-            x = 0;
-            y = 0;
-            own.style.transform = `translate(${x}px, ${y}px)`;
-            ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
-            keysValid = false;
-        } else {
-            keysValid = true;
-        }
-    }
-}
 */

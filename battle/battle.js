@@ -75,11 +75,14 @@ let start=()=>{
                     startEndSheet.style.opacity = 0;
                     startEndSheet.style.backgroundColor = "#222";
                     startEndSheet.textContent = "";
-                    // 工事中
                     if (turnOneOrTwo==1 && color=="red" || turnOneOrTwo==2 && color=="blue"){
                         keysValid = true;
                     }
-                    eachTurn(10);
+                    // 工事中
+                    // eachTurn() はsocket.on() のときに呼び出す
+                    if (isHostStr=="true"){
+                        socket.emit("countdown", {value: roomName});
+                    }
                 }
                 cnt--;
             }, 1000);
@@ -636,22 +639,13 @@ let eachTurn=(s)=>{
     // ターン開始時に置ける場所を表示する
     visualizeCanPutStoneAll(turnOneOrTwo);
     set = setInterval(() => {
+        // 工事中
         if (s<=0){
             clearInterval(set);
-            setTimeout(()=>{
-                // ターンの合間に 1000ms の間隔を空ける
-                if(finished){
-                    finish();
-                    keysValid = false;
-                } else {
-                    // // 工事中
-                    // if (!alreadyVoted){
-                    //     vote(0, 0, colorOneOrTwo, true);
-                    // }
-                    // 次のターンへ
-                    eachTurn(10);
-                }
-            }, 1000);
+            if(finished){
+                finish();
+                keysValid = false;
+            }
         }
         // 残り時間を更新する
         if (finished){
@@ -715,6 +709,7 @@ let finish=()=>{
 let socket = io();
 let username = sessionStorage.getItem("username");
 let roomName = sessionStorage.getItem("roomName");
+let isHostStr = sessionStorage.getItem("isHost");
 let ownX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
 let ownY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
 let timer = document.getElementById("timer");
