@@ -288,6 +288,7 @@ io.on("connection", (socket)=>{
         let roomName = data.value["roomName"];
         delete rooms[roomName];
         delete users[username];
+        io.sockets.emit("delete-room", {value: roomName});
     });
     // users を返す
     socket.on("need-users", ()=>{
@@ -503,6 +504,9 @@ main
 ・design の丸が画面端から出てこない
 ・form タグを使って getElementById().onclick から name.onclick に変更する
     -> 授業が終わったら getElementById().onclick に戻す
+
+wait
+・マッチング中に部屋が消えたときに、その部屋で待機している人に通知を送ってトップに戻す
 
 battle
 ・ターンが終わるまでは、何回でも投票できるようにする

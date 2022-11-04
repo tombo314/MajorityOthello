@@ -43,6 +43,14 @@ btnToTop.onclick=()=>{
     window.location.href = "/";
 }
 
+// マッチング中に部屋がなくなった
+socket.on("delete-room", (data)=>{
+    if (roomName==data.value){
+        alert("部屋がなくなりました。");
+        window.location.href = "/";
+    }
+})
+
 // いずれかの部屋のマッチングが終了した
 socket.on("waiting-finished", (data)=>{
     let roomMember = data.value;
