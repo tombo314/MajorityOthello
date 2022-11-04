@@ -325,18 +325,17 @@ io.on("connection", (socket)=>{
             io.sockets.emit(username, {value: true});
         } else {
             // 部屋が存在しない場合はスタート画面に戻る
-            io.sockets.emit(username, {value: false});
+            io.sockets.emit("room-not-exist", {value: roomName});
         }
     });
 
     /* wait.html */
     // 部屋が存在しない場合はスタート画面に戻る
     socket.on("confirm-room", (data)=>{
-        let roomName = data.value["roomName"];
-        let username = data.value["username"];
+        let roomName = data.value;
         // 部屋が存在しない場合
         if (!Object.keys(rooms).includes(roomName)){
-            io.sockets.emit(`${username}-confirm-room`, {value: false});
+            io.sockets.emit("room-not-exist", {value: roomName});
         }
     });
     // マッチングが完了した部屋の名前を通知する
@@ -404,21 +403,13 @@ io.on("connection", (socket)=>{
         let oneOrTwo = data.value[2];
         let roomName = data.value[3];
         field = data.value[4];
-        let timeout = data.value[5];
         let color = oneOrTwo==1 ? "cntRed" : "cntBlue";
         if (!Object.keys(rooms).includes(roomName)){
             return false;
         }
-        // 工事中
-        // battle.js にまだ timeout = true の場合を入れていない
-        if (timeout){
-            // TURN_DURATION_SEC を超えたら、強制的にターンを終了する
-            rooms[roomName]["cntVoted"] = 9999;
-        } else {
-            // 投票する
-            rooms[roomName]["voted"][i][j]++;
-            rooms[roomName]["cntVoted"]++;
-        }
+        // 投票する
+        rooms[roomName]["voted"][i][j]++;
+        rooms[roomName]["cntVoted"]++;
         // 投票結果を返す
         if (rooms[roomName]["cntVoted"]>=rooms[roomName][color]){
             let h = 0;
@@ -457,16 +448,22 @@ io.on("connection", (socket)=>{
         }
     });
     // カウントダウンを管理する
-    // 工事中
-    socket.on("countdown", (data)=>{
+    socket.on("countdown-start", (data)=>{
         let roomName = data.value["roomName"];
-        rooms[roomName]["cntSec"] = 0;
-        rooms[roomName]["set"] = setInterval(()=>{
-            if (rooms[roomName]["cntSec"]>=rooms[roomName]["turnDurationSec"]){
-                rooms[roomName]["cntSec"] = 0;
-            }
-            rooms[roomName]["cntSec"]++;
-        }, 1000);
+        if (Object.keys(rooms).includes(roomName)){
+            rooms[roomName]["cntSec"] = 0;
+            rooms[roomName]["set"] = setInterval(()=>{
+                // そのターンが終わったら次のターンを始める
+                if (rooms[roomName]["cntSec"]>=rooms[roomName]["turnDurationSec"]){
+                    rooms[roomName]["cntSec"] = 0;
+                    io.sockets.emit("countdown", {value: roomName});
+                } else {
+                    rooms[roomName]["cntSec"]++;
+                }
+            }, 1000);
+        } else {
+            io.sockets.emit("room-not-exist", {value: roomName});
+        }
     });
     // ゲームが終了したことを通知する
     socket.on("game-finished", (data)=>{ 

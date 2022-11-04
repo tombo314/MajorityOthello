@@ -11,16 +11,7 @@ if (sessionStorage.getItem("samePageLoaded")=="true"){
 sessionStorage.setItem("samePageLoaded", "true");
 
 // 部屋が存在しない場合はスタート画面に戻る
-socket.emit("confirm-room", {value: {
-    "roomName": roomName,
-    "username": username
-}});
-socket.on(`${username}-confirm-room`, (data)=>{
-    if (!data.value){
-        alert("部屋が存在しません");
-        window.location.href = "/";
-    }
-});
+socket.emit("confirm-room", {value: roomName});
 
 // 自分がホストだったら、バトル画面に遷移するボタンを表示
 if (sessionStorage.getItem("isHostStr")=="true"){
@@ -40,5 +31,13 @@ socket.on("waiting-finished", (data)=>{
         alert("バトル画面に遷移します。");
         sessionStorage.setItem("samePageLoaded", "false");
         window.location.href = "/battle";
+    }
+});
+
+// 部屋が存在しない場合
+socket.on("room-not-exist", (data)=>{
+    if (data.value==roomName){
+        alert("部屋が存在しません。");
+        window.location.href = "/";
     }
 });

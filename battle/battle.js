@@ -80,14 +80,13 @@ let start=()=>{
                     startEndSheet.textContent = "";
                     if (turnOneOrTwo==1 && color=="red" || turnOneOrTwo==2 && color=="blue"){
                         keysValid = true;
+                        eachTurn(parseInt(turnDurationSec));
                     }
-                    // 工事中
-                    // eachTurn() はsocket.on() のときに呼び出す
                     if (isHostStr=="true"){
-                        // socket.emit("countdown", {value: {
-                        //     "roomName": roomName,
-                        //     "turnDurationSec": turnDurationSec
-                        // }});
+                        socket.emit("countdown-start", {value: {
+                            "roomName": roomName,
+                            "turnDurationSec": turnDurationSec
+                        }});
                     }
                 }
                 cnt--;
@@ -448,10 +447,9 @@ let othello=(p, q, oneOrTwo)=>{
     }
     return false;
 }
-let vote=(i, j, oneOrTwo, timeout)=>{
+let vote=(i, j, oneOrTwo)=>{
     socket.emit("voted", {value: [
-        i, j, oneOrTwo, roomName, field,
-        timeout // turnDurationSec を過ぎたかどうか
+        i, j, oneOrTwo, roomName, field
     ]});
     // 強制的に自陣に戻される
     if (turnOneOrTwo==1 && color=="red" || turnOneOrTwo==2 && color=="blue"){
@@ -715,6 +713,7 @@ let username = sessionStorage.getItem("username");
 let roomName = sessionStorage.getItem("roomName");
 let isHostStr = sessionStorage.getItem("isHostStr");
 let turnDurationSec = sessionStorage.getItem("turnDurationSec");
+console.log(parseInt(turnDurationSec));
 let ownX = getRandomInt(LOWER_BOUND_X, UPPER_BOUND_X);
 let ownY = getRandomInt(LOWER_BOUND_Y, UPPER_BOUND_Y);
 let timer = document.getElementById("timer");
@@ -899,7 +898,10 @@ socket.on("voted", (data)=>{
 
 // カウントダウンを管理する
 socket.on("countdown", (data)=>{
-
+    let roomNameTmp = data.value;
+    if (roomNameTmp==roomName){
+        eachTurn(parseInt(turnDurationSec));
+    }
 });
 
 // ゲームの終了を認識する
@@ -913,8 +915,8 @@ socket.on("game-finished", (data)=>{
 });
 
 // 部屋が存在しなかった場合、スタート画面に戻る
-socket.on(username, (data)=>{
-    if (!data.value){
+socket.on("room-not-exist", (data)=>{
+    if (data.value==roomName){
         alert("部屋が存在しません。");
         window.location.href = "/";
     }
@@ -994,7 +996,7 @@ onkeydown=(e)=>{
     // 投票する
     if (e.key=="Enter"){
         if (canPutStoneThere(paintedI, paintedJ, colorOneOrTwo)){
-            vote(paintedI, paintedJ, colorOneOrTwo, false);
+            vote(paintedI, paintedJ, colorOneOrTwo);
         }
     }
 }
