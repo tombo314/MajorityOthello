@@ -99,7 +99,7 @@ html{
         height: 120vh;
         position: absolute;
         background-color: #2226;
-        // visibility: hidden; // ここを消してデバッグ
+        visibility: hidden; // ここを消してデバッグ
     }
 
     #room-make-window{
@@ -109,7 +109,7 @@ html{
         border-radius: 30px;
         background-color: rgba(255, 144, 59, 0.867);
         transform: translate(300px, 120px);
-        // visibility: hidden; // ここを消してデバッグ
+        visibility: hidden; // ここを消してデバッグ
         z-index: 999;
         .wrapper{
             margin-left: -330px;

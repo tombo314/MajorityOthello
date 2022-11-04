@@ -46,7 +46,8 @@ let registerUser=(roomName)=>{
                     sessionStorage.setItem("samePageLoaded", "false");
                     window.location.href = "/wait";
                 } else {
-                    alert("部屋が存在しません。");
+                    // /wait/wait.html に遷移してから戻ることでリロードする
+                    window.location.href = "/wait";
                 }
             });
         } else {
@@ -79,9 +80,15 @@ let makeRoom=(e)=>{
             alert("ユーザー名を入力してください。");
             window.location.href = "/";
         }
+        // １ターンの秒数が空白
+        else if (turnDurationSecElem.value==""){
+            e.preventDefault();
+            alert("１ターンの秒数を入力して下さい。");
+            window.location.href = "/";
+        }
         // １ターンの秒数が１～６０の範囲の整数でない
         // 工事中
-        else if (false){
+        else if (isNaN(turnDurationSecElem.value) || 1>turnDurationSecElem.value || turnDurationSecElem.value>60){
             e.preventDefault();
             alert("１ターンの秒数は１～６０の範囲の整数を入力して下さい。");
             window.location.href = "/";
@@ -166,6 +173,13 @@ roomUsername.onkeyup=()=>{
     if (roomUsername.value==""){
         roomUsername.value = "ユーザー名を入力してください。";
         roomUsername.style.color = "#2227";
+    }
+}
+
+// Enter を押して部屋を作る（１ターンの秒数の欄）
+turnDurationSecElem.onkeydown=(e)=>{
+    if (e.key=="Enter"){
+        makeRoom(e);
     }
 }
 

@@ -329,6 +329,15 @@ io.on("connection", (socket)=>{
     });
 
     /* wait.html */
+    // 部屋が存在しない場合はスタート画面に戻る
+    socket.on("confirm-room", (data)=>{
+        let roomName = data.value["roomName"];
+        let username = data.value["username"];
+        // 部屋が存在しない場合
+        if (!Object.keys(rooms).includes(roomName)){
+            io.sockets.emit(`${username}-confirm-room`, {value: false});
+        }
+    });
     // マッチングが完了した部屋の名前を通知する
     socket.on("waiting-finished", (data)=>{
         if (Object.keys(rooms).includes(data.value)){
