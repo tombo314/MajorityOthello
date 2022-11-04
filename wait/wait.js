@@ -49,7 +49,7 @@ socket.on("delete-room", (data)=>{
         alert("部屋がなくなりました。");
         window.location.href = "/";
     }
-})
+});
 
 // いずれかの部屋のマッチングが終了した
 socket.on("waiting-finished", (data)=>{

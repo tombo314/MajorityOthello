@@ -94,7 +94,9 @@ let start=()=>{
         }, 2000);
     }
 }
+// 工事中
 let makeSquare=(i, j)=>{
+    // マスの選択を表す
     let sheet = document.createElement("div");
     sheet.setAttribute("id", `square${i}${j}`);
     sheet.setAttribute("style", `
@@ -105,6 +107,18 @@ let makeSquare=(i, j)=>{
         top: ${GRID_INIT_TOP+i*(GRID_Y+GRID_DIFF_Y)}px;
     `);
     othelloWrapper.appendChild(sheet);
+
+    // // 投票（赤）を表す
+    // sheet = document.createElement("div");
+    // sheet.setAttribute("id", `square${i}${j}red`);
+    // sheet.setAttribute("style", `
+    //     width: ${GRID_X}px;
+    //     height: ${GRID_Y}px;
+    //     position: absolute;
+    //     left: ${GRID_INIT_LEFT+j*(GRID_X+GRID_DIFF_X)}px;
+    //     top: ${GRID_INIT_TOP+i*(GRID_Y+GRID_DIFF_Y)}px;
+    // `);
+    // othelloWrapper.appendChild(sheet);
 }
 let paintSquare=(i, j)=>{
     if (i<0 || j<0 || 8<=i || 8<=j){

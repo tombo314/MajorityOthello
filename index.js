@@ -331,6 +331,7 @@ io.on("connection", (socket)=>{
         }
     });
 
+
     /* wait.html */
     // 部屋が存在しない場合はスタート画面に戻る
     socket.on("confirm-room", (data)=>{
@@ -344,7 +345,11 @@ io.on("connection", (socket)=>{
     socket.on("need-users-length", (data)=>{
         let roomName = data.value;
         if (Object.keys(rooms).includes(roomName)){
-            io.sockets.emit("need-users-length", {value: rooms[roomName]["users"].length});
+            io.sockets.emit("need-users-length", {value: {
+                "roomName": roomName,
+                "usersLength": rooms[roomName]["users"].length
+            }});
+            console.log(rooms[roomName]["users"]);
         }
         // 部屋が存在しない場合
         else {
@@ -357,6 +362,7 @@ io.on("connection", (socket)=>{
             io.sockets.emit("waiting-finished", {value: rooms[data.value]["users"]});
         }
     });
+
 
     /* battle.html */
     // turnDurationSec を返す
@@ -504,9 +510,6 @@ main
 ・design の丸が画面端から出てこない
 ・form タグを使って getElementById().onclick から name.onclick に変更する
     -> 授業が終わったら getElementById().onclick に戻す
-
-wait
-・マッチング中に部屋が消えたときに、その部屋で待機している人に通知を送ってトップに戻す
 
 battle
 ・ターンが終わるまでは、何回でも投票できるようにする
