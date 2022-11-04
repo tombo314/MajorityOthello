@@ -38,7 +38,7 @@ let registerUser=(roomName)=>{
                 "username": username,
                 "roomName": roomName
             }});
-            sessionStorage.setItem("isHost", "false");
+            sessionStorage.setItem("isHostStr", "false");
             sessionStorage.setItem("username", username);
             sessionStorage.setItem("roomName", roomName);
             sessionStorage.setItem("samePageLoaded", "false");

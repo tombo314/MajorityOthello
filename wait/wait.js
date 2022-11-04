@@ -3,6 +3,13 @@ let btnStart = document.getElementById("btn-start");
 let btnToTop = document.getElementById("btn-to-top");
 let username = sessionStorage.getItem("username");
 let roomName = sessionStorage.getItem("roomName");
+let isHostStr = sessionStorage.getItem("isHostStr");
+
+// 「トップに戻る」ボタンのレイアウト
+console.log(isHostStr);
+if (isHostStr=="false"){
+    btnToTop.style.transform = "translateX(400px)";
+}
 
 // 部屋が存在しない場合はスタート画面に戻る
 socket.emit("confirm-room", {value: roomName});
@@ -32,6 +39,7 @@ btnStart.onclick=()=>{
 
 // トップに戻る
 btnToTop.onclick=()=>{
+    alert("トップに戻ります。");
     window.location.href = "/";
 }
 
