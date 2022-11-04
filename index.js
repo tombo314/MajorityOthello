@@ -258,10 +258,11 @@ rooms = {
         "cntUsers": 0,
         "cntRed": 0,
         "cntBlue": 0,
-        "cntTmp": 0,
+        "cntVoted": 0,
+        "turnDurationSec": 0,
         "cntSec": 0,
         "set": null,
-        "voted": [[0]*8 for _ in range(8)]
+        "voted": null
     },
     ...
 }
@@ -303,7 +304,7 @@ io.on("connection", (socket)=>{
             "cntUsers": 0,
             "cntRed": 0,
             "cntBlue": 0,
-            "cntTmp": 0,
+            "cntVoted": 0,
             "turnDurationSec": 0,
             "cntSec": 0,
             "set": null,
@@ -412,14 +413,14 @@ io.on("connection", (socket)=>{
         // battle.js にまだ timeout = true の場合を入れていない
         if (timeout){
             // TURN_DURATION_SEC を超えたら、強制的にターンを終了する
-            rooms[roomName]["cntTmp"] = 9999;
+            rooms[roomName]["cntVoted"] = 9999;
         } else {
             // 投票する
             rooms[roomName]["voted"][i][j]++;
-            rooms[roomName]["cntTmp"]++;
+            rooms[roomName]["cntVoted"]++;
         }
         // 投票結果を返す
-        if (rooms[roomName]["cntTmp"]>=rooms[roomName][color]){
+        if (rooms[roomName]["cntVoted"]>=rooms[roomName][color]){
             let h = 0;
             let w = 0;
             let max = 0;
@@ -433,7 +434,7 @@ io.on("connection", (socket)=>{
                 }
             }
             initVoted(roomName);
-            rooms[roomName]["cntTmp"] = 0;
+            rooms[roomName]["cntVoted"] = 0;
             if (max>0){
                 // 1 票以上の投票があった場合
                 io.sockets.emit("voted", {value: [h, w, oneOrTwo, roomName]});
@@ -459,12 +460,13 @@ io.on("connection", (socket)=>{
     // 工事中
     socket.on("countdown", (data)=>{
         let roomName = data.value["roomName"];
+        rooms[roomName]["cntSec"] = 0;
         rooms[roomName]["set"] = setInterval(()=>{
-            if (rooms[roomName]["turnDurationSec"]<=0){
-                clearInterval(rooms[roomName]["set"]);
+            if (rooms[roomName]["cntSec"]>=rooms[roomName]["turnDurationSec"]){
+                rooms[roomName]["cntSec"] = 0;
             }
-            rooms[roomName]["turnDurationSec"]--;
-        }, rooms[roomName]["turnDurationSec"]);
+            rooms[roomName]["cntSec"]++;
+        }, 1000);
     });
     // ゲームが終了したことを通知する
     socket.on("game-finished", (data)=>{ 
