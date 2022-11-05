@@ -768,6 +768,7 @@ if (username!=null){
     window.location.href = "/";
 }
 
+// ホストからサーバーに turnDurationSec の値を送信する
 if (isHostStr=="true"){
     socket.emit("turn-duration-sec", {value: {
         "roomName": roomName,
