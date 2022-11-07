@@ -421,12 +421,13 @@ io.on("connection", (socket)=>{
         let roomName = data.value["roomName"];
         let i = data.value["i"];
         let j = data.value["j"];
+        field = data.value["field"]
         if (!Object.keys(rooms).includes(roomName)){
             return false;
         }
         // 投票する
         rooms[roomName]["voted"][i][j]++;
-        rooms[roomName]["turnOneOrTwo"] = turnOneOrTwo;
+        rooms[roomName]["turnOneOrTwo"] = data.value["turnOneOrTwo"];
     });
     // 工事中
     // カウントダウンと投票結果の送信を管理する
@@ -461,14 +462,14 @@ io.on("connection", (socket)=>{
                         "roomName": roomName,
                         "i": maxI,
                         "j": maxJ,
-                        "oneOrTwo": oneOrTwo
+                        "turnOneOrTwo": rooms[roomName]["turnOneOrTwo"]
                     }});
                 } else {
                     // 投票数が 0 の場合は置ける場所からランダムに置く
                     let candidateRandom = [];
                     for (let i=0; i<8; i++){
                         for (let j=0; j<8; j++){
-                            if (canPutStoneThere(i, j, oneOrTwo)){
+                            if (canPutStoneThere(i, j, rooms[roomName]["turnOneOrTwo"])){
                                 candidateRandom.push([i, j]);
                             }
                         }
@@ -480,7 +481,7 @@ io.on("connection", (socket)=>{
                         "roomName": roomName,
                         "i": randI,
                         "j": randJ,
-                        "oneOrTwo": oneOrTwo
+                        "turnOneOrTwo": rooms[roomName]["turnOneOrTwo"]
                     }});
                 }
                 // voted 配列を初期化
@@ -527,10 +528,9 @@ battle
 ・visualizeStone をずらしてに呼んで、順番にひっくり返るようにする
 ・すべての socket.on() が部屋間で独立しているかを確認する
     -> 必要なソケット通信の箇所に roomName を付け加える
-・ゲーム終了の流れが上手く動いていない
-・全員が投票し終わっても turnDurationSec 秒経つまではターンが変わらないようにする
-    -> 盤面の変化、文字の色の変化、keysValid の変化などはすべてターンの終わりに反映させるようにする
-・countdown と candidateRandom 周辺の流れを確認する
+・ゲーム終了の流れが上手く動いていない可能性がある
+・投票した場合、投票が無視されランダム投票が１回行われる
+・投票しなかった場合、ランダム投票が２回連続で行われる
 
 // 工事中 <-を参照
 */
