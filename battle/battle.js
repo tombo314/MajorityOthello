@@ -25,7 +25,6 @@ let y = 0;
 let cntStone = 4;
 let turnOneOrTwo = 1;
 let eachTurnStarted = false;
-let alreadyVoted = false;
 let finished = false;
 
 // 定数の宣言
@@ -79,12 +78,11 @@ let start=()=>{
                     if (turnOneOrTwo==1 && color=="red" || turnOneOrTwo==2 && color=="blue"){
                         keysValid = true;
                         eachTurnStarted = true;
-                        eachTurn(parseInt(turnDurationSec));
                     }
+                    eachTurn(parseInt(turnDurationSec));
                     if (isHostStr=="true"){
                         socket.emit("countdown-start", {value: {
-                            "roomName": roomName,
-                            "turnDurationSec": turnDurationSec
+                            "roomName": roomName
                         }});
                     }
                 }
@@ -93,7 +91,6 @@ let start=()=>{
         }, 2000);
     }
 }
-// 工事中
 let makeSquare=(i, j)=>{
     // マスの選択を表す
     let sheet = document.createElement("div");
@@ -106,18 +103,6 @@ let makeSquare=(i, j)=>{
         top: ${GRID_INIT_TOP+i*(GRID_Y+GRID_DIFF_Y)}px;
     `);
     othelloWrapper.appendChild(sheet);
-
-    // // 投票（赤）を表す
-    // sheet = document.createElement("div");
-    // sheet.setAttribute("id", `square${i}${j}red`);
-    // sheet.setAttribute("style", `
-    //     width: ${GRID_X}px;
-    //     height: ${GRID_Y}px;
-    //     position: absolute;
-    //     left: ${GRID_INIT_LEFT+j*(GRID_X+GRID_DIFF_X)}px;
-    //     top: ${GRID_INIT_TOP+i*(GRID_Y+GRID_DIFF_Y)}px;
-    // `);
-    // othelloWrapper.appendChild(sheet);
 }
 let paintSquare=(i, j)=>{
     if (i<0 || j<0 || 8<=i || 8<=j){
@@ -132,6 +117,17 @@ let unPaintSquare=(i, j)=>{
     }
     let elem = document.getElementById(`square${i}${j}`);
     elem.style.backgroundColor = "#70ad47";
+}
+let paintSquareRedBlue=(i, j, oneOrTwo)=>{
+    if (i<0 || j<0 || 8<=i || 8<=j){
+        return false
+    }
+    let elem = document.getElementById(`square${i}${j}`);
+    if (oneOrTwo==RED){
+        elem.style.backgroundColor = "#f227";
+    } else if (oneOrTwo==BLUE){
+        elem.style.backgroundColor = "#22f7";
+    }
 }
 let makeStone=(i, j)=>{
     // 赤
@@ -464,7 +460,7 @@ let vote=(i, j, oneOrTwo)=>{
     socket.emit("voted", {value: [
         i, j, oneOrTwo, roomName, field
     ]});
-    alreadyVoted = true;
+    paintSquareRedBlue(i, j, oneOrTwo);
     // 強制的に自陣に戻される
     if (turnOneOrTwo==1 && color=="red" || turnOneOrTwo==2 && color=="blue"){
         x = 0;
@@ -655,20 +651,12 @@ let canPutStoneAll=(n)=>{
 let eachTurn=(s)=>{
     // ターン開始時に置ける場所を表示する
     eachTurnStarted = true;
-    alreadyVoted = false;
     visualizeCanPutStoneAll(turnOneOrTwo);
     set = setInterval(() => {
         if (s<=0){
             // ターン終了
             clearInterval(set);
             eachTurnStarted = false;
-            if (!alreadyVoted){
-                socket.emit("time-is-up", {value: {
-                    "roomName": roomName,
-                    "oneOrTwo": turnOneOrTwo,
-                    "field": field
-                }});
-            }
             // ゲームが終わったとき
             if(finished){
                 finish();

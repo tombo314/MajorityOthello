@@ -83,7 +83,6 @@ let getRandomInt=(min, max)=> {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min);
 }
-
 let canPutStoneThere=(p, q, oneOrTwo)=>{
     let n = oneOrTwo;
     let m;
@@ -481,6 +480,7 @@ io.on("connection", (socket)=>{
             }
         }, 1000);
     });
+    // 工事中
     // ターン内に投票が間に合わなかったとき
     // socket.on("countdown-start") に統合する
     socket.on("time-is-up", (data)=>{
