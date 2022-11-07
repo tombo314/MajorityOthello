@@ -456,6 +456,7 @@ io.on("connection", (socket)=>{
     // 工事中
     // カウントダウンを管理する
     // 時間がきたら投票を締め切る
+    // 統合先
     socket.on("countdown-start", (data)=>{
         let roomName = data.value["roomName"];
         if (!Object.keys(rooms).includes(roomName)){
