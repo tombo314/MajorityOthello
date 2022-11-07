@@ -418,44 +418,18 @@ io.on("connection", (socket)=>{
     });
     // 投票を受け付ける
     socket.on("voted", (data)=>{
-        let i = data.value[0];
-        let j = data.value[1];
-        let oneOrTwo = data.value[2];
-        let roomName = data.value[3];
-        field = data.value[4];
-        let color = oneOrTwo==1 ? "cntRed" : "cntBlue";
+        let roomName = data.value["roomName"];
+        let i = data.value["i"];
+        let j = data.value["j"];
         if (!Object.keys(rooms).includes(roomName)){
             return false;
         }
         // 投票する
         rooms[roomName]["voted"][i][j]++;
         rooms[roomName]["cntVoted"]++;
-        // 工事中
-        // 投票結果を返す
-        // 「全員が投票したら」から「１票以上の投票があったら」に条件を変更する
-        // socket.on("countdown-start") に統合する
-        if (rooms[roomName]["cntVoted"]>=rooms[roomName][color]){
-            let maxI = 0;
-            let maxJ = 0;
-            let max = 0;
-            for (let i=0; i<8; i++){
-                for (let j=0; j<8; j++){
-                    if (max<rooms[roomName]["voted"][i][j]){
-                        max = rooms[roomName]["voted"][i][j];
-                        naxI = i;
-                        maxJ = j;
-                    }
-                }
-            }
-            initVoted(roomName);
-            rooms[roomName]["cntVoted"] = 0;
-            io.sockets.emit("voted", {value: [maxI, maxJ, oneOrTwo, roomName]});
-        }
     });
     // 工事中
-    // カウントダウンを管理する
-    // 時間がきたら投票を締め切る
-    // 統合先
+    // カウントダウンと投票結果の送信を管理する
     socket.on("countdown-start", (data)=>{
         let roomName = data.value["roomName"];
         if (!Object.keys(rooms).includes(roomName)){
@@ -470,7 +444,39 @@ io.on("connection", (socket)=>{
             }
             // そのターンが終わったら次のターンを始める
             if (rooms[roomName]["cntSec"]>=rooms[roomName]["turnDurationSec"]){
-                rooms[roomName]["cntSec"] = 0;
+                let maxI = 0;
+                let maxJ = 0;
+                let max = 0;
+                for (let i=0; i<8; i++){
+                    for (let j=0; j<8; j++){
+                        if (max<rooms[roomName]["voted"][i][j]){
+                            max = rooms[roomName]["voted"][i][j];
+                            naxI = i;
+                            maxJ = j;
+                        }
+                    }
+                }
+                if (max>0){
+                    io.sockets.emit("voted", {value: [maxI, maxJ, oneOrTwo, roomName]});
+                } else {
+                    // 0 票の場合は置ける場所からランダムに置く
+                    let candidateRandom = [];
+                    for (let i=0; i<8; i++){
+                        for (let j=0; j<8; j++){
+                            if (canPutStoneThere(i, j, oneOrTwo)){
+                                candidateRandom.push([i, j]);
+                            }
+                        }
+                    }
+                    let r = getRandomInt(0, candidateRandom.length);
+                    randI = candidateRandom[r][0];
+                    randJ = candidateRandom[r][1];
+                    io.sockets.emit("voted", {value: [randI, randJ, oneOrTwo, roomName]});
+                }
+                // voted 配列を初期化
+                initVoted(roomName);
+                rooms[roomName]["cntVoted"] = 0;
+                // 次のターンへ
                 io.sockets.emit("countdown-restart", {value: {
                     "roomName": roomName,
                     "turnDurationSec": rooms[roomName]["turnDurationSec"]
@@ -479,34 +485,6 @@ io.on("connection", (socket)=>{
                 rooms[roomName]["cntSec"]++;
             }
         }, 1000);
-    });
-    // 工事中
-    // ターン内に投票が間に合わなかったとき
-    // socket.on("countdown-start") に統合する
-    socket.on("time-is-up", (data)=>{
-        let roomName = data.value["roomName"];
-        let oneOrTwo = data.value["oneOrTwo"];
-        field = data.value["field"];
-        initVoted(roomName);
-        if (!Object.keys(rooms).includes(roomName)){
-            io.sockets.emit("room-not-exist", {value: roomName});
-            return false;
-        }
-        initVoted(roomName);
-        rooms[roomName]["cntVoted"] = 0;
-        // 0 票の場合は置ける場所からランダムに置く
-        let candidateRandom = [];
-        for (let i=0; i<8; i++){
-            for (let j=0; j<8; j++){
-                if (canPutStoneThere(i, j, oneOrTwo)){
-                    candidateRandom.push([i, j]);
-                }
-            }
-        }
-        let r = getRandomInt(0, candidateRandom.length);
-        randI = candidateRandom[r][0];
-        randJ = candidateRandom[r][1];
-        io.sockets.emit("voted", {value: [randI, randJ, oneOrTwo, roomName]});
     });
     // ゲームが終了したことを通知する
     socket.on("game-finished", (data)=>{ 

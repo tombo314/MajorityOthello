@@ -457,9 +457,11 @@ let othello=(p, q, oneOrTwo)=>{
     return false;
 }
 let vote=(i, j, oneOrTwo)=>{
-    socket.emit("voted", {value: [
-        i, j, oneOrTwo, roomName, field
-    ]});
+    socket.emit("voted", {value: {
+        "roomName": roomName,
+        "i": i,
+        "j": j
+    }});
     paintSquareRedBlue(i, j, oneOrTwo);
     // 強制的に自陣に戻される
     if (turnOneOrTwo==1 && color=="red" || turnOneOrTwo==2 && color=="blue"){
