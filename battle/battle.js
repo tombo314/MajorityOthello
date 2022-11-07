@@ -460,7 +460,8 @@ let vote=(i, j, oneOrTwo)=>{
     socket.emit("voted", {value: {
         "roomName": roomName,
         "i": i,
-        "j": j
+        "j": j,
+        "turnOneOrTwo": turnOneOrTwo
     }});
     paintSquareRedBlue(i, j, oneOrTwo);
     // 強制的に自陣に戻される
@@ -865,10 +866,10 @@ socket.on("coordinates-changed", (data)=>{
 
 // 投票結果を受け取る
 socket.on("voted", (data)=>{
-    let i = data.value[0];
-    let j = data.value[1];
-    let oneOrTwo = data.value[2];
-    let roomNameTmp = data.value[3];
+    let roomNameTmp = data.value["roomName"];
+    let i = data.value["i"];
+    let j = data.value["j"];
+    let oneOrTwo = data.value["oneOrTwo"];
     let otherOneOrTwo;
     if (colorOneOrTwo==RED){
         otherOneOrTwo = BLUE;
@@ -878,6 +879,7 @@ socket.on("voted", (data)=>{
     if (roomNameTmp!=roomName){
         return false;
     }
+    console.log(1);
     // 投票結果を盤面に反映させる
     let valid = othello(i, j, oneOrTwo);
     if (valid){

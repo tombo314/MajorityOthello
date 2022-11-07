@@ -257,9 +257,9 @@ rooms = {
         "cntUsers": 0,
         "cntRed": 0,
         "cntBlue": 0,
-        "cntVoted": 0,
-        "turnDurationSec": 0,
         "cntSec": 0,
+        "turnOneOrTwo": 1,
+        "turnDurationSec": turnDurationSec,
         "set": null,
         "voted": null
     },
@@ -305,9 +305,9 @@ io.on("connection", (socket)=>{
             "cntUsers": 0,
             "cntRed": 0,
             "cntBlue": 0,
-            "cntVoted": 0,
-            "turnDurationSec": turnDurationSec,
             "cntSec": 0,
+            "turnOneOrTwo": 1,
+            "turnDurationSec": turnDurationSec,
             "set": null,
             "voted": null
         };
@@ -426,7 +426,7 @@ io.on("connection", (socket)=>{
         }
         // 投票する
         rooms[roomName]["voted"][i][j]++;
-        rooms[roomName]["cntVoted"]++;
+        rooms[roomName]["turnOneOrTwo"] = turnOneOrTwo;
     });
     // 工事中
     // カウントダウンと投票結果の送信を管理する
@@ -442,7 +442,7 @@ io.on("connection", (socket)=>{
                 io.sockets.emit("room-not-exist", {value: roomName});
                 return false;
             }
-            // そのターンが終わったら次のターンを始める
+            // ターンが終わったとき
             if (rooms[roomName]["cntSec"]>=rooms[roomName]["turnDurationSec"]){
                 let maxI = 0;
                 let maxJ = 0;
@@ -457,9 +457,14 @@ io.on("connection", (socket)=>{
                     }
                 }
                 if (max>0){
-                    io.sockets.emit("voted", {value: [maxI, maxJ, oneOrTwo, roomName]});
+                    io.sockets.emit("voted", {value: {
+                        "roomName": roomName,
+                        "i": maxI,
+                        "j": maxJ,
+                        "oneOrTwo": oneOrTwo
+                    }});
                 } else {
-                    // 0 票の場合は置ける場所からランダムに置く
+                    // 投票数が 0 の場合は置ける場所からランダムに置く
                     let candidateRandom = [];
                     for (let i=0; i<8; i++){
                         for (let j=0; j<8; j++){
@@ -471,11 +476,15 @@ io.on("connection", (socket)=>{
                     let r = getRandomInt(0, candidateRandom.length);
                     randI = candidateRandom[r][0];
                     randJ = candidateRandom[r][1];
-                    io.sockets.emit("voted", {value: [randI, randJ, oneOrTwo, roomName]});
+                    io.sockets.emit("voted", {value: {
+                        "roomName": roomName,
+                        "i": randI,
+                        "j": randJ,
+                        "oneOrTwo": oneOrTwo
+                    }});
                 }
                 // voted 配列を初期化
                 initVoted(roomName);
-                rooms[roomName]["cntVoted"] = 0;
                 // 次のターンへ
                 io.sockets.emit("countdown-restart", {value: {
                     "roomName": roomName,
@@ -513,7 +522,6 @@ main
 battle
 ・ターンが終わるまでは、何回でも投票できるようにする
     -> 一番最後に投票した場所が自分の投票した場所になる
-・投票したマスが分かるように着色する
 ・投票時に confirm() などで Yes or No を聞く
 〇投票システムを作る
 ・visualizeStone をずらしてに呼んで、順番にひっくり返るようにする
