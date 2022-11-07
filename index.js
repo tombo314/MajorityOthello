@@ -421,7 +421,6 @@ io.on("connection", (socket)=>{
         let roomName = data.value["roomName"];
         let i = data.value["i"];
         let j = data.value["j"];
-        field = data.value["field"]
         if (!Object.keys(rooms).includes(roomName)){
             return false;
         }
@@ -433,6 +432,7 @@ io.on("connection", (socket)=>{
     // カウントダウンと投票結果の送信を管理する
     socket.on("countdown-start", (data)=>{
         let roomName = data.value["roomName"];
+        field = data.value["field"];
         if (!Object.keys(rooms).includes(roomName)){
             io.sockets.emit("room-not-exist", {value: roomName});
             return false;

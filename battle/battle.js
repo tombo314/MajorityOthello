@@ -82,7 +82,8 @@ let start=()=>{
                     eachTurn(parseInt(turnDurationSec));
                     if (isHostStr=="true"){
                         socket.emit("countdown-start", {value: {
-                            "roomName": roomName
+                            "roomName": roomName,
+                            "field": field
                         }});
                     }
                 }
@@ -461,7 +462,6 @@ let vote=(i, j, oneOrTwo)=>{
         "roomName": roomName,
         "i": i,
         "j": j,
-        "field": field,
         "turnOneOrTwo": turnOneOrTwo
     }});
     paintSquareRedBlue(i, j, oneOrTwo);
