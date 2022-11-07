@@ -431,7 +431,10 @@ io.on("connection", (socket)=>{
         // 投票する
         rooms[roomName]["voted"][i][j]++;
         rooms[roomName]["cntVoted"]++;
+        // 工事中
         // 投票結果を返す
+        // 「全員が投票したら」から「１票以上の投票があったら」に条件を変更する
+        // socket.on("countdown-start") に統合する
         if (rooms[roomName]["cntVoted"]>=rooms[roomName][color]){
             let maxI = 0;
             let maxJ = 0;
@@ -450,7 +453,9 @@ io.on("connection", (socket)=>{
             io.sockets.emit("voted", {value: [maxI, maxJ, oneOrTwo, roomName]});
         }
     });
+    // 工事中
     // カウントダウンを管理する
+    // 時間がきたら投票を締め切る
     socket.on("countdown-start", (data)=>{
         let roomName = data.value["roomName"];
         if (!Object.keys(rooms).includes(roomName)){
@@ -476,6 +481,7 @@ io.on("connection", (socket)=>{
         }, 1000);
     });
     // ターン内に投票が間に合わなかったとき
+    // socket.on("countdown-start") に統合する
     socket.on("time-is-up", (data)=>{
         let roomName = data.value["roomName"];
         let oneOrTwo = data.value["oneOrTwo"];
@@ -485,6 +491,7 @@ io.on("connection", (socket)=>{
             io.sockets.emit("room-not-exist", {value: roomName});
             return false;
         }
+        initVoted(roomName);
         rooms[roomName]["cntVoted"] = 0;
         // 0 票の場合は置ける場所からランダムに置く
         let candidateRandom = [];
@@ -528,15 +535,15 @@ battle
 ・ターンが終わるまでは、何回でも投票できるようにする
     -> 一番最後に投票した場所が自分の投票した場所になる
 ・投票したマスが分かるように着色する
-・投票時に confirm などで Yes or No を聞く
+・投票時に confirm() などで Yes or No を聞く
 〇投票システムを作る
 ・visualizeStone をずらしてに呼んで、順番にひっくり返るようにする
-・２人以上いないとバトル画面に遷移できないようにする
 ・すべての socket.on() が部屋間で独立しているかを確認する
     -> 必要なソケット通信の箇所に roomName を付け加える
 ・ゲーム終了の流れが上手く動いていない
 ・全員が投票し終わっても turnDurationSec 秒経つまではターンが変わらないようにする
     -> 盤面の変化、文字の色の変化、keysValid の変化などはすべてターンの終わりに反映させるようにする
+・countdown と candidateRandom 周辺の流れを確認する
 
 // 工事中 <-を参照
 */

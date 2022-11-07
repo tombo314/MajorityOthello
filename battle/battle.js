@@ -882,7 +882,7 @@ socket.on("voted", (data)=>{
     let otherOneOrTwo;
     if (colorOneOrTwo==RED){
         otherOneOrTwo = BLUE;
-    } else if (colorOneOrTwo==BLUE) {
+    } else if (colorOneOrTwo==BLUE){
         otherOneOrTwo = RED;
     }
     if (roomNameTmp!=roomName){
