@@ -79,11 +79,11 @@ let makeRoom=(e)=>{
             alert("１ターンの秒数を入力して下さい。");
             window.location.href = "/";
         }
-        // １ターンの秒数が１～６０の範囲の整数でない
+        // １ターンの秒数が１０～６０の範囲の整数でない
         // 工事中
-        else if (isNaN(turnDurationSecElem.value) || 1>turnDurationSecElem.value || turnDurationSecElem.value>60){
+        else if (isNaN(turnDurationSecElem.value) || 10>turnDurationSecElem.value || turnDurationSecElem.value>60){
             e.preventDefault();
-            alert("１ターンの秒数は１～６０の範囲の整数を入力して下さい。");
+            alert("１ターンの秒数は１０～６０の範囲の整数を入力して下さい。");
             window.location.href = "/";
         }
         // 何もなければ /wait/wait.html に遷移

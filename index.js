@@ -428,7 +428,6 @@ io.on("connection", (socket)=>{
         rooms[roomName]["voted"][i][j]++;
         rooms[roomName]["turnOneOrTwo"] = data.value["turnOneOrTwo"];
     });
-    // 工事中
     // カウントダウンと投票結果の送信を管理する
     socket.on("countdown-start", (data)=>{
         let roomName = data.value["roomName"];
@@ -445,6 +444,7 @@ io.on("connection", (socket)=>{
             }
             // ターンが終わったとき
             if (rooms[roomName]["cntSec"]>=rooms[roomName]["turnDurationSec"]){
+                clearInterval(rooms[roomName]["set"]);
                 let maxI = 0;
                 let maxJ = 0;
                 let max = 0;
@@ -521,16 +521,16 @@ main
     -> 授業が終わったら getElementById().onclick に戻す
 
 battle
-・ターンが終わるまでは、何回でも投票できるようにする
-    -> 一番最後に投票した場所が自分の投票した場所になる
-・投票時に confirm() などで Yes or No を聞く
+（長期）
 〇投票システムを作る
+    ・ターンが終わるまでは、何回でも投票できるようにする
+        -> 一番最後に投票した場所が自分の投票した場所になる
+    ・投票時に confirm() などで Yes or No を聞く
 ・visualizeStone をずらしてに呼んで、順番にひっくり返るようにする
 ・すべての socket.on() が部屋間で独立しているかを確認する
     -> 必要なソケット通信の箇所に roomName を付け加える
-・ゲーム終了の流れが上手く動いていない可能性がある
-・投票した場合、投票が無視されランダム投票が１回行われる
-・投票しなかった場合、ランダム投票が２回連続で行われる
+（短期）
+・投票した結果が時間切れになったあとに反映されない
 
 // 工事中 <-を参照
 */
