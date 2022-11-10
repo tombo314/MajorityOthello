@@ -882,7 +882,6 @@ socket.on("voted", (data)=>{
     }
     // 投票結果を盤面に反映させる
     let valid = othello(i, j, oneOrTwo);
-    console.log(i, j, oneOrTwo);
     if (valid){
         cntStone += 1;
         if (cntStone>=STONE_LIMIT){

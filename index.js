@@ -448,6 +448,8 @@ io.on("connection", (socket)=>{
                 let maxI = 0;
                 let maxJ = 0;
                 let max = 0;
+                // debug
+                console.log(rooms[roomName]["voted"]);
                 for (let i=0; i<8; i++){
                     for (let j=0; j<8; j++){
                         if (max<rooms[roomName]["voted"][i][j]){
@@ -457,15 +459,19 @@ io.on("connection", (socket)=>{
                         }
                     }
                 }
+                // 投票数が 1 以上あったとき
                 if (max>0){
+                    // debug
+                    console.log("debug:\n" + rooms[roomName]["voted"]);
                     io.sockets.emit("voted", {value: {
                         "roomName": roomName,
                         "i": maxI,
                         "j": maxJ,
                         "turnOneOrTwo": rooms[roomName]["turnOneOrTwo"]
                     }});
-                } else {
-                    // 投票数が 0 の場合は置ける場所からランダムに置く
+                }
+                // 投票数が 0 の場合は置ける場所からランダムに置く
+                else {
                     let candidateRandom = [];
                     for (let i=0; i<8; i++){
                         for (let j=0; j<8; j++){
@@ -531,6 +537,7 @@ battle
     -> 必要なソケット通信の箇所に roomName を付け加える
 （短期）
 ・投票した結果が時間切れになったあとに反映されない
+    -> その後、カウントダウンが止まり、赤は動けなくなって青は動けるようになる
 
 // 工事中 <-を参照
 */
