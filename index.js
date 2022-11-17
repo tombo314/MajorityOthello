@@ -65,7 +65,7 @@ let server = http.createServer((req, res)=>{
 let io = socket(server);
 
 // 関数宣言
-let initVoted=(roomName)=>{
+initVoted=(roomName)=>{
     let voted = [];
     for (let i=0; i<8; i++){
         let tmp = [];
@@ -78,12 +78,12 @@ let initVoted=(roomName)=>{
         rooms[roomName]["voted"] = voted;
     }
 }
-let getRandomInt=(min, max)=> {
+getRandomInt=(min, max)=> {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min);
 }
-let canPutStoneThere=(p, q, oneOrTwo)=>{
+canPutStoneThere=(p, q, oneOrTwo)=>{
     let n = oneOrTwo;
     let m;
     if (n==1){
@@ -432,12 +432,14 @@ io.on("connection", (socket)=>{
     socket.on("countdown-start", (data)=>{
         let roomName = data.value["roomName"];
         field = data.value["field"];
+        // 部屋が存在しない
         if (!Object.keys(rooms).includes(roomName)){
             io.sockets.emit("room-not-exist", {value: roomName});
             return false;
         }
         rooms[roomName]["cntSec"] = 0;
         rooms[roomName]["set"] = setInterval(()=>{
+            // 部屋が存在しない
             if (!Object.keys(rooms).includes(roomName)){
                 io.sockets.emit("room-not-exist", {value: roomName});
                 return false;
@@ -448,21 +450,18 @@ io.on("connection", (socket)=>{
                 let maxI = 0;
                 let maxJ = 0;
                 let max = 0;
-                // debug
-                console.log(rooms[roomName]["voted"]);
+                // 投票数が最大のマスを探索
                 for (let i=0; i<8; i++){
                     for (let j=0; j<8; j++){
                         if (max<rooms[roomName]["voted"][i][j]){
                             max = rooms[roomName]["voted"][i][j];
-                            naxI = i;
+                            maxI = i;
                             maxJ = j;
                         }
                     }
                 }
                 // 投票数が 1 以上あったとき
                 if (max>0){
-                    // debug
-                    console.log("debug:\n" + rooms[roomName]["voted"]);
                     io.sockets.emit("voted", {value: {
                         "roomName": roomName,
                         "i": maxI,
@@ -492,6 +491,9 @@ io.on("connection", (socket)=>{
                 }
                 // voted 配列を初期化
                 initVoted(roomName);
+                // debug
+                // ターン終了
+                console.log(1);
                 // 次のターンへ
                 io.sockets.emit("countdown-restart", {value: {
                     "roomName": roomName,
@@ -519,9 +521,11 @@ io.on("connection", (socket)=>{
 /* 
 To Do
 全体
+（長期）
 ・BGM と SE を入れる
 
 main
+（長期）
 ・design の丸が画面端から出てこない
 ・form タグを使って getElementById().onclick から name.onclick に変更する
     -> 授業が終わったら getElementById().onclick に戻す
@@ -535,9 +539,9 @@ battle
 ・visualizeStone をずらしてに呼んで、順番にひっくり返るようにする
 ・すべての socket.on() が部屋間で独立しているかを確認する
     -> 必要なソケット通信の箇所に roomName を付け加える
+・バトルが始まる前の暗いときに、自動で１つか２つ赤が置かれる。
 （短期）
-・投票した結果が時間切れになったあとに反映されない
-    -> その後、カウントダウンが止まり、赤は動けなくなって青は動けるようになる
+・２回目の eachTurn()（１回目のon("countdown-restart")）が呼ばれていない
 
 // 工事中 <-を参照
 */

@@ -25,7 +25,7 @@ let y = 0;
 let cntStone = 4;
 let turnOneOrTwo = 1;
 let eachTurnStarted = false;
-let finished = false;
+let isFinished = false;
 
 // 定数の宣言
 const RED = 1;
@@ -52,12 +52,12 @@ const COLOR_FIELD_RED = "rgb(255, 50, 50)";
 const COLOR_FIELD_BLUE = "rgb(50, 50, 255)";
 
 // 関数の宣言
-let getRandomInt=(min, max)=> {
+getRandomInt=(min, max)=> {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min);
 }
-let start=()=>{
+start=()=>{
     keysValid = false;
     opacity += 0.01;
     startEndSheet.style.opacity = opacity;
@@ -92,7 +92,7 @@ let start=()=>{
         }, 2000);
     }
 }
-let makeSquare=(i, j)=>{
+makeSquare=(i, j)=>{
     // マスの選択を表す
     let sheet = document.createElement("div");
     sheet.setAttribute("id", `square${i}${j}`);
@@ -105,21 +105,21 @@ let makeSquare=(i, j)=>{
     `);
     othelloWrapper.appendChild(sheet);
 }
-let paintSquare=(i, j)=>{
+paintSquare=(i, j)=>{
     if (i<0 || j<0 || 8<=i || 8<=j){
         return false
     }
     let elem = document.getElementById(`square${i}${j}`);
     elem.style.backgroundColor = "#cfca";
 }
-let unPaintSquare=(i, j)=>{
+unPaintSquare=(i, j)=>{
     if (i<0 || j<0 || 8<=i || 8<=j){
         return false
     }
     let elem = document.getElementById(`square${i}${j}`);
     elem.style.backgroundColor = "#70ad47";
 }
-let paintSquareRedBlue=(i, j, oneOrTwo)=>{
+paintSquareRedBlue=(i, j, oneOrTwo)=>{
     if (i<0 || j<0 || 8<=i || 8<=j){
         return false
     }
@@ -130,7 +130,7 @@ let paintSquareRedBlue=(i, j, oneOrTwo)=>{
         elem.style.backgroundColor = "#22f7";
     }
 }
-let makeStone=(i, j)=>{
+makeStone=(i, j)=>{
     // 赤
     let stone = document.createElement("canvas");
     stone.setAttribute("width", 550);
@@ -168,7 +168,7 @@ let makeStone=(i, j)=>{
     context.stroke();
 }
 let playerCircleUsed = new Set();
-let makePlayerCircle=(playerName, initX, initY, playerColor)=>{
+makePlayerCircle=(playerName, initX, initY, playerColor)=>{
     if (!playerCircleUsed.has(playerName)){
         let canvas = document.createElement("canvas");
         canvas.setAttribute("width", 1400);
@@ -188,7 +188,7 @@ let makePlayerCircle=(playerName, initX, initY, playerColor)=>{
     }
 }
 let playerNameUsed = new Set();
-let makePlayerName=(playerName, initX, initY)=>{
+makePlayerName=(playerName, initX, initY)=>{
     if (!playerNameUsed.has(playerName)){
         let createName = document.createElement("div");
         createName.textContent = playerName;
@@ -206,7 +206,7 @@ let makePlayerName=(playerName, initX, initY)=>{
         elem.style.zIndex = 10;
     }
 }
-let visualizeStone=(i, j, color)=>{
+visualizeStone=(i, j, color)=>{
     let otherColor;
     if (color==COLOR_FIELD_RED){
         otherColor = COLOR_FIELD_BLUE;
@@ -218,7 +218,7 @@ let visualizeStone=(i, j, color)=>{
     elem = document.getElementById(`stone${i}${j}${color}`);
     elem.style.visibility = "visible";
 }
-let othello=(p, q, oneOrTwo)=>{
+othello=(p, q, oneOrTwo)=>{
     let n = oneOrTwo;
     let m;
     let color;
@@ -457,7 +457,7 @@ let othello=(p, q, oneOrTwo)=>{
     }
     return false;
 }
-let vote=(i, j, oneOrTwo)=>{
+vote=(i, j, oneOrTwo)=>{
     socket.emit("voted", {value: {
         "roomName": roomName,
         "i": i,
@@ -474,7 +474,7 @@ let vote=(i, j, oneOrTwo)=>{
         keysValid = false;
     }
 }
-let canPutStoneThere=(p, q, oneOrTwo)=>{
+canPutStoneThere=(p, q, oneOrTwo)=>{
     let n = oneOrTwo;
     let m;
     if (n==1){
@@ -639,7 +639,7 @@ let canPutStoneThere=(p, q, oneOrTwo)=>{
 
     return false;
 }
-let canPutStoneAll=(n)=>{
+canPutStoneAll=(n)=>{
     for (let i=0; i<8; i++){
         for (let j=0; j<8; j++){
             if (field[i][j]!=0){
@@ -652,7 +652,7 @@ let canPutStoneAll=(n)=>{
     }
     return false;
 }
-let eachTurn=(s)=>{
+eachTurn=(s)=>{
     // ターン開始時に置ける場所を表示する
     eachTurnStarted = true;
     visualizeCanPutStoneAll(turnOneOrTwo);
@@ -662,13 +662,13 @@ let eachTurn=(s)=>{
             clearInterval(set);
             eachTurnStarted = false;
             // ゲームが終わったとき
-            if(finished){
+            if(isFinished){
                 finish();
                 keysValid = false;
             }
         }
         // 残り時間を更新する
-        if (finished){
+        if (isFinished){
             timer.textContent = "00:00";
         } else {
             timer.textContent = `00:${("00"+s).slice(-2)}`;
@@ -677,7 +677,7 @@ let eachTurn=(s)=>{
     }, 1000);
 }
 let setCanPutStoneAll = new Set();
-let visualizeCanPutStoneAll=(n)=>{
+visualizeCanPutStoneAll=(n)=>{
     for (let i=0; i<8; i++){
         for (let j=0; j<8; j++){
             if (canPutStoneThere(i, j, n)){
@@ -690,7 +690,7 @@ let visualizeCanPutStoneAll=(n)=>{
         }
     }
 }
-let finish=()=>{
+finish=()=>{
     let red = 0;
     let blue = 0;
     for (let i=0; i<8; i++){
@@ -877,6 +877,7 @@ socket.on("voted", (data)=>{
     } else if (colorOneOrTwo==BLUE){
         otherOneOrTwo = RED;
     }
+    // 自分が入っている部屋への命令であるか確認
     if (roomNameTmp!=roomName){
         return false;
     }
@@ -885,18 +886,14 @@ socket.on("voted", (data)=>{
     if (valid){
         cntStone += 1;
         if (cntStone>=STONE_LIMIT){
-            finished = true;
+            isFinished = true;
         }
-        // 反対側の手番が回ってきたら
-        if (canPutStoneAll(oneOrTwo)){
-            if (colorOneOrTwo==RED){
-                turnOneOrTwo ^= 3;
-            } else if (colorOneOrTwo==BLUE){
-                turnOneOrTwo ^= 3;
-            }
+        // 反対のチームの手番が回ってきたら
+        if (canPutStoneAll(otherOneOrTwo)){
+            turnOneOrTwo ^= 3;
         // どちらも手がなくなったら
-        } else if (!canPutStoneAll(otherOneOrTwo)){
-            finished = true;
+        } else if (!canPutStoneAll(oneOrTwo)){
+            isFinished = true;
         }
     }
 
@@ -932,10 +929,10 @@ socket.on("countdown-restart", (data)=>{
 });
 
 // ゲームの終了を認識する
-socket.on("game-finished", (data)=>{
+socket.on("game-isFinished", (data)=>{
     let usernameOther = data.value;
     if (usernameOther!=username){
-        finished = true;
+        isFinished = true;
         keysValid = false;
         finish();
     }
@@ -1030,10 +1027,10 @@ onkeydown=(e)=>{
 
 onkeyup=(e)=>{
     if (keysValid){
-        if (finished){
+        if (isFinished){
             finish();
             keysValid = false;
-            socket.emit("game-finished", {value: username});
+            socket.emit("game-isFinished", {value: username});
         }
         if (e.key=="w"){
             wDown = false;
