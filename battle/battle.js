@@ -1,3 +1,5 @@
+// auhfk,gy
+
 // 同じページを一度読み込んだかどうか
 if (sessionStorage.getItem("samePageLoaded")=="true"){
     window.location.href = "/";
@@ -1046,4 +1048,3 @@ onkeyup=(e)=>{
         }
     }
 }
-/*  */
