@@ -1,3 +1,4 @@
+
 let set;
 let socket = io();
 let roomForRooms = document.getElementById("room-for-rooms");
@@ -258,8 +259,8 @@ let diffX = new Array(CIRCLE_NUM).fill(0, 0, CIRCLE_NUM);
 let diffY = new Array(CIRCLE_NUM).fill(0, 0, CIRCLE_NUM);
 for(let i=0; i<CIRCLE_NUM; i++){
     let elem = document.getElementById(`circle${i}`);
-    diffX[i] = getRandomInt(-3, 4);
-    diffY[i] = getRandomInt(-3, 4);
+    diffX[i] = getRandomInt(-2, 3);
+    diffY[i] = getRandomInt(-2, 3);
     let threshold = 1;
     if (0<=diffX[i] && diffX[i]<threshold){
         diffX[i]++;
@@ -281,10 +282,10 @@ for(let i=0; i<CIRCLE_NUM; i++){
             } else {
                 diffX[i] *= 0.9;
             }
-            if (diffX[i]>=6){
-                diffX[i] = 3;
-            } else if (diffX[i]<=-6){
-                diffX[i] = -3;
+            if (diffX[i]>=4){
+                diffX[i] = 2;
+            } else if (diffX[i]<=-4){
+                diffX[i] = -2;
             }
         }
         if (coords[i][1]+y[i]<=0 || coords[i][1]+y[i]>=innerHeight-40){
@@ -294,10 +295,10 @@ for(let i=0; i<CIRCLE_NUM; i++){
             } else {
                 diffY[i] *= 0.9;
             }
-            if (diffY[i]>=8){
-                diffY[i] = 4;
-            } else if (diffY[i]<=-8){
-                diffY[i] = -4;
+            if (diffY[i]>=4){
+                diffY[i] = 2;
+            } else if (diffY[i]<=-4){
+                diffY[i] = -2;
             }
         }
         elem.style.transform = `translate(${coords[i][0]+x[i]}px, ${coords[i][1]+y[i]}px)`;

@@ -1,3 +1,4 @@
+
 /*
 sessionStorage で管理する変数
 
@@ -518,7 +519,7 @@ io.on("connection", (socket)=>{
     });
 });
 
-/* 
+/*
 To Do
 全体
 （長期）
@@ -540,6 +541,7 @@ battle
 ・すべての socket.on() が部屋間で独立しているかを確認する
     -> 必要なソケット通信の箇所に roomName を付け加える
 ・バトルが始まる前の暗いときに、自動で１つか２つ赤が置かれる。
+・paintSquareRedBlue の解除が行われていない
 （短期）
 ・２回目の eachTurn()（１回目のon("countdown-restart")）が呼ばれていない
 
