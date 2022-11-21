@@ -660,22 +660,25 @@ eachTurn=(s)=>{
     // ターン開始時に置ける場所を表示する
     visualizeCanPutStoneAll(turnOneOrTwo);
     // 残り時間を更新する
+    let latest_s = s;
     set = setInterval(() => {
         // ターン終了
-        if (s<=0){
+        if (s<=0 && latest_s==1){
             clearInterval(set);
             // ゲームが終わったとき
             if(isFinished){
                 finish();
                 keysValid = false;
             }
+        }
         // ターン中
-        } else {
+        else {
             // 残り時間を更新する
             if (isFinished){
                 timer.textContent = "00:00";
             } else {
                 timer.textContent = `00:${("00"+s).slice(-2)}`;
+                latest_s = s;
                 s--;
             }
         }
