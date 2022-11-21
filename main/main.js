@@ -1,4 +1,3 @@
-
 let set;
 let socket = io();
 let roomForRooms = document.getElementById("room-for-rooms");

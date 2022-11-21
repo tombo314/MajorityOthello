@@ -24,7 +24,6 @@ let x = 0;
 let y = 0;
 let cntStone = 4;
 let turnOneOrTwo = 1;
-let eachTurnStarted = false;
 let isFinished = false;
 
 // 定数の宣言
@@ -77,7 +76,6 @@ start=()=>{
                     startEndSheet.textContent = "";
                     if (turnOneOrTwo==1 && color=="red" || turnOneOrTwo==2 && color=="blue"){
                         keysValid = true;
-                        eachTurnStarted = true;
                     }
                     eachTurn(parseInt(turnDurationSec));
                     if (isHostStr=="true"){
@@ -654,13 +652,11 @@ canPutStoneAll=(n)=>{
 }
 eachTurn=(s)=>{
     // ターン開始時に置ける場所を表示する
-    eachTurnStarted = true;
     visualizeCanPutStoneAll(turnOneOrTwo);
     set = setInterval(() => {
         if (s<=0){
             // ターン終了
             clearInterval(set);
-            eachTurnStarted = false;
             // ゲームが終わったとき
             if(isFinished){
                 finish();
@@ -897,16 +893,16 @@ socket.on("voted", (data)=>{
         }
     }
 
-    // 「赤（青）のターン」の文字の色を反映させる
     if (valid){
+        // 「赤（青）のターン」の文字の色を反映させる
         let turn = document.getElementById("turn");
         let turnColor;
-        // 次に赤のターン
+        // 次に赤のターンのとき
         if (turnOneOrTwo==1){
             turn.innerHTML = "<span id='turn-color'>赤</span>のターン";
             turnColor = document.getElementById("turn-color");
             turnColor.style.color = COLOR_FIELD_RED;
-        // 次に青のターン
+        // 次に青のターンのとき
         } else if (turnOneOrTwo==2) {
             turn.innerHTML = "<span id='turn-color'>青</span>のターン";
             turnColor = document.getElementById("turn-color");
@@ -914,6 +910,7 @@ socket.on("voted", (data)=>{
         }
     }
 
+    // 次に自分のチームのターンなら動かせるようにする
     if (oneOrTwo!=colorOneOrTwo){
         keysValid = true;
     }
@@ -923,8 +920,13 @@ socket.on("voted", (data)=>{
 socket.on("countdown-restart", (data)=>{
     let roomNameTmp = data.value["roomName"];
     turnDurationSec = data.value["turnDurationSec"];
-    if (roomNameTmp==roomName && !eachTurnStarted){
+    if (roomNameTmp==roomName){
+        // debug
+        console.log(1);
         eachTurn(parseInt(turnDurationSec));
+    } else {
+        // debug
+        console.log(2);
     }
 });
 

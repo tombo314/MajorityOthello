@@ -492,9 +492,6 @@ io.on("connection", (socket)=>{
                 }
                 // voted 配列を初期化
                 initVoted(roomName);
-                // debug
-                // ターン終了
-                console.log(1);
                 // 次のターンへ
                 io.sockets.emit("countdown-restart", {value: {
                     "roomName": roomName,
@@ -520,7 +517,11 @@ io.on("connection", (socket)=>{
 });
 
 /*
-To Do
+〇 Notes
+・ＰＣのバッテリー節約モードをオフにする
+・画面幅を調整する
+
+〇 To Do
 全体
 （長期）
 ・BGM と SE を入れる
@@ -543,7 +544,7 @@ battle
 ・バトルが始まる前の暗いときに、自動で１つか２つ赤が置かれる。
 ・paintSquareRedBlue の解除が行われていない
 （短期）
-・２回目の eachTurn()（１回目のon("countdown-restart")）が呼ばれていない
+・ターンの残り時間の表示がマイナスになる
 
 // 工事中 <-を参照
 */
