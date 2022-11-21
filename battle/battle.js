@@ -659,6 +659,7 @@ eachTurn=(s)=>{
     }
     // ターン開始時に置ける場所を表示する
     visualizeCanPutStoneAll(turnOneOrTwo);
+    // 残り時間を更新する
     set = setInterval(() => {
         // ターン終了
         if (s<=0){
@@ -767,7 +768,9 @@ if (username!=null){
         "userX": ownX,
         "userY": ownY
     }});
-} else {
+}
+// 自分のユーザー情報が登録されていなかったとき
+else {
     alert("ユーザー情報が登録されていません。");
     window.location.href = "/";
 }
