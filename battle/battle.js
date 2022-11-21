@@ -651,24 +651,32 @@ canPutStoneAll=(n)=>{
     return false;
 }
 eachTurn=(s)=>{
+    // 盤面の色を初期化する
+    for (let i=0; i<8; i++){
+        for (let j=0; j<8; j++){
+            unPaintSquare(i, j);
+        }
+    }
     // ターン開始時に置ける場所を表示する
     visualizeCanPutStoneAll(turnOneOrTwo);
     set = setInterval(() => {
+        // ターン終了
         if (s<=0){
-            // ターン終了
             clearInterval(set);
             // ゲームが終わったとき
             if(isFinished){
                 finish();
                 keysValid = false;
             }
-        }
-        // 残り時間を更新する
-        if (isFinished){
-            timer.textContent = "00:00";
+        // ターン中
         } else {
-            timer.textContent = `00:${("00"+s).slice(-2)}`;
-            s--;
+            // 残り時間を更新する
+            if (isFinished){
+                timer.textContent = "00:00";
+            } else {
+                timer.textContent = `00:${("00"+s).slice(-2)}`;
+                s--;
+            }
         }
     }, 1000);
 }
@@ -689,6 +697,7 @@ visualizeCanPutStoneAll=(n)=>{
 finish=()=>{
     let red = 0;
     let blue = 0;
+    // 赤と青の数を数える
     for (let i=0; i<8; i++){
         for (let j=0; j<8; j++){
             if (field[i][j]==RED){
@@ -699,6 +708,7 @@ finish=()=>{
         }
     }
     opacity = 0;
+    // 画面を暗転して勝敗のテキストを表示
     set = setInterval(()=>{
         opacity += 0.01;
         startEndSheet.style.opacity = opacity;
@@ -707,14 +717,19 @@ finish=()=>{
             startEndSheet.style.backgroundColor = "#2228";
             startEndSheet.style.opacity = 1;
             let color;
+            // 引き分けでない
             if (red!=blue){
+                // 赤の勝ち
                 if (red>blue){
                     color = `<span style="color: ${COLOR_FIELD_RED}">赤</span>`;
+                // 青の勝ち
                 } else if (red<blue){
                     color = `<span style="color: ${COLOR_FIELD_BLUE}">青</span>`;
                 }
                 startEndSheet.innerHTML = `${color}チームの勝利です`;
-            } else {
+            }
+            // 引き分け
+            else {
                 startEndSheet.textContent = "引き分けです";
             }
         }
@@ -734,6 +749,7 @@ let nodesAlly = document.getElementById("nodes-ally");
 let nodesOpponent = document.getElementById("nodes-opponent");
 let othelloWrapper = document.getElementById("othello-wrapper");
 let startEndSheet = document.getElementById("start-end-sheet");
+// 部屋の turnDurationSec の値を取得する
 socket.emit("need-turn-duration-sec", {value: roomName});
 socket.on("need-turn-duration-sec", (data)=>{
     let roomNameTmp = data.value["roomName"];
@@ -756,7 +772,7 @@ if (username!=null){
     window.location.href = "/";
 }
 
-// ホストからサーバーに turnDurationSec の値を送信する
+// 自分がホストのとき、サーバーに turnDurationSec の値を送信する
 if (isHostStr=="true"){
     socket.emit("turn-duration-sec", {value: {
         "roomName": roomName,
@@ -855,6 +871,7 @@ socket.on("coordinates-changed", (data)=>{
     let nameY = nameCoord[1];
     let userElem = document.getElementById(`id-${usernameOther}`);
     let nameElem = document.getElementById(`id-${usernameOther}-name`);
+    // 他のプレイヤーの情報のとき反映させる
     if (usernameOther!=username){
         userElem.style.transform = `translate(${userX}px, ${userY}px)`;
         nameElem.style.transform = `translate(${nameX}px, ${nameY}px)`;
@@ -893,8 +910,8 @@ socket.on("voted", (data)=>{
         }
     }
 
+    // 「赤（青）のターン」の文字の色を反映させる
     if (valid){
-        // 「赤（青）のターン」の文字の色を反映させる
         let turn = document.getElementById("turn");
         let turnColor;
         // 次に赤のターンのとき
@@ -921,12 +938,7 @@ socket.on("countdown-restart", (data)=>{
     let roomNameTmp = data.value["roomName"];
     turnDurationSec = data.value["turnDurationSec"];
     if (roomNameTmp==roomName){
-        // debug
-        console.log(1);
         eachTurn(parseInt(turnDurationSec));
-    } else {
-        // debug
-        console.log(2);
     }
 });
 
