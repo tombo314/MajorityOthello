@@ -115,7 +115,12 @@ makeRoom=(e)=>{
 }
 
 // 周りの暗いところをクリックしてキャンセル
-blackSheet.onclick=()=>{
+// 授業後に修正
+// blackSheet.onclick=()=>{
+//     blackSheet.style.visibility = "hidden";
+//     roomMakeWindow.style.visibility = "hidden";
+// }
+funcForForm=()=>{
     blackSheet.style.visibility = "hidden";
     roomMakeWindow.style.visibility = "hidden";
 }
@@ -256,6 +261,7 @@ let x = new Array(CIRCLE_NUM).fill(0, 0, CIRCLE_NUM);
 let y = new Array(CIRCLE_NUM).fill(0, 0, CIRCLE_NUM);
 let diffX = new Array(CIRCLE_NUM).fill(0, 0, CIRCLE_NUM);
 let diffY = new Array(CIRCLE_NUM).fill(0, 0, CIRCLE_NUM);
+// すべての丸の動きを管理する
 for(let i=0; i<CIRCLE_NUM; i++){
     let elem = document.getElementById(`circle${i}`);
     diffX[i] = getRandomInt(-2, 3);
@@ -271,9 +277,11 @@ for(let i=0; i<CIRCLE_NUM; i++){
     } else if (threshold<diffY[i] && diffY[i]<=0){
         diffY[i]--;
     }
+    // 丸を動かす
     set = setInterval(()=>{
         x[i] += diffX[i];
         y[i] += diffY[i];
+        // 壁にぶつかったら方向を x を反転
         if (coords[i][0]+x[i]<=0 || coords[i][0]+x[i]>=innerWidth-40){
             diffX[i] *= -1;
             if (getRandomInt(0, 2)){
@@ -287,6 +295,7 @@ for(let i=0; i<CIRCLE_NUM; i++){
                 diffX[i] = -2;
             }
         }
+        // 壁にぶつかったら方向を y を反転
         if (coords[i][1]+y[i]<=0 || coords[i][1]+y[i]>=innerHeight-40){
             diffY[i] *= -1;
             if (getRandomInt(0, 2)){

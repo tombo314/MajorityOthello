@@ -522,7 +522,7 @@ io.on("connection", (socket)=>{
     -> setInterval が機能しないため
 ・画面幅を調整する
     -> レスポンシブ性がゴミカスのため
-・ゲーム中に１人以上のユーザーが一時的にノンアクティブになった場合、正しい動作は保証していない
+・ゲーム中に１人以上のユーザーが一時的にノンアクティブになった場合、正しい動作は保証できない
 
 〇 To Do
 全体
@@ -531,7 +531,6 @@ io.on("connection", (socket)=>{
 
 main
 （長期）
-・design の丸が画面端から出てこない
 ・form タグを使って getElementById().onclick から name.onclick に変更する
     -> 授業が終わったら getElementById().onclick に戻す
 
