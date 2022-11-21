@@ -540,13 +540,13 @@ battle
 〇投票システムを作る
     ・ターンが終わるまでは、何回でも投票できるようにする
         -> 一番最後に投票した場所が自分の投票した場所になる
-    ・投票時に confirm() などで Yes or No を聞く
 ・visualizeStone をずらしてに呼んで、順番にひっくり返るようにする
 ・すべての socket.on() が部屋間で独立しているかを確認する
     -> 必要なソケット通信の箇所に roomName を付け加える
 （短期）
 ・カウントダウンが途中で止まる
     -> eachTurn 内の setInterval が途中で clearInterval() される？
+    -> eachTurn の引数 s が一時的に 0 になって（latest_s も 1 になる）、その後元の値に戻るが、 s<=0 で clearInterval(set) のため、壊れている
 
 // 工事中 <-を参照
 */
