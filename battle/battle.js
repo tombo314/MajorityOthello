@@ -109,7 +109,7 @@ makeSquare=(i, j)=>{
         width: ${GRID_X}px;
         height: ${GRID_Y}px;
         position: absolute;
-        left: ${GRID_INIT_LEFT+j*(GRID_X+GRID_DIFF_X)}px;
+        left: ${GRID_INIT_LEFT+j*(GRID_X+GRID_DIFF_X)}px;d
         top: ${GRID_INIT_TOP+i*(GRID_Y+GRID_DIFF_Y)}px;
     `);
     othelloWrapper.appendChild(sheet);
@@ -689,7 +689,6 @@ eachTurn=(s)=>{
             } else {
                 timer.textContent = `00:${("00"+s).slice(-2)}`;
                 s--;
-                console.log(s);
             }
         }
     }, 1000);
