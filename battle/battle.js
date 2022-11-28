@@ -44,7 +44,7 @@ const GRID_INIT_LEFT = -40;
 const GRID_INIT_TOP = -65;
 const GRID_DIFF_X = 5.75;
 const GRID_DIFF_Y = 4;
-const STONE_LIMIT = 64;
+const STONE_LIMIT = 6;
 const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
 const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
 const COLOR_FIELD_RED = "rgb(255, 50, 50)";
@@ -669,17 +669,14 @@ let eachTurn = (s)=>{
         }
     }
     // ターン開始時に置ける場所を表示する
-    visualizeCanPutStoneAll(turnOneOrTwo);
+    if (turnOneOrTwo==colorOneOrTwo){
+        visualizeCanPutStoneAll(turnOneOrTwo);
+    }
     // 残り時間を更新する
     set = setInterval(() => {
         // ターン終了
         if (s<=0){
             clearInterval(set);
-            // ゲームが終わったとき
-            if(isFinished){
-                finish();
-                keysValid = false;
-            }
         }
         // ターン中
         else {
@@ -708,6 +705,12 @@ let visualizeCanPutStoneAll = (n)=>{
     }
 }
 let finish = ()=>{
+    // すでに終了していたら実行しない
+    if (isFinished){
+        return false;
+    }
+    isFinished = true;
+    keysValid = false;
     let red = 0;
     let blue = 0;
     // 赤と青の数を数える
@@ -893,6 +896,10 @@ socket.on("coordinates-changed", (data)=>{
 
 // 投票結果を受け取る
 socket.on("voted", (data)=>{
+    // ゲームがすでに終了している
+    if (isFinished){
+        return false;
+    }
     let roomNameTmp = data.value["roomName"];
     let i = data.value["i"];
     let j = data.value["j"];
@@ -913,15 +920,20 @@ socket.on("voted", (data)=>{
     let valid = othello(i, j, oneOrTwo);
     if (valid){
         cntStone += 1;
+        // ゲーム終了
         if (cntStone>=STONE_LIMIT){
-            isFinished = true;
+            if (isHostStr=="true"){
+                socket.emit("game-finished", {value: roomName});
+            }
         }
         // 反対のチームの手番が回ってきたら
         if (canPutStoneAll(otherOneOrTwo)){
             turnOneOrTwo ^= 3;
         // どちらも手がなくなったら
         } else if (!canPutStoneAll(oneOrTwo)){
-            isFinished = true;
+            if (isHostStr=="true"){
+                socket.emit("game-finished", {value: roomName});
+            }
         }
     }
 
@@ -959,10 +971,8 @@ socket.on("countdown-restart", (data)=>{
 
 // ゲームの終了を認識する
 socket.on("game-finished", (data)=>{
-    let usernameOther = data.value;
-    if (usernameOther!=username){
-        isFinished = true;
-        keysValid = false;
+    let roomNameOther = data.value;
+    if (roomNameOther==roomName){
         finish();
     }
 });
@@ -1062,11 +1072,6 @@ onkeydown=(e)=>{
 // キー入力の処理
 onkeyup=(e)=>{
     if (keysValid){
-        if (isFinished){
-            finish();
-            keysValid = false;
-            socket.emit("game-finished", {value: username});
-        }
         if (e.key=="w"){
             wDown = false;
         } else if (e.key=="a"){
