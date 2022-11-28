@@ -975,6 +975,12 @@ socket.on("countdown-restart", (data)=>{
     }
 });
 
+socket.on("need-field", (data)=>{
+    if (isHostStr=="true" && data.value==roomName){
+        socket.emit("need-field", {value: field});
+    }
+});
+
 // ゲームの終了を認識する
 socket.on("game-finished", (data)=>{
     let roomNameOther = data.value;

@@ -329,7 +329,6 @@ io.on("connection", (socket)=>{
         }
     });
 
-
     /* wait.html */
     // 部屋が存在しない場合はスタート画面に戻る
     socket.on("confirm-room", (data)=>{
@@ -435,8 +434,6 @@ io.on("connection", (socket)=>{
     socket.on("turnOneOrTwo-update", (data)=>{
         let roomName = data.value["roomName"];
         let turnOneOrTwo = data.value["turnOneOrTwo"];
-        // debug
-        console.log(turnOneOrTwo);
         if (!Object.keys(rooms).includes(roomName)){
             io.sockets.emit("room-not-exist", {value: roomName});
             return false;
@@ -486,6 +483,12 @@ io.on("connection", (socket)=>{
                 }
                 // 投票数が 0 の場合は置ける場所からランダムに置く
                 else {
+                    // field を更新する
+                    io.sockets.emit("need-field", {value: roomName});
+                    socket.on("need-field", (data)=>{
+                        field = data.value;
+                    });
+                    // ランダムに置けるマスの候補を探索する
                     let candidateRandom = [];
                     for (let i=0; i<8; i++){
                         for (let j=0; j<8; j++){
@@ -554,7 +557,7 @@ io.on("connection", (socket)=>{
 （長期）
 ・visualizeStone をずらしてに呼んで、順番にひっくり返るようにする
 （短期）
-・ランダムに置くときに、赤 -> 青 -> 赤 と置いて次の青が置かれない。
+・ランダムに置く処理がバグっている
 
 // debug -> デバッグ用の出力がある
 // 工事中 -> コードを作成・改良中である
