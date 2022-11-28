@@ -120,6 +120,7 @@ paintSquare=(i, j)=>{
     }
     let elem = document.getElementById(`square${i}${j}`);
     elem.style.backgroundColor = "#cfca";
+    console.log(elem.style.backgroundColor);    
 }
 unPaintSquare=(i, j)=>{
     if (i<0 || j<0 || 8<=i || 8<=j){
