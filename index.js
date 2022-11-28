@@ -1,4 +1,4 @@
-
+/*  */
 /*
 sessionStorage で管理する変数
 
