@@ -433,8 +433,10 @@ io.on("connection", (socket)=>{
     });
     // 手番を管理する
     socket.on("turnOneOrTwo-update", (data)=>{
-        let roomName = data.value[0];
-        let turnOneOrTwo = data.value[1];
+        let roomName = data.value["roomName"];
+        let turnOneOrTwo = data.value["turnOneOrTwo"];
+        // debug
+        console.log(turnOneOrTwo);
         if (!Object.keys(rooms).includes(roomName)){
             io.sockets.emit("room-not-exist", {value: roomName});
             return false;
@@ -552,8 +554,7 @@ io.on("connection", (socket)=>{
 （長期）
 ・visualizeStone をずらしてに呼んで、順番にひっくり返るようにする
 （短期）
-・rooms[roomName]["turnOneOrTwo"] を更新するタイミングが悪い
-    -> candidateRandom の青が置かれない
+・ランダムに置くときに、赤 -> 青 -> 赤 と置いて次の青が置かれない。
 
 // debug -> デバッグ用の出力がある
 // 工事中 -> コードを作成・改良中である

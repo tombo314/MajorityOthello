@@ -926,7 +926,6 @@ socket.on("voted", (data)=>{
         // 反対のチームの手番が回ってきたら
         if (canPutStoneAll(otherOneOrTwo)){
             turnOneOrTwo ^= 3;
-            工事中
             // ホストはサーバに部屋の turnOneOrTwo を送信する
             if (isHostStr=="true"){
                 socket.emit("turnOneOrTwo-update", {value:{
