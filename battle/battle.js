@@ -51,12 +51,12 @@ const COLOR_FIELD_RED = "rgb(255, 50, 50)";
 const COLOR_FIELD_BLUE = "rgb(50, 50, 255)";
 
 // 関数の宣言
-getRandomInt=(min, max)=> {
+let getRandomInt = (min, max)=> {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min);
 }
-start=()=>{
+let start = ()=>{
     keysValid = false;
     opacity += 0.01;
     startEndSheet.style.opacity = opacity;
@@ -101,7 +101,7 @@ start=()=>{
         }, 2000);
     }
 }
-makeSquare=(i, j)=>{
+let makeSquare = (i, j)=>{
     // マスの選択を表す
     let sheet = document.createElement("div");
     sheet.setAttribute("id", `square${i}${j}`);
@@ -114,21 +114,21 @@ makeSquare=(i, j)=>{
     `);
     othelloWrapper.appendChild(sheet);
 }
-paintSquare=(i, j)=>{
+let paintSquare = (i, j)=>{
     if (i<0 || j<0 || 8<=i || 8<=j){
         return false
     }
     let elem = document.getElementById(`square${i}${j}`);
     elem.style.backgroundColor = "#cfca";
 }
-unPaintSquare=(i, j)=>{
+let unPaintSquare = (i, j)=>{
     if (i<0 || j<0 || 8<=i || 8<=j){
         return false
     }
     let elem = document.getElementById(`square${i}${j}`);
     elem.style.backgroundColor = "#70ad47";
 }
-paintSquareRedBlue=(i, j, oneOrTwo)=>{
+let paintSquareRedBlue = (i, j, oneOrTwo)=>{
     if (i<0 || j<0 || 8<=i || 8<=j){
         return false
     }
@@ -139,7 +139,7 @@ paintSquareRedBlue=(i, j, oneOrTwo)=>{
         elem.style.backgroundColor = "#22f7";
     }
 }
-makeStone=(i, j)=>{
+let makeStone = (i, j)=>{
     // 赤
     let stone = document.createElement("canvas");
     stone.setAttribute("width", 550);
@@ -177,7 +177,7 @@ makeStone=(i, j)=>{
     context.stroke();
 }
 let playerCircleUsed = new Set();
-makePlayerCircle=(playerName, initX, initY, playerColor)=>{
+let makePlayerCircle = (playerName, initX, initY, playerColor)=>{
     if (!playerCircleUsed.has(playerName)){
         let canvas = document.createElement("canvas");
         canvas.setAttribute("width", 1400);
@@ -197,7 +197,7 @@ makePlayerCircle=(playerName, initX, initY, playerColor)=>{
     }
 }
 let playerNameUsed = new Set();
-makePlayerName=(playerName, initX, initY)=>{
+let makePlayerName = (playerName, initX, initY)=>{
     if (!playerNameUsed.has(playerName)){
         let createName = document.createElement("div");
         createName.textContent = playerName;
@@ -215,7 +215,7 @@ makePlayerName=(playerName, initX, initY)=>{
         elem.style.zIndex = 10;
     }
 }
-visualizeStone=(i, j, color)=>{
+let visualizeStone = (i, j, color)=>{
     let otherColor;
     if (color==COLOR_FIELD_RED){
         otherColor = COLOR_FIELD_BLUE;
@@ -227,7 +227,7 @@ visualizeStone=(i, j, color)=>{
     elem = document.getElementById(`stone${i}${j}${color}`);
     elem.style.visibility = "visible";
 }
-othello=(p, q, oneOrTwo)=>{
+let othello = (p, q, oneOrTwo)=>{
     let n = oneOrTwo;
     let m;
     let color;
@@ -466,7 +466,7 @@ othello=(p, q, oneOrTwo)=>{
     }
     return false;
 }
-vote=(i, j, oneOrTwo)=>{
+let vote = (i, j, oneOrTwo)=>{
     socket.emit("voted", {value: {
         "roomName": roomName,
         "i": i,
@@ -483,7 +483,7 @@ vote=(i, j, oneOrTwo)=>{
         keysValid = false;
     }
 }
-canPutStoneThere=(p, q, oneOrTwo)=>{
+let canPutStoneThere = (p, q, oneOrTwo)=>{
     let n = oneOrTwo;
     let m;
     if (n==1){
@@ -648,7 +648,7 @@ canPutStoneThere=(p, q, oneOrTwo)=>{
 
     return false;
 }
-canPutStoneAll=(n)=>{
+let canPutStoneAll = (n)=>{
     for (let i=0; i<8; i++){
         for (let j=0; j<8; j++){
             if (field[i][j]!=0){
@@ -661,7 +661,7 @@ canPutStoneAll=(n)=>{
     }
     return false;
 }
-eachTurn=(s)=>{
+let eachTurn = (s)=>{
     // 盤面の色を初期化する
     for (let i=0; i<8; i++){
         for (let j=0; j<8; j++){
@@ -694,7 +694,7 @@ eachTurn=(s)=>{
     }, 1000);
 }
 let setCanPutStoneAll = new Set();
-visualizeCanPutStoneAll=(n)=>{
+let visualizeCanPutStoneAll = (n)=>{
     for (let i=0; i<8; i++){
         for (let j=0; j<8; j++){
             if (canPutStoneThere(i, j, n)){
@@ -707,7 +707,7 @@ visualizeCanPutStoneAll=(n)=>{
         }
     }
 }
-finish=()=>{
+let finish = ()=>{
     let red = 0;
     let blue = 0;
     // 赤と青の数を数える
@@ -878,12 +878,10 @@ set = setInterval(start, 20);
 socket.on("coordinates-changed", (data)=>{
     let user = data.value;
     let usernameOther = user["username"];
-    let userCoord = user["userCoord"];
-    let userX = userCoord[0];
-    let userY = userCoord[1];
-    let nameCoord = user["nameCoord"];
-    let nameX = nameCoord[0];
-    let nameY = nameCoord[1];
+    let userX = user["userCoord"][0];
+    let userY = user["userCoord"][1];
+    let nameX = user["nameCoord"][0];
+    let nameY = user["nameCoord"][1];
     let userElem = document.getElementById(`id-${usernameOther}`);
     let nameElem = document.getElementById(`id-${usernameOther}-name`);
     // 他のプレイヤーの情報のとき反映させる
@@ -977,6 +975,7 @@ socket.on("room-not-exist", (data)=>{
     }
 });
 
+// キー入力の処理
 onkeydown=(e)=>{
     // 移動が有効のとき
     if (keysValid){
@@ -1060,6 +1059,7 @@ onkeydown=(e)=>{
     }
 }
 
+// キー入力の処理
 onkeyup=(e)=>{
     if (keysValid){
         if (isFinished){

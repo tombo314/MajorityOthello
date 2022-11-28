@@ -78,12 +78,13 @@ initVoted=(roomName)=>{
         rooms[roomName]["voted"] = voted;
     }
 }
-getRandomInt=(min, max)=> {
+/** [min, max) の範囲の乱数を取得 */
+let getRandomInt = (min, max)=> {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min);
 }
-canPutStoneThere=(p, q, oneOrTwo)=>{
+let canPutStoneThere = (p, q, oneOrTwo)=>{
     let n = oneOrTwo;
     let m;
     if (n==1){
@@ -450,7 +451,7 @@ io.on("connection", (socket)=>{
             }
             // ターンが終わったとき
             if (rooms[roomName]["cntSec"]>=rooms[roomName]["turnDurationSec"]){
-                clearInterval(rooms[roomName]["set"]);
+                rooms[roomName]["cntSec"] = 0;
                 let maxI = 0;
                 let maxJ = 0;
                 let max = 0;
@@ -500,7 +501,9 @@ io.on("connection", (socket)=>{
                     "roomName": roomName,
                     "turnDurationSec": rooms[roomName]["turnDurationSec"]
                 }});
-            } else {
+            }
+            // ターンがまだ終わっていないとき、経過時間をインクリメント
+            else {
                 rooms[roomName]["cntSec"]++;
             }
         }, 1000);
@@ -543,7 +546,6 @@ io.on("connection", (socket)=>{
 ・すべての socket.on() が部屋間で独立しているかを確認する
     -> 必要なソケット通信の箇所に roomName を付け加える
 （短期）
-・２ターン目の rooms[roomName]["cntSec"] が動かない
 
-// 工事中 <-を参照
+// debug を参照
 */
