@@ -705,10 +705,6 @@ let visualizeCanPutStoneAll = (n)=>{
     }
 }
 let finish = ()=>{
-    // すでに終了していたら実行しない
-    if (isFinished){
-        return false;
-    }
     isFinished = true;
     keysValid = false;
     let red = 0;
@@ -914,7 +910,7 @@ socket.on("voted", (data)=>{
     if (roomNameTmp!=roomName){
         return false;
     }
-    // カウントダウンを同期させるために、ローカルの set をクリア
+    // カウントダウンを全体で同期させるために、ローカルの set をクリア
     clearInterval(set);
     // 投票結果を盤面に反映させる
     let valid = othello(i, j, oneOrTwo);
@@ -924,11 +920,13 @@ socket.on("voted", (data)=>{
         if (cntStone>=STONE_LIMIT){
             if (isHostStr=="true"){
                 socket.emit("game-finished", {value: roomName});
+                return false;
             }
         }
         // 反対のチームの手番が回ってきたら
         if (canPutStoneAll(otherOneOrTwo)){
             turnOneOrTwo ^= 3;
+            工事中
             // ホストはサーバに部屋の turnOneOrTwo を送信する
             if (isHostStr=="true"){
                 socket.emit("turnOneOrTwo-update", {value:{
@@ -936,10 +934,12 @@ socket.on("voted", (data)=>{
                     "turnOneOrTwo": turnOneOrTwo
                 }});
             }
+            
         // どちらも手がなくなったら
         } else if (!canPutStoneAll(oneOrTwo)){
             if (isHostStr=="true"){
                 socket.emit("game-finished", {value: roomName});
+                return false;
             }
         }
     }

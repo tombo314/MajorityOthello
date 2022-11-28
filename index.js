@@ -442,9 +442,6 @@ io.on("connection", (socket)=>{
         rooms[roomName]["turnOneOrTwo"] = turnOneOrTwo;
     });
     // 投票結果を送信し、カウントダウンを管理する
-    // 工事中
-    // これは start() 実行時の１回しか呼ばれない
-    //     -> 部屋が複数あると、それらの部屋を区別できない
     socket.on("countdown-start", (data)=>{
         let roomName = data.value["roomName"];
         field = data.value["field"];
@@ -454,7 +451,7 @@ io.on("connection", (socket)=>{
             return false;
         }
         rooms[roomName]["cntSec"] = 0;
-        rooms[roomName]["set"] = setInterval(()=>{
+        setInterval(()=>{
             // 部屋が存在しない
             if (!Object.keys(rooms).includes(roomName)){
                 io.sockets.emit("room-not-exist", {value: roomName});
@@ -554,13 +551,10 @@ io.on("connection", (socket)=>{
 ＜battle＞
 （長期）
 ・visualizeStone をずらしてに呼んで、順番にひっくり返るようにする
-・すべての socket.on() が部屋間で独立しているかを確認する
-    -> 必要なソケット通信の箇所に roomName を付け加える
 （短期）
-・ゲームの終了は、部屋のホストからサーバを経由して全体に通知する
-    -> それ以外でゲームを終了しないようにする
-    -> 各ユーザは、ゲーム終了時に isFinished=true とする
-・randomCandidate で青が置かれないバグがある
+・rooms[roomName]["turnOneOrTwo"] を更新するタイミングが悪い
+    -> candidateRandom の青が置かれない
 
-// debug を参照
+// debug -> デバッグ用の出力がある
+// 工事中 -> コードを作成・改良中である
 */
