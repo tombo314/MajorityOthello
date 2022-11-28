@@ -366,6 +366,10 @@ io.on("connection", (socket)=>{
     // turnDurationSec を返す
     socket.on("need-turn-duration-sec", (data)=>{
         let roomName = data.value;
+        if (!Object.keys(rooms).includes(roomName)){
+            io.sockets.emit("room-not-exist", {value: roomName});
+            return false;
+        }
         io.sockets.emit("need-turn-duration-sec", {value: {
             "roomName": roomName,
             "turnDurationSec": rooms[roomName]["turnDurationSec"]
@@ -529,9 +533,6 @@ io.on("connection", (socket)=>{
 ・BGM と SE を入れる
 
 ＜main＞
-（長期）
-・form タグを使って getElementById().onclick から name.onclick に変更する
-    -> 授業が終わったら getElementById().onclick に戻す
 
 ＜battle＞
 （長期）

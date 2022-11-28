@@ -109,7 +109,7 @@ makeSquare=(i, j)=>{
         width: ${GRID_X}px;
         height: ${GRID_Y}px;
         position: absolute;
-        left: ${GRID_INIT_LEFT+j*(GRID_X+GRID_DIFF_X)}px;d
+        left: ${GRID_INIT_LEFT+j*(GRID_X+GRID_DIFF_X)}px;   
         top: ${GRID_INIT_TOP+i*(GRID_Y+GRID_DIFF_Y)}px;
     `);
     othelloWrapper.appendChild(sheet);
@@ -120,7 +120,6 @@ paintSquare=(i, j)=>{
     }
     let elem = document.getElementById(`square${i}${j}`);
     elem.style.backgroundColor = "#cfca";
-    console.log(elem.style.backgroundColor);    
 }
 unPaintSquare=(i, j)=>{
     if (i<0 || j<0 || 8<=i || 8<=j){
