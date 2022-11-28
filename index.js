@@ -261,7 +261,6 @@ rooms = {
         "cntSec": 0,
         "turnOneOrTwo": 1,
         "turnDurationSec": turnDurationSec,
-        "set": null,
         "voted": null
     },
     ...
@@ -309,7 +308,6 @@ io.on("connection", (socket)=>{
             "cntSec": 0,
             "turnOneOrTwo": 1,
             "turnDurationSec": turnDurationSec,
-            "set": null,
             "voted": null
         };
         // voted 配列を初期化
@@ -427,13 +425,26 @@ io.on("connection", (socket)=>{
         let i = data.value["i"];
         let j = data.value["j"];
         if (!Object.keys(rooms).includes(roomName)){
+            io.sockets.emit("room-not-exist", {value: roomName});
             return false;
         }
         // 投票する
         rooms[roomName]["voted"][i][j]++;
-        rooms[roomName]["turnOneOrTwo"] = data.value["turnOneOrTwo"];
     });
-    // カウントダウンと投票結果の送信を管理する
+    // 手番を管理する
+    socket.on("turnOneOrTwo-update", (data)=>{
+        let roomName = data.value[0];
+        let turnOneOrTwo = data.value[1];
+        if (!Object.keys(rooms).includes(roomName)){
+            io.sockets.emit("room-not-exist", {value: roomName});
+            return false;
+        }
+        rooms[roomName]["turnOneOrTwo"] = turnOneOrTwo;
+    });
+    // 投票結果を送信し、カウントダウンを管理する
+    // 工事中
+    // これは start() 実行時の１回しか呼ばれない
+    //     -> 部屋が複数あると、それらの部屋を区別できない
     socket.on("countdown-start", (data)=>{
         let roomName = data.value["roomName"];
         field = data.value["field"];

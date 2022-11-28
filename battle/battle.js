@@ -44,7 +44,7 @@ const GRID_INIT_LEFT = -40;
 const GRID_INIT_TOP = -65;
 const GRID_DIFF_X = 5.75;
 const GRID_DIFF_Y = 4;
-const STONE_LIMIT = 6;
+const STONE_LIMIT = 64;
 const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
 const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
 const COLOR_FIELD_RED = "rgb(255, 50, 50)";
@@ -929,6 +929,13 @@ socket.on("voted", (data)=>{
         // 反対のチームの手番が回ってきたら
         if (canPutStoneAll(otherOneOrTwo)){
             turnOneOrTwo ^= 3;
+            // ホストはサーバに部屋の turnOneOrTwo を送信する
+            if (isHostStr=="true"){
+                socket.emit("turnOneOrTwo-update", {value:{
+                    "roomName": roomName,
+                    "turnOneOrTwo": turnOneOrTwo
+                }});
+            }
         // どちらも手がなくなったら
         } else if (!canPutStoneAll(oneOrTwo)){
             if (isHostStr=="true"){
