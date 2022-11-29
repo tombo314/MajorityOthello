@@ -928,6 +928,11 @@ socket.on("voted", (data)=>{
         // 反対のチームの手番が回ってきたら
         if (canPutStoneAll(otherOneOrTwo)){
             turnOneOrTwo ^= 3;
+            keysValid = false;
+            x = 0;
+            y = 0;
+            own.style.transform = `translate(${x}px, ${y}px)`;
+            ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
             // ホストはサーバに部屋の turnOneOrTwo を送信する
             if (isHostStr=="true"){
                 socket.emit("turnOneOrTwo-update", {value:{
@@ -979,7 +984,10 @@ socket.on("countdown-restart", (data)=>{
 
 socket.on("need-field", (data)=>{
     if (isHostStr=="true" && data.value==roomName){
-        socket.emit("need-field", {value: field});
+        socket.emit("need-field", {value: {
+            "roomName": roomName,
+            "field": field
+        }});
     }
 });
 

@@ -480,37 +480,19 @@ io.on("connection", (socket)=>{
                         "j": maxJ,
                         "turnOneOrTwo": rooms[roomName]["turnOneOrTwo"]
                     }});
+                    // voted 配列を初期化
+                    initVoted(roomName);
+                    // 次のターンへ
+                    io.sockets.emit("countdown-restart", {value: {
+                        "roomName": roomName,
+                        "turnDurationSec": rooms[roomName]["turnDurationSec"]
+                    }});
                 }
                 // 投票数が 0 の場合は置ける場所からランダムに置く
                 else {
-                    // field を更新する
+                    // field を更新し、その後の処理を行う
                     io.sockets.emit("need-field", {value: roomName});
-                    // ランダムに置けるマスの候補を探索する
-                    let candidateRandom = [];
-                    for (let i=0; i<8; i++){
-                        for (let j=0; j<8; j++){
-                            if (canPutStoneThere(i, j, rooms[roomName]["turnOneOrTwo"])){
-                                candidateRandom.push([i, j]);
-                            }
-                        }
-                    }
-                    let r = getRandomInt(0, candidateRandom.length);
-                    randI = candidateRandom[r][0];
-                    randJ = candidateRandom[r][1];
-                    io.sockets.emit("voted", {value: {
-                        "roomName": roomName,
-                        "i": randI,
-                        "j": randJ,
-                        "turnOneOrTwo": rooms[roomName]["turnOneOrTwo"]
-                    }});
                 }
-                // voted 配列を初期化
-                initVoted(roomName);
-                // 次のターンへ
-                io.sockets.emit("countdown-restart", {value: {
-                    "roomName": roomName,
-                    "turnDurationSec": rooms[roomName]["turnDurationSec"]
-                }});
             }
             // ターンがまだ終わっていないとき、経過時間をインクリメント
             else {
@@ -518,9 +500,35 @@ io.on("connection", (socket)=>{
             }
         }, 1000);
     });
-    // field を更新する
+    // field を更新し、次のターンの開始までの処理を行う
     socket.on("need-field", (data)=>{
-        field = data.value; 
+        let roomName = data.value["roomName"];
+        field = data.value["field"];
+        // ランダムに置けるマスの候補を探索する
+        let candidateRandom = [];
+        for (let i=0; i<8; i++){
+            for (let j=0; j<8; j++){
+                if (canPutStoneThere(i, j, rooms[roomName]["turnOneOrTwo"])){
+                    candidateRandom.push([i, j]);
+                }
+            }
+        }
+        let r = getRandomInt(0, candidateRandom.length);
+        randI = candidateRandom[r][0];
+        randJ = candidateRandom[r][1];
+        io.sockets.emit("voted", {value: {
+            "roomName": roomName,
+            "i": randI,
+            "j": randJ,
+            "turnOneOrTwo": rooms[roomName]["turnOneOrTwo"]
+        }});
+        // voted 配列を初期化
+        initVoted(roomName);
+        // 次のターンへ
+        io.sockets.emit("countdown-restart", {value: {
+            "roomName": roomName,
+            "turnDurationSec": rooms[roomName]["turnDurationSec"]
+        }});
     });
     // ゲームが終了したことを通知する
     socket.on("game-finished", (data)=>{ 
@@ -559,8 +567,7 @@ io.on("connection", (socket)=>{
 ・visualizeStone をずらしてに呼んで、順番にひっくり返るようにする
 ・ゲーム終了時にそれぞれの石の数を表示する
 （短期）
-・ランダムに置く処理がバグっている
-    -> 赤 -> 青 ->（２回目の赤が置かれない）->（その後問題なく置かれる）
+・ランダムに置く処理で、石が置かれないことがある
 
 // debug -> デバッグ用の出力がある
 // 工事中 -> コードを作成・改良中である
