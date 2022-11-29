@@ -65,7 +65,7 @@ let server = http.createServer((req, res)=>{
 let io = socket(server);
 
 // 関数宣言
-initVoted=(roomName)=>{
+let initVoted = (roomName)=>{
     let voted = [];
     for (let i=0; i<8; i++){
         let tmp = [];
@@ -485,9 +485,6 @@ io.on("connection", (socket)=>{
                 else {
                     // field を更新する
                     io.sockets.emit("need-field", {value: roomName});
-                    socket.on("need-field", (data)=>{
-                        field = data.value;
-                    });
                     // ランダムに置けるマスの候補を探索する
                     let candidateRandom = [];
                     for (let i=0; i<8; i++){
@@ -520,6 +517,10 @@ io.on("connection", (socket)=>{
                 rooms[roomName]["cntSec"]++;
             }
         }, 1000);
+    });
+    // field を更新する
+    socket.on("need-field", (data)=>{
+        field = data.value; 
     });
     // ゲームが終了したことを通知する
     socket.on("game-finished", (data)=>{ 
@@ -556,8 +557,10 @@ io.on("connection", (socket)=>{
 ＜battle＞
 （長期）
 ・visualizeStone をずらしてに呼んで、順番にひっくり返るようにする
+・ゲーム終了時にそれぞれの石の数を表示する
 （短期）
 ・ランダムに置く処理がバグっている
+    -> 赤 -> 青 ->（２回目の赤が置かれない）->（その後問題なく置かれる）
 
 // debug -> デバッグ用の出力がある
 // 工事中 -> コードを作成・改良中である

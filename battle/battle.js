@@ -58,48 +58,51 @@ let getRandomInt = (min, max)=> {
 }
 let start = ()=>{
     keysValid = false;
-    opacity += 0.01;
-    startEndSheet.style.opacity = opacity;
-    // 画面の暗転が終わった
-    if (opacity>=0.6){
-        clearInterval(set);
-        startEndSheet.style.backgroundColor = "#2228";
-        startEndSheet.style.opacity = 1;
-        startEndSheet.innerHTML = `<span style='color: ${COLOR_FIELD_RED}'>赤</span>が先手です`;
-        // 2 秒間「～が先手です」の文字を表示
-        setTimeout(()=>{
-            let cnt = 3;
-            // ゲーム開始のカウントダウン
-            set = setInterval(() => {
-                startEndSheet.textContent = cnt;
-                // ゲーム開始のカウントダウンが終わった
-                if (cnt<=0){
-                    clearInterval(set);
-                    // 画面を明転し、カウントダウンの文字を非表示にする
-                    startEndSheet.style.opacity = 0;
-                    startEndSheet.style.backgroundColor = "#222";
-                    startEndSheet.textContent = "";
-                    // 先手だったら（デフォルトは赤が先手）移動が有効になる
-                    if (turnOneOrTwo==1 && color=="red" || turnOneOrTwo==2 && color=="blue"){
-                        keysValid = true;
+    let opacity = 0;
+    set = setInterval(()=>{
+        opacity += 0.01;
+        startEndSheet.style.opacity = opacity;
+        // 画面の暗転が終わった
+        if (opacity>=0.6){
+            clearInterval(set);
+            startEndSheet.style.backgroundColor = "#2228";
+            startEndSheet.style.opacity = 1;
+            startEndSheet.innerHTML = `<span style='color: ${COLOR_FIELD_RED}'>赤</span>が先手です`;
+            // 2 秒間「～が先手です」の文字を表示
+            setTimeout(()=>{
+                let cnt = 3;
+                // ゲーム開始のカウントダウン
+                set = setInterval(() => {
+                    startEndSheet.textContent = cnt;
+                    // ゲーム開始のカウントダウンが終わった
+                    if (cnt<=0){
+                        clearInterval(set);
+                        // 画面を明転し、カウントダウンの文字を非表示にする
+                        startEndSheet.style.opacity = 0;
+                        startEndSheet.style.backgroundColor = "#222";
+                        startEndSheet.textContent = "";
+                        // 先手だったら（デフォルトは赤が先手）移動が有効になる
+                        if (turnOneOrTwo==1 && color=="red" || turnOneOrTwo==2 && color=="blue"){
+                            keysValid = true;
+                        }
+                        // ターンを開始
+                        eachTurn(parseInt(turnDurationSec));
+                        // ホストだったら、ターンが開始したことをサーバに伝える
+                        if (isHostStr=="true"){
+                            socket.emit("countdown-start", {value: {
+                                "roomName": roomName,
+                                "field": field
+                            }});
+                        }
                     }
-                    // ターンを開始
-                    eachTurn(parseInt(turnDurationSec));
-                    // ホストだったら、ターンが開始したことをサーバに伝える
-                    if (isHostStr=="true"){
-                        socket.emit("countdown-start", {value: {
-                            "roomName": roomName,
-                            "field": field
-                        }});
+                    // ゲーム開始のカウントダウン中
+                    else {
+                        cnt--;
                     }
-                }
-                // ゲーム開始のカウントダウン中
-                else {
-                    cnt--;
-                }
-            }, 1000);
-        }, 2000);
-    }
+                }, 1000);
+            }, 2000);
+        }
+    }, 20);
 }
 let makeSquare = (i, j)=>{
     // マスの選択を表す
@@ -870,8 +873,7 @@ visualizeStone(3, 4, COLOR_FIELD_BLUE);
 visualizeStone(4, 3, COLOR_FIELD_BLUE);
 
 // バトル開始時の演出
-opacity = 0;
-set = setInterval(start, 20);
+start();
 
 // 他のプレイヤーの座標の変化を受け取る
 socket.on("coordinates-changed", (data)=>{
