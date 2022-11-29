@@ -665,6 +665,10 @@ let canPutStoneAll = (n)=>{
     return false;
 }
 let eachTurn = (s)=>{
+    wDown = false;
+    aDown = false;
+    sDown = false;
+    dDown = false;
     // 盤面の色を初期化する
     for (let i=0; i<8; i++){
         for (let j=0; j<8; j++){
