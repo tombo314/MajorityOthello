@@ -44,7 +44,8 @@ const GRID_INIT_LEFT = -40;
 const GRID_INIT_TOP = -65;
 const GRID_DIFF_X = 5.75;
 const GRID_DIFF_Y = 4;
-const STONE_LIMIT = 64;
+// const STONE_LIMIT = 64;
+const STONE_LIMIT = 6;
 const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
 const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
 const COLOR_FIELD_RED = "rgb(255, 50, 50)";
@@ -665,6 +666,7 @@ let canPutStoneAll = (n)=>{
     return false;
 }
 let eachTurn = (s)=>{
+    // キー入力を初期化
     wDown = false;
     aDown = false;
     sDown = false;
@@ -736,7 +738,13 @@ let finish = ()=>{
             startEndSheet.style.backgroundColor = "#2228";
             startEndSheet.style.opacity = 1;
             let color;
-            // 引き分けでない
+            let textStoneCnt = `
+                <div>
+                    <span style="color: ${COLOR_FIELD_RED}">${red}</span>
+                    　vs　
+                    <span style="color: ${COLOR_FIELD_BLUE}">${blue}</span>
+                </div>
+            `;
             if (red!=blue){
                 // 赤の勝ち
                 if (red>blue){
@@ -745,11 +753,25 @@ let finish = ()=>{
                 } else if (red<blue){
                     color = `<span style="color: ${COLOR_FIELD_BLUE}">青</span>`;
                 }
-                startEndSheet.innerHTML = `${color}チームの勝利です`;
+                startEndSheet.innerHTML = `
+                    <span style="transform: translateX(13vw)">
+                        ${textStoneCnt}
+                    </span>
+                    <span style="transform: translate(-7vw, 12vh)">${color}
+                        チームの勝利です
+                    </span>
+                `;
             }
             // 引き分け
             else {
-                startEndSheet.textContent = "引き分けです";
+                startEndSheet.innerHTML = `
+                    <span style="transform: translateX(9vw)">
+                        ${textStoneCnt}
+                    </span>
+                    <span style="transform: translate(-7vw, 12vh)">
+                        引き分けです
+                    </span>
+                `;
             }
         }
     }, 20);

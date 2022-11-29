@@ -564,7 +564,6 @@ io.on("connection", (socket)=>{
 
 ＜battle＞
 （長期）
-・visualizeStone をずらしてに呼んで、順番にひっくり返るようにする
 ・ゲーム終了時にそれぞれの石の数を表示する
 （短期）
 
