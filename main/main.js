@@ -10,6 +10,7 @@ let roomUsername = document.getElementById("username");
 let btnSubmit = document.getElementById("btn-submit");
 let design = document.getElementById("design");
 let turnDurationSecElem = document.getElementById("turn-duration-sec");
+let labelTurnDuration = document.getElementById("label-turn-duration")
 
 const BUTTON_ROOM_SELECT_WIDTH = 120;
 const RADIUS = 20;
@@ -17,16 +18,18 @@ const CIRCLE_NUM = 10;
 const COLOR_PLAYER_RED = "rgb(255, 100, 100)";
 const COLOR_PLAYER_BLUE = "rgb(100, 100, 255)";
 const COLOR_PLAYER_PURPLE = "rgb(240, 100, 255)";
+const TURN_DURATION_LOWER_BOUND = 1;
+const TURN_DURATION_UPPER_BOUND = 60;
 
 // min 以上 max 未満の乱数を取得
-getRandomInt=(min, max)=> {
+let getRandomInt=(min, max)=> {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min);
-}
+};
 
 // ゲストが部屋に入るときにユーザーを登録する
-registerUser=(roomName)=>{
+let registerUser=(roomName)=>{
     let username = prompt("ユーザー名を入力してください...");
     socket.emit("need-users", {value: ""});
     socket.on("need-users", (data)=>{
@@ -48,10 +51,10 @@ registerUser=(roomName)=>{
             window.location.href = "/";
         }
     });
-}
+};
 
 // ホストが部屋の作成を完了するとき
-makeRoom=(e)=>{
+let makeRoom=(e)=>{
     // 部屋名の重複を避ける
     socket.emit("need-rooms", {value: ""});
     socket.on("need-rooms", (data)=>{
@@ -65,25 +68,25 @@ makeRoom=(e)=>{
         else if (roomNameElem.value=="部屋名を入力してください。" || roomNameElem.value==""){
             e.preventDefault();
             alert("部屋名を入力してください。");
-            window.location.href = "/";
+            location.href = "/";
         }
         // ユーザー名が空白
         else if (roomUsername.value=="ユーザー名を入力してください。" || roomUsername.value==""){
             e.preventDefault();
             alert("ユーザー名を入力してください。");
-            window.location.href = "/";
+            location.href = "/";
         }
         // １ターンの秒数が空白
         else if (turnDurationSecElem.value==""){
             e.preventDefault();
             alert("１ターンの秒数を入力して下さい。");
-            window.location.href = "/";
+            location.href = "/";
         }
-        // １ターンの秒数が１０～６０の範囲の整数でない
-        else if (isNaN(turnDurationSecElem.value) || turnDurationSecElem.value<10 || 60<turnDurationSecElem.value){
+        // １ターンの秒数が TURN_DURATION_LOWER_BOUND ～ TURN_DURATION_UPPER_BOUND の範囲の整数でない
+        else if (isNaN(turnDurationSecElem.value) || turnDurationSecElem.value<TURN_DURATION_LOWER_BOUND || TURN_DURATION_UPPER_BOUND<turnDurationSecElem.value){
             e.preventDefault();
-            alert("１ターンの秒数は１０～６０の範囲の整数を入力して下さい。");
-            window.location.href = "/";
+            alert(`1 ターンの秒数は ${TURN_DURATION_LOWER_BOUND} ～ ${TURN_DURATION_UPPER_BOUND} の範囲の整数を入力して下さい。`);
+            location.href = "/";
         }
         // 何もなければ /wait/wait.html に遷移
         else {
@@ -103,33 +106,34 @@ makeRoom=(e)=>{
                     sessionStorage.setItem("username", roomUsername.value);
                     sessionStorage.setItem("roomName", roomNameElem.value);
                     sessionStorage.setItem("samePageLoaded", "false");
-                    window.location.href = "/wait";
+                    location.href = "/wait";
                 } else {
                     alert("そのユーザー名はすでに使われています。");
-                    window.location.href = "/";
+                    location.href = "/";
                 }
             });
         }
     });
-}
+};
 
 // 周りの暗いところをクリックしてキャンセル
 // 授業後に修正
 // blackSheet.onclick=()=>{
 //     blackSheet.style.visibility = "hidden";
 //     roomMakeWindow.style.visibility = "hidden";
-// }
-funcForForm=()=>{
+// };
+let funcForForm=()=>{
     blackSheet.style.visibility = "hidden";
     roomMakeWindow.style.visibility = "hidden";
-}
+};
+
 // Escキーを押してキャンセル
 onkeydown=(e)=>{
     if (e.key=="Escape"){
         blackSheet.style.visibility = "hidden";
         roomMakeWindow.style.visibility = "hidden";
     }
-}
+};
 
 // 「部屋を作る」を押してフォームを表示
 btnMakeRoom.onclick=()=>{
@@ -140,7 +144,7 @@ btnMakeRoom.onclick=()=>{
     roomNameElem.style.color = "#2227";
     roomUsername.style.color = "#2227";
     roomNameElem.focus();
-}
+};
 
 // 文字が入力されたら「部屋名を～」をクリア
 roomNameElem.onkeydown=(e)=>{
@@ -152,14 +156,14 @@ roomNameElem.onkeydown=(e)=>{
     } else if (e.key=="Enter"){
         makeRoom(e);
     }
-}
+};
 // value が空のとき「部屋名を～」を表示
 roomNameElem.onkeyup=()=>{
     if (roomNameElem.value==""){
         roomNameElem.value = "部屋名を入力してください。";
         roomNameElem.style.color = "#2227";
     }
-}
+};
 
 // 文字が入力されたら「ユーザー名を～」をクリア
 roomUsername.onkeydown=(e)=>{
@@ -171,21 +175,21 @@ roomUsername.onkeydown=(e)=>{
     } else if (e.key=="Enter"){
         makeRoom(e);
     }
-}
+};
 // value が空のとき「ユーザー名を～」を表示
 roomUsername.onkeyup=()=>{
     if (roomUsername.value==""){
         roomUsername.value = "ユーザー名を入力してください。";
         roomUsername.style.color = "#2227";
     }
-}
+};
 
 // Enter を押して部屋を作る（１ターンの秒数の欄）
 turnDurationSecElem.onkeydown=(e)=>{
     if (e.key=="Enter"){
         makeRoom(e);
     }
-}
+};
 
 // 「部屋を作る」を完了する
 btnSubmit.onclick=(e)=> makeRoom(e);
@@ -223,6 +227,9 @@ socket.on("update-rooms", (data)=>{
         }
     }
 });
+
+// labelTurnDuration のテキストを表示する
+labelTurnDuration.textContent = `　　　1 ターンの秒数（半角で ${TURN_DURATION_LOWER_BOUND} ～ ${TURN_DURATION_UPPER_BOUND} の整数）： `;
 
 // 初期画面のデザイン
 let coords = [];

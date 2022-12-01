@@ -514,6 +514,10 @@ io.on("connection", (socket)=>{
             }
         }
         let r = getRandomInt(0, candidateRandom.length);
+        // out of range を弾く
+        if (r>=candidateRandom.length){
+            return false;
+        }
         randI = candidateRandom[r][0];
         randJ = candidateRandom[r][1];
         io.sockets.emit("voted", {value: {
@@ -544,28 +548,20 @@ io.on("connection", (socket)=>{
     });
 });
 
+
 /*
 〇 Notes
-・ＰＣのバッテリー節約モードをオフにする
-    -> setInterval が機能しないため
-・画面幅を調整する
-    -> レスポンシブ性が低いため
-・ゲーム中に１人以上のユーザーが一時的にノンアクティブになった場合、正しい動作は保証されない
+    ・ノートＰＣのバッテリー節約モードをオフにする
+        -> setInterval が機能しないため
+    ・画面幅を調整する
+        -> レスポンシブ性が低いため
 
 〇 To Do
-＜全体＞
-（長期）
-・BGM と SE を入れる
-・252 教室のパソコンを複数使ってテストする
+    ＜main＞
+    ・現在の参加者数を表示する
 
-＜main＞
-（長期）
-・現在の参加者数を表示する（名前一覧も表示する？）
-
-＜battle＞
-（長期）
-（短期）
-
-// debug -> デバッグ用の出力がある
-// 工事中 -> コードを作成・改良中である
+    ＜battle＞
+    ・ゲーム終了時にサーバーがエラーで落ちることがある
+    ・自分のチームがどちらかを最初に表示する
+    ・自分が操作している石を強調して表示する
 */
