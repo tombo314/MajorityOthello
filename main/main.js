@@ -141,6 +141,10 @@ socket.emit("update-rooms", {value: ""});
 socket.on("update-rooms", (data)=>{
     let roomCnt = 0;
     let rooms = data.value;
+    // 子要素をすべて削除
+    while (roomForRooms.firstChild){
+        roomForRooms.removeChild(roomForRooms.firstChild);
+    }
     for (let v in rooms){
         let elem = document.createElement("button");
         elem.textContent = v;
