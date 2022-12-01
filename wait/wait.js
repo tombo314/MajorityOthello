@@ -31,7 +31,7 @@ btnStart.onclick=()=>{
         // １人以下の場合
         else {
             alert("２人以上いないと開始できません。");
-            window.location.href = "/wait";
+            location.href = "/wait";
         }
     });
 }
@@ -39,15 +39,12 @@ btnStart.onclick=()=>{
 // トップに戻る
 btnToTop.onclick=()=>{
     alert("トップに戻ります。");
-    window.location.href = "/";
+    location.href = "/";
 }
 
-// マッチング中に部屋がなくなった
-socket.on("delete-room", (data)=>{
-    if (roomName==data.value){
-        alert("部屋がなくなりました。");
-        window.location.href = "/";
-    }
+// 部屋の待機人数を更新する
+socket.on("update-waiting-cnt", (data)=>{
+    
 });
 
 // いずれかの部屋のマッチングが終了した
@@ -57,7 +54,7 @@ socket.on("waiting-finished", (data)=>{
     if (roomMember.includes(username)){
         alert("バトル画面に遷移します。");
         sessionStorage.setItem("samePageLoaded", "false");
-        window.location.href = "/battle";
+        location.href = "/battle";
     }
 });
 
@@ -65,6 +62,6 @@ socket.on("waiting-finished", (data)=>{
 socket.on("room-not-exist", (data)=>{
     if (data.value==roomName){
         alert("部屋が存在しません。");
-        window.location.href = "/";
+        location.href = "/";
     }
 });

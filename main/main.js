@@ -1,4 +1,7 @@
-let set;
+let username;
+let roomName;
+let isHost;
+let onclickEvent;
 let socket = io();
 let roomForRooms = document.getElementById("room-for-rooms");
 let blackSheet = document.getElementById("black-sheet");
@@ -10,7 +13,7 @@ let roomUsername = document.getElementById("username");
 let btnSubmit = document.getElementById("btn-submit");
 let design = document.getElementById("design");
 let turnDurationSecElem = document.getElementById("turn-duration-sec");
-let labelTurnDuration = document.getElementById("label-turn-duration")
+let labelTurnDuration = document.getElementById("label-turn-duration");
 
 const BUTTON_ROOM_SELECT_WIDTH = 120;
 const RADIUS = 20;
@@ -29,99 +32,27 @@ let getRandomInt=(min, max)=> {
 };
 
 // ゲストが部屋に入るときにユーザーを登録する
-let registerUser=(roomName)=>{
-    let username = prompt("ユーザー名を入力してください...");
+let registerUser=(rName)=>{
+    username = prompt("ユーザー名を入力してください...");
+    roomName = rName;
+    isHost = false;
     socket.emit("need-users", {value: ""});
-    socket.on("need-users", (data)=>{
-        let users = data.value;
-        if (username==null || username==""){
-            // キャンセル
-        } else if (!Object.keys(users).includes(username)){
-            socket.emit("register-name", {value: {
-                "username": username,
-                "roomName": roomName
-            }});
-            sessionStorage.setItem("isHostStr", "false");
-            sessionStorage.setItem("username", username);
-            sessionStorage.setItem("roomName", roomName);
-            sessionStorage.setItem("samePageLoaded", "false");
-            window.location.href = "/wait";
-        } else {
-            alert("そのユーザー名はすでに使われています。");
-            window.location.href = "/";
-        }
-    });
 };
 
 // ホストが部屋の作成を完了するとき
-let makeRoom=(e)=>{
+let makeRoom=(event)=>{
+    isHost = true;
+    onclickEvent = event;
     // 部屋名の重複を避ける
     socket.emit("need-rooms", {value: ""});
-    socket.on("need-rooms", (data)=>{
-        let rooms = data.value;
-        // 部屋名がすでに使われている
-        if (Object.keys(rooms).includes(roomNameElem.value)){
-            alert("その部屋名はすでに使われています。");
-            window.location.href = "/";
-        }
-        // 部屋名が空白
-        else if (roomNameElem.value=="部屋名を入力してください。" || roomNameElem.value==""){
-            e.preventDefault();
-            alert("部屋名を入力してください。");
-            location.href = "/";
-        }
-        // ユーザー名が空白
-        else if (roomUsername.value=="ユーザー名を入力してください。" || roomUsername.value==""){
-            e.preventDefault();
-            alert("ユーザー名を入力してください。");
-            location.href = "/";
-        }
-        // １ターンの秒数が空白
-        else if (turnDurationSecElem.value==""){
-            e.preventDefault();
-            alert("１ターンの秒数を入力して下さい。");
-            location.href = "/";
-        }
-        // １ターンの秒数が TURN_DURATION_LOWER_BOUND ～ TURN_DURATION_UPPER_BOUND の範囲の整数でない
-        else if (isNaN(turnDurationSecElem.value) || turnDurationSecElem.value<TURN_DURATION_LOWER_BOUND || TURN_DURATION_UPPER_BOUND<turnDurationSecElem.value){
-            e.preventDefault();
-            alert(`1 ターンの秒数は ${TURN_DURATION_LOWER_BOUND} ～ ${TURN_DURATION_UPPER_BOUND} の範囲の整数を入力して下さい。`);
-            location.href = "/";
-        }
-        // 何もなければ /wait/wait.html に遷移
-        else {
-            socket.emit("need-users", {value: ""});
-            socket.on("need-users", (data)=>{
-                let username = roomUsername.value;
-                let users = data.value;
-                if (username==null || username==""){
-                    // キャンセル
-                } else if (!Object.keys(users).includes(username)){
-                    socket.emit("room-make-finished", {value: {
-                        "roomName": roomNameElem.value,
-                        "roomUsername": roomUsername.value,
-                        "turnDurationSec": turnDurationSecElem.value
-                    }});
-                    sessionStorage.setItem("isHostStr", "true");
-                    sessionStorage.setItem("username", roomUsername.value);
-                    sessionStorage.setItem("roomName", roomNameElem.value);
-                    sessionStorage.setItem("samePageLoaded", "false");
-                    location.href = "/wait";
-                } else {
-                    alert("そのユーザー名はすでに使われています。");
-                    location.href = "/";
-                }
-            });
-        }
-    });
 };
 
 // 周りの暗いところをクリックしてキャンセル
-// 授業後に修正
-// blackSheet.onclick=()=>{
-//     blackSheet.style.visibility = "hidden";
-//     roomMakeWindow.style.visibility = "hidden";
-// };
+    // 授業後に修正
+    // blackSheet.onclick=()=>{
+    //     blackSheet.style.visibility = "hidden";
+    //     roomMakeWindow.style.visibility = "hidden";
+    // };
 let funcForForm=()=>{
     blackSheet.style.visibility = "hidden";
     roomMakeWindow.style.visibility = "hidden";
@@ -214,10 +145,10 @@ socket.on("update-rooms", (data)=>{
         let elem = document.createElement("button");
         elem.textContent = v;
         elem.setAttribute("class", "btn-room-select");
-        elem.setAttribute("style",
-            `width: ${BUTTON_ROOM_SELECT_WIDTH}px;
-             font-size: ${Math.min(30, BUTTON_ROOM_SELECT_WIDTH / elem.textContent.length)}px`
-        );
+        elem.setAttribute("style",`
+            width: ${BUTTON_ROOM_SELECT_WIDTH}px;
+            font-size: ${Math.min(30, BUTTON_ROOM_SELECT_WIDTH / elem.textContent.length)}px
+        `);
         elem.setAttribute("onclick", `registerUser('${v}')`);
         roomForRooms.appendChild(elem);
         roomCnt++;
@@ -225,6 +156,90 @@ socket.on("update-rooms", (data)=>{
             let br = document.createElement("br");
             roomForRooms.appendChild(br);
         }
+    }
+});
+
+// 部屋の作成に関する確認
+socket.on("need-rooms", (data)=>{
+    let e = onclickEvent;
+    let rooms = data.value;
+    // 部屋名がすでに使われている
+    if (Object.keys(rooms).includes(roomNameElem.value)){
+        alert("その部屋名はすでに使われています。");
+    }
+    // 部屋名が空白
+    else if (roomNameElem.value=="部屋名を入力してください。" || roomNameElem.value==""){
+        e.preventDefault();
+        alert("部屋名を入力してください。");
+    }
+    // ユーザー名が空白
+    else if (roomUsername.value=="ユーザー名を入力してください。" || roomUsername.value==""){
+        e.preventDefault();
+        alert("ユーザー名を入力してください。");
+    }
+    // １ターンの秒数が空白
+    else if (turnDurationSecElem.value==""){
+        e.preventDefault();
+        alert("１ターンの秒数を入力して下さい。");
+    }
+    // １ターンの秒数が TURN_DURATION_LOWER_BOUND ～ TURN_DURATION_UPPER_BOUND の範囲の整数でない
+    else if (isNaN(turnDurationSecElem.value) || turnDurationSecElem.value<TURN_DURATION_LOWER_BOUND || TURN_DURATION_UPPER_BOUND<turnDurationSecElem.value){
+        e.preventDefault();
+        alert(`1 ターンの秒数は ${TURN_DURATION_LOWER_BOUND} ～ ${TURN_DURATION_UPPER_BOUND} の範囲の整数を入力して下さい。`);
+    }
+    // エラーが何もなければ、ユーザー名の重複を確認するフェーズに移動
+    else {
+        socket.emit("need-users", {value: ""});
+    }
+});
+
+// ユーザー名の重複を避ける
+//     -> 部屋を作成
+//     -> ユーザーを登録
+//     -> /wait に遷移
+socket.on("need-users", (data)=>{
+    let users = data.value;
+    let usernameHost;
+    if (isHost){
+        usernameHost = roomUsername.value;
+    }
+    if (username==null || username==""){
+        // 自分がホストの場合は username = usernameHost とする
+        if (isHost && usernameHost!=null && usernameHost!=""){
+            username = usernameHost;
+        }
+        // キャンセル
+        else {
+            return false;
+        }
+    }
+    // ユーザー名の重複を避ける
+    if (!Object.keys(users).includes(username)){
+        // ホストとして部屋を作るとき
+        if (isHost){
+            socket.emit("room-make-finished", {value: {
+                "roomName": roomNameElem.value,
+                "roomUsername": roomUsername.value,
+                "turnDurationSec": turnDurationSecElem.value
+            }});
+            sessionStorage.setItem("isHostStr", "true");
+            sessionStorage.setItem("username", roomUsername.value);
+            sessionStorage.setItem("roomName", roomNameElem.value);
+        }
+        // ゲストとして部屋に入るとき
+        else {
+            socket.emit("register-name", {value: {
+                "username": username,
+                "roomName": roomName
+            }});
+            sessionStorage.setItem("isHostStr", "false");
+            sessionStorage.setItem("username", username);
+            sessionStorage.setItem("roomName", roomName);
+        }
+        sessionStorage.setItem("samePageLoaded", "false");
+        location.href = "/wait";
+    } else {
+        alert("そのユーザー名はすでに使われています。");
     }
 });
 
@@ -284,7 +299,7 @@ for(let i=0; i<CIRCLE_NUM; i++){
         diffY[i]--;
     }
     // 丸を動かす
-    set = setInterval(()=>{
+    setInterval(()=>{
         x[i] += diffX[i];
         y[i] += diffY[i];
         // 壁にぶつかったら方向を x を反転

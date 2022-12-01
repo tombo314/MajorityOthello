@@ -323,6 +323,8 @@ io.on("connection", (socket)=>{
             rooms[roomName]["users"].push(username);
             users[username] = {};
             io.sockets.emit(username, {value: true});
+            // 部屋の待機人数を更新する
+            // io.sockets.emit("update-waiting-cnt", {value: });
         } else {
             // 部屋が存在しない場合はスタート画面に戻る
             io.sockets.emit("room-not-exist", {value: roomName});
@@ -358,7 +360,6 @@ io.on("connection", (socket)=>{
             io.sockets.emit("waiting-finished", {value: rooms[data.value]["users"]});
         }
     });
-
 
     /* battle.html */
     // turnDurationSec を返す
@@ -558,10 +559,13 @@ io.on("connection", (socket)=>{
 
 〇 To Do
     ＜main＞
-    ・現在の参加者数を表示する
+    ・同じ部屋がタブ１枚につき１つ複製される
+        -> リロードすると消える
+
+    ＜wait＞
+    ・部屋内の現在の参加者数を表示する
 
     ＜battle＞
-    ・ゲーム終了時にサーバーがエラーで落ちることがある
     ・自分のチームがどちらかを最初に表示する
     ・自分が操作している石を強調して表示する
 */

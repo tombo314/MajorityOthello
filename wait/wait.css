@@ -16,6 +16,9 @@ html {
     text-align: center;
     color: #333;
   }
+  h1 span {
+    margin-left: 100px;
+  }
   .wrapper-btns {
     display: flex;
     position: absolute;
