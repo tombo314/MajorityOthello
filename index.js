@@ -376,9 +376,7 @@ io.on("connection", (socket)=>{
     socket.on("waiting-finished", (data)=>{
         let roomName = data.value;
         if (Object.keys(rooms).includes(roomName)){
-            io.sockets.emit("waiting-finished", {value: {
-                "roomName": roomName
-            }});
+            io.sockets.emit("waiting-finished", {value: roomName});
         }
     });
 

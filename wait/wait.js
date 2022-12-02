@@ -23,20 +23,18 @@ if (sessionStorage.getItem("isHostStr")=="true"){
 btnStart.onclick=()=>{
     // 部屋で待機中の人数を得る
     socket.emit("need-users-length", {value: roomName});
-    // 工事中
-    socket.on("need-users-length", (data)=>{
-        let roomNameTmp = data.value["roomName"];
-        let usersLength = data.value["usersLength"];
-        if (roomNameTmp==roomName && usersLength>=2){
-            socket.emit("waiting-finished", {value: roomName});
-        }
-        // １人以下の場合
-        else {
-            alert("２人以上いないと開始できません。");
-            location.href = "/wait";
-        }
-    });
 }
+socket.on("need-users-length", (data)=>{
+    let roomNameTmp = data.value["roomName"];
+    let usersLength = data.value["usersLength"];
+    if (roomNameTmp==roomName && usersLength>=2){
+        socket.emit("waiting-finished", {value: roomName});
+    }
+    // １人以下の場合
+    else {
+        alert("２人以上いないと開始できません。");
+    }
+});
 
 // トップに戻る
 btnToTop.onclick=()=>{
