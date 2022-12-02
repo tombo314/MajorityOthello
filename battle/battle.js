@@ -201,15 +201,31 @@ let makePlayerCircle = (playerName, initX, initY, playerColor)=>{
     }
 };
 let playerNameUsed = new Set();
-let makePlayerName = (playerName, initX, initY)=>{
+let makePlayerName = (playerName, initX, initY, isSelf=false)=>{
     if (!playerNameUsed.has(playerName)){
         let createName = document.createElement("div");
         createName.textContent = playerName;
-        createName.setAttribute("style", `
-            position: absolute;
-            z-index: 9;
-            font-weight: bold;
-        `);
+        // 自分の丸だけ名前の色を変える
+        if (isSelf){
+            let colorTmp;
+            if (colorOneOrTwo==RED){
+                colorTmp = COLOR_FIELD_RED;
+            } else {
+                colorTmp = COLOR_FIELD_BLUE;
+            }
+            createName.setAttribute("style", `
+                position: absolute;
+                font-weight: bold;
+                color: ${colorTmp};
+                z-index: 9;
+            `);
+        } else {
+            createName.setAttribute("style", `
+                position: absolute;
+                z-index: 9;
+                font-weight: bold;
+            `);
+        }
         createName.setAttribute("id", `id-${playerName}-name`);
         nodesAlly.appendChild(createName);
         playerNameUsed.add(playerName);
@@ -836,6 +852,20 @@ socket.on("user-info-init", (data)=>{
     if (roomNameTmp!=roomName){
         return false;
     }
+    // 自分の色を取得
+    color = users[username]["color"];
+    // 自分が青の場合に画面の右側に配置する
+    if (color=="blue"){
+        ownX = Math.min(ownX, 350);
+        ownX = innerWidth - ownX;
+    }
+    // 色を red:1, blue:2 で保持する
+    if (color=="red"){
+        colorOneOrTwo = RED;
+    } else if (color=="blue"){
+        colorOneOrTwo = BLUE;
+    }
+    // 各プレイヤーの円を描画し名前を表示
     for (let v of roomMember){
         let playerName = v;
         let playerColorRGB;
@@ -850,33 +880,22 @@ socket.on("user-info-init", (data)=>{
             initX = innerWidth - initX;
         }
 
-        // 全プレイヤーの円を描画
+        // プレイヤーの円を描画
         makePlayerCircle(playerName, initX, initY, playerColorRGB);
-
         // プレイヤーの名前を表示
-        makePlayerName(playerName, initX, initY);
+        if (playerName==username){
+            makePlayerName(playerName, initX, initY, true);
+        } else {
+            makePlayerName(playerName, initX, initY);
+        }
     }
-
     // 自分の情報を初期化
     own = document.getElementById(`id-${username}`);
     ownName = document.getElementById(`id-${username}-name`);
-    color = users[username]["color"];
-    // 自分が青の場合に画面の右側に配置する
-    if (color=="blue"){
-        ownX = Math.min(ownX, 350);
-        ownX = innerWidth - ownX;
-    }
-    // 色を red:1, blue:2 で保持する
-    if (color=="red"){
-        colorOneOrTwo = RED;
-    } else if (color=="blue"){
-        colorOneOrTwo = BLUE;
-    }
     // 準備中の人数の表示を消す
     while (cntNotReadyWrapper.firstChild){
         cntNotReadyWrapper.removeChild(cntNotReadyWrapper.firstChild);
     }
-
     // バトル開始
     start();
 });

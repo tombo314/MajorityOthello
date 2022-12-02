@@ -264,7 +264,6 @@ for (let i=0; i<CIRCLE_NUM; i++){
         position: absolute;
         border-radius: 100px;
         transform: translate(${randX}px, ${randY}px);
-        box-shadow: 2px 2px 10px red;
         z-index: 20;
     `);
     design.appendChild(elem);
