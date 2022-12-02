@@ -27,7 +27,7 @@ btnStart.onclick=()=>{
 socket.on("need-users-length", (data)=>{
     let roomNameTmp = data.value["roomName"];
     let usersLength = data.value["usersLength"];
-    if (roomNameTmp==roomName && usersLength>=2){
+    if (roomNameTmp==roomName && usersLength>=2 && isHostStr=="true"){
         socket.emit("waiting-finished", {value: roomName});
     }
     // １人以下の場合
