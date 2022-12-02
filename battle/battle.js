@@ -874,7 +874,7 @@ socket.on("user-info-init", (data)=>{
     }
     // 準備中の人数の表示を消す
     while (cntNotReadyWrapper.firstChild){
-        cntNotReadyWrapper.remove(cntNotReadyWrapper.firstChild);
+        cntNotReadyWrapper.removeChild(cntNotReadyWrapper.firstChild);
     }
 
     // バトル開始
