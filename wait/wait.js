@@ -56,9 +56,9 @@ socket.on("update-waiting-cnt", (data)=>{
 
 // いずれかの部屋のマッチングが終了した
 socket.on("waiting-finished", (data)=>{
-    let roomMember = data.value;
+    let roomNameTmp = data.value;
     // マッチングが完了した部屋に自分が登録されていたら遷移する
-    if (roomMember.includes(username)){
+    if (roomNameTmp==roomName){
         alert("バトル画面に遷移します。");
         sessionStorage.setItem("samePageLoaded", "false");
         location.href = "/battle";

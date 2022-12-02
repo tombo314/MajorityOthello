@@ -790,6 +790,7 @@ let nodesAlly = document.getElementById("nodes-ally");
 let nodesOpponent = document.getElementById("nodes-opponent");
 let othelloWrapper = document.getElementById("othello-wrapper");
 let startEndSheet = document.getElementById("start-end-sheet");
+let cntNotReady = document.getElementById("cnt-not-ready");
 // 部屋の turnDurationSec の値を取得する
 socket.emit("need-turn-duration-sec", {value: roomName});
 socket.on("need-turn-duration-sec", (data)=>{
@@ -826,9 +827,14 @@ if (isHostStr=="true"){
 // 全プレイヤーの情報を取得
 // 全員の準備が終わったらバトル開始
 socket.on("user-info-init", (data)=>{
+    let roomNameTmp = data.value["roomName"];
     let rooms = data.value["rooms"];
     let users = data.value["users"];
     let roomMember = rooms[roomName]["users"];
+    // 自分の部屋への命令ではなかった場合
+    if (roomNameTmp!=roomName){
+        return false;
+    }
     for (let v of roomMember){
         let playerName = v;
         let playerColorRGB;
@@ -901,6 +907,16 @@ visualizeStone(3, 3, COLOR_FIELD_RED);
 visualizeStone(4, 4, COLOR_FIELD_RED);
 visualizeStone(3, 4, COLOR_FIELD_BLUE);
 visualizeStone(4, 3, COLOR_FIELD_BLUE);
+
+// 準備が完了していない人の数を表示
+socket.on("update-cnt-not-ready", (data)=>{
+    let roomNameTmp = data.value["roomName"];
+    let cntNotReadyTmp = data.value["cnt-not-ready"];
+    // 自分の部屋への命令であるか確認
+    if (roomNameTmp==roomName){
+        cntNotReady.textContent = cntNotReadyTmp;
+    }
+});
 
 // 他のプレイヤーの座標の変化を受け取る
 socket.on("coordinates-changed", (data)=>{

@@ -10,6 +10,7 @@ samePageLoaded : 同じページを一度読み込んだかどうか
 let http = require("http");
 let fs = require("fs");
 let socket = require("socket.io");
+const { isPromise } = require("util/types");
 let server = http.createServer((req, res)=>{
     // main
     if (req.url=="/"){
@@ -375,7 +376,9 @@ io.on("connection", (socket)=>{
     // マッチングが完了した部屋の名前を通知する
     socket.on("waiting-finished", (data)=>{
         if (Object.keys(rooms).includes(data.value)){
-            io.sockets.emit("waiting-finished", {value: rooms[data.value]["users"]});
+            io.sockets.emit("waiting-finished", {value: {
+                "roomName": roomName
+            }});
         }
     });
 
@@ -402,37 +405,40 @@ io.on("connection", (socket)=>{
             let userY = userInfo["userY"];
             let cntRed;
             let cntBlue;
-            // 部屋が見つかった場合
-            if (Object.keys(rooms).includes(roomName)){
-                cntRed = rooms[roomName]["cntRed"];
-                cntBlue = rooms[roomName]["cntBlue"];
-                rooms[roomName]["cntUsers"]++;
-                if (cntRed<=cntBlue){
-                    color = "red";
-                    rooms[roomName]["cntRed"]++;
-                } else {
-                    color = "blue";
-                    rooms[roomName]["cntBlue"]++;
-                }
-                users[username] = {
-                    "userX": userX,
-                    "userY": userY,
-                    "color": color
-                };
-                // 部屋とユーザーの情報を返す
-                if (rooms[roomName]["cntUsers"]>=rooms[roomName]["users"].length){
-                    io.sockets.emit("user-info-init", {value: {
-                        "rooms": rooms,
-                        "users": users
-                    }});
-                }
-                else {
-
-                }
+            // 部屋が存在しないとき
+            if (!Object.keys(rooms).includes(roomName)){
+                io.sockets.emit("room-not-exist", {value: roomName});
+                return false;
             }
-            // 部屋が見つからない場合はスタート画面に戻る
+            cntRed = rooms[roomName]["cntRed"];
+            cntBlue = rooms[roomName]["cntBlue"];
+            rooms[roomName]["cntUsers"]++;
+            if (cntRed<=cntBlue){
+                color = "red";
+                rooms[roomName]["cntRed"]++;
+            } else {
+                color = "blue";
+                rooms[roomName]["cntBlue"]++;
+            }
+            users[username] = {
+                "userX": userX,
+                "userY": userY,
+                "color": color
+            };
+            // 全員の準備ができたら部屋とユーザーの情報を返す
+            if (rooms[roomName]["cntUsers"]>=rooms[roomName]["users"].length){
+                io.sockets.emit("user-info-init", {value: {
+                    "roomName": roomName,
+                    "rooms": rooms,
+                    "users": users
+                }});
+            }
+            // まだ全員の準備が完了していないとき
             else {
-                io.sockets.emit(username, {value: false});
+                io.sockets.emit("update-cnt-not-ready", {value: {
+                    "roomName": roomName,
+                    "cnt-not-ready": rooms[roomName]["users"].length-rooms[roomName]["cntUsers"]
+                }});
             }
         }
     });

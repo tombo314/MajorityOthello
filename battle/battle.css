@@ -42,10 +42,10 @@ html {
     background-color: rgb(201, 46, 203);
     color: rgb(87, 251, 136);
   }
-  h1 .waiting-cnt-wrapper {
+  h1 .cnt-not-ready-wrapper {
     position: absolute;
     font-size: 22px;
-    color: #cfc;
+    color: #afa;
     transform: translate(250px, 13px);
   }
   .flex {
