@@ -824,6 +824,7 @@ if (isHostStr=="true"){
 }
 
 // 全プレイヤーの情報を取得
+// 全員の準備が終わったらバトル開始
 socket.on("user-info-init", (data)=>{
     let rooms = data.value["rooms"];
     let users = data.value["users"];
@@ -864,6 +865,9 @@ socket.on("user-info-init", (data)=>{
     } else if (color=="blue"){
         colorOneOrTwo = BLUE;
     }
+    
+    // バトル開始
+    start();
 });
 
 // マス選択時に盤面の上に被せるシートを生成
@@ -897,9 +901,6 @@ visualizeStone(3, 3, COLOR_FIELD_RED);
 visualizeStone(4, 4, COLOR_FIELD_RED);
 visualizeStone(3, 4, COLOR_FIELD_BLUE);
 visualizeStone(4, 3, COLOR_FIELD_BLUE);
-
-// バトル開始時の演出
-start();
 
 // 他のプレイヤーの座標の変化を受け取る
 socket.on("coordinates-changed", (data)=>{
