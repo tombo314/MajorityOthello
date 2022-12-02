@@ -23,6 +23,7 @@ if (sessionStorage.getItem("isHostStr")=="true"){
 btnStart.onclick=()=>{
     // 部屋で待機中の人数を得る
     socket.emit("need-users-length", {value: roomName});
+    // 工事中
     socket.on("need-users-length", (data)=>{
         let roomNameTmp = data.value["roomName"];
         let usersLength = data.value["usersLength"];

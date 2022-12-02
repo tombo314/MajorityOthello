@@ -374,7 +374,8 @@ io.on("connection", (socket)=>{
     });
     // マッチングが完了した部屋の名前を通知する
     socket.on("waiting-finished", (data)=>{
-        if (Object.keys(rooms).includes(data.value)){
+        let roomName = data.value;
+        if (Object.keys(rooms).includes(roomName)){
             io.sockets.emit("waiting-finished", {value: {
                 "roomName": roomName
             }});
