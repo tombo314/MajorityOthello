@@ -44,7 +44,7 @@ btnToTop.onclick=()=>{
 
 // 部屋の待機人数を更新する
 socket.on("update-waiting-cnt", (data)=>{
-    
+    // 工事中
 });
 
 // いずれかの部屋のマッチングが終了した

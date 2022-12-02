@@ -323,6 +323,7 @@ io.on("connection", (socket)=>{
             rooms[roomName]["users"].push(username);
             users[username] = {};
             io.sockets.emit(username, {value: true});
+            // 工事中
             // 部屋の待機人数を更新する
             // io.sockets.emit("update-waiting-cnt", {value: });
         } else {
