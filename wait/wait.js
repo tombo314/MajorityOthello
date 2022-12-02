@@ -1,13 +1,14 @@
 let socket = io();
 let btnStart = document.getElementById("btn-start");
 let btnToTop = document.getElementById("btn-to-top");
+let waitingCnt = document.getElementById("waiting-cnt");
 let username = sessionStorage.getItem("username");
 let roomName = sessionStorage.getItem("roomName");
 let isHostStr = sessionStorage.getItem("isHostStr");
 
 // 「トップに戻る」ボタンのレイアウト
 if (isHostStr=="false"){
-    btnToTop.style.transform = "translateX(400px)";
+    btnToTop.style.transform = "translateX(-10vw)";
 }
 
 // 部屋が存在しない場合はスタート画面に戻る
@@ -42,9 +43,15 @@ btnToTop.onclick=()=>{
     location.href = "/";
 }
 
+// 自分が入ったことによって、その部屋の人数が増えたことをその部屋に通知する
+socket.emit("update-waiting-cnt", {value: roomName});
 // 部屋の待機人数を更新する
 socket.on("update-waiting-cnt", (data)=>{
-    // 工事中
+    let roomNameTmp = data.value["roomName"];
+    // 自分の部屋に向けられた命令だったら
+    if (roomNameTmp==roomName){
+        waitingCnt.textContent = data.value["userLength"];
+    }
 });
 
 // いずれかの部屋のマッチングが終了した
@@ -60,7 +67,7 @@ socket.on("waiting-finished", (data)=>{
 
 // 部屋が存在しない場合
 socket.on("room-not-exist", (data)=>{
-    if (data.value==roomName){
+    if (data.value==roomName && isHostStr=="false"){
         alert("部屋が存在しません。");
         location.href = "/";
     }

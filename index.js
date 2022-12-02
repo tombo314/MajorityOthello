@@ -289,6 +289,14 @@ io.on("connection", (socket)=>{
         delete users[username];
         io.sockets.emit("delete-room", {value: roomName});
     });
+    // 公開されている部屋を更新する
+    socket.on("update-rooms", (data)=>{
+        io.sockets.emit("update-rooms", {value: rooms});
+    });
+    // rooms を返す
+    socket.on("need-rooms", (data)=>{
+        io.sockets.emit("need-rooms", {value: rooms});
+    });
     // users を返す
     socket.on("need-users", ()=>{
         io.sockets.emit("need-users", {value: users});
@@ -323,9 +331,6 @@ io.on("connection", (socket)=>{
             rooms[roomName]["users"].push(username);
             users[username] = {};
             io.sockets.emit(username, {value: true});
-            // 工事中
-            // 部屋の待機人数を更新する
-            // io.sockets.emit("update-waiting-cnt", {value: });
         } else {
             // 部屋が存在しない場合はスタート画面に戻る
             io.sockets.emit("room-not-exist", {value: roomName});
@@ -354,6 +359,19 @@ io.on("connection", (socket)=>{
         else {
             io.sockets.emit("room-not-exist", {value: roomName});
         }
+    });
+    // 工事中
+    // 部屋の待機人数を更新する
+    socket.on("update-waiting-cnt", (data)=>{
+        let roomName = data.value;
+        if (!Object.keys(rooms).includes(roomName)){
+            io.sockets.emit("room-not-exist", {value: roomName});
+            return false;
+        }
+        io.sockets.emit("update-waiting-cnt", {value: {
+            "roomName": roomName,
+            "userLength": rooms[roomName]["users"].length
+        }});
     });
     // マッチングが完了した部屋の名前を通知する
     socket.on("waiting-finished", (data)=>{
@@ -537,16 +555,8 @@ io.on("connection", (socket)=>{
         }});
     });
     // ゲームが終了したことを通知する
-    socket.on("game-finished", (data)=>{ 
+    socket.on("game-finished", (data)=>{
         io.sockets.emit("game-finished", {value:data.value});
-    });
-    // 公開されている部屋を更新する
-    socket.on("update-rooms", (data)=>{
-        io.sockets.emit("update-rooms", {value: rooms});
-    });
-    // rooms を返す
-    socket.on("need-rooms", (data)=>{
-        io.sockets.emit("need-rooms", {value: rooms});
     });
 });
 
@@ -562,7 +572,6 @@ io.on("connection", (socket)=>{
     ＜main＞
     
     ＜wait＞
-    ・部屋内の現在の参加者数を表示する
 
     ＜battle＞
     ・自分のチームがどちらかを最初に表示する

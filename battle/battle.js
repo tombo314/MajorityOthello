@@ -1,6 +1,7 @@
 // 同じページを一度読み込んだかどうか
+// リロードでトップに戻る
 if (sessionStorage.getItem("samePageLoaded")=="true"){
-    window.location.href = "/";
+    location.href = "/";
 } else {
     sessionStorage.setItem("samePageLoaded", "true");
 }
@@ -811,7 +812,7 @@ if (username!=null){
 // 自分のユーザー情報が登録されていなかったとき
 else {
     alert("ユーザー情報が登録されていません。");
-    window.location.href = "/";
+    location.href = "/";
 }
 
 // 自分がホストのとき、サーバーに turnDurationSec の値を送信する
@@ -1028,7 +1029,7 @@ socket.on("game-finished", (data)=>{
 socket.on("room-not-exist", (data)=>{
     if (data.value==roomName){
         alert("部屋が存在しません。");
-        window.location.href = "/";
+        location.href = "/";
     }
 });
 
