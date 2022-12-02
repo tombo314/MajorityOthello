@@ -56,7 +56,7 @@ let getRandomInt = (min, max)=> {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min);
-}
+};
 let start = ()=>{
     keysValid = false;
     let opacity = 0;
@@ -104,7 +104,7 @@ let start = ()=>{
             }, 2000);
         }
     }, 20);
-}
+};
 let makeSquare = (i, j)=>{
     // マスの選択を表す
     let sheet = document.createElement("div");
@@ -117,21 +117,21 @@ let makeSquare = (i, j)=>{
         top: ${GRID_INIT_TOP+i*(GRID_Y+GRID_DIFF_Y)}px;
     `);
     othelloWrapper.appendChild(sheet);
-}
+};
 let paintSquare = (i, j)=>{
     if (i<0 || j<0 || 8<=i || 8<=j){
         return false
     }
     let elem = document.getElementById(`square${i}${j}`);
     elem.style.backgroundColor = "#cfca";
-}
+};
 let unPaintSquare = (i, j)=>{
     if (i<0 || j<0 || 8<=i || 8<=j){
         return false
     }
     let elem = document.getElementById(`square${i}${j}`);
     elem.style.backgroundColor = "#70ad47";
-}
+};
 let paintSquareRedBlue = (i, j, oneOrTwo)=>{
     if (i<0 || j<0 || 8<=i || 8<=j){
         return false
@@ -142,7 +142,7 @@ let paintSquareRedBlue = (i, j, oneOrTwo)=>{
     } else if (oneOrTwo==BLUE){
         elem.style.backgroundColor = "#22f7";
     }
-}
+};
 let makeStone = (i, j)=>{
     // 赤
     let stone = document.createElement("canvas");
@@ -179,7 +179,7 @@ let makeStone = (i, j)=>{
     context.arc(61.7*j+68, 58*i+43, RADIUS, 0*Math.PI/180, 360*Math.PI/180, false);
     context.fill();
     context.stroke();
-}
+};
 let playerCircleUsed = new Set();
 let makePlayerCircle = (playerName, initX, initY, playerColor)=>{
     if (!playerCircleUsed.has(playerName)){
@@ -199,7 +199,7 @@ let makePlayerCircle = (playerName, initX, initY, playerColor)=>{
         context.fill();
         context.stroke();
     }
-}
+};
 let playerNameUsed = new Set();
 let makePlayerName = (playerName, initX, initY)=>{
     if (!playerNameUsed.has(playerName)){
@@ -218,7 +218,7 @@ let makePlayerName = (playerName, initX, initY)=>{
         elem.style.transform = `translate(${initX+xDiff}px, ${initY+INIT_Y_DIFF}px)`;
         elem.style.zIndex = 10;
     }
-}
+};
 let visualizeStone = (i, j, color)=>{
     let otherColor;
     if (color==COLOR_FIELD_RED){
@@ -230,7 +230,7 @@ let visualizeStone = (i, j, color)=>{
     elem.style.visibility = "hidden";
     elem = document.getElementById(`stone${i}${j}${color}`);
     elem.style.visibility = "visible";
-}
+};
 let othello = (p, q, oneOrTwo)=>{
     let n = oneOrTwo;
     let m;
@@ -469,7 +469,7 @@ let othello = (p, q, oneOrTwo)=>{
         return true;
     }
     return false;
-}
+};
 let vote = (i, j, oneOrTwo)=>{
     socket.emit("voted", {value: {
         "roomName": roomName,
@@ -486,7 +486,7 @@ let vote = (i, j, oneOrTwo)=>{
         ownName.style.transform = `translate(${ownX+x+xDiff}px, ${ownY+y+INIT_Y_DIFF}px)`;
         keysValid = false;
     }
-}
+};
 let canPutStoneThere = (p, q, oneOrTwo)=>{
     let n = oneOrTwo;
     let m;
@@ -651,7 +651,7 @@ let canPutStoneThere = (p, q, oneOrTwo)=>{
     }
 
     return false;
-}
+};
 let canPutStoneAll = (n)=>{
     for (let i=0; i<8; i++){
         for (let j=0; j<8; j++){
@@ -664,7 +664,7 @@ let canPutStoneAll = (n)=>{
         }
     }
     return false;
-}
+};
 let eachTurn = (s)=>{
     // キー入力を初期化
     wDown = false;
@@ -698,7 +698,7 @@ let eachTurn = (s)=>{
             }
         }
     }, 1000);
-}
+};
 let setCanPutStoneAll = new Set();
 let visualizeCanPutStoneAll = (n)=>{
     for (let i=0; i<8; i++){
@@ -712,7 +712,7 @@ let visualizeCanPutStoneAll = (n)=>{
             }
         }
     }
-}
+};
 let finish = ()=>{
     isFinished = true;
     keysValid = false;
@@ -775,7 +775,7 @@ let finish = ()=>{
             }
         }
     }, 20);
-}
+};
 
 // 関数を用いた変数の初期化
 let socket = io();
@@ -865,7 +865,7 @@ socket.on("user-info-init", (data)=>{
     } else if (color=="blue"){
         colorOneOrTwo = BLUE;
     }
-    
+
     // バトル開始
     start();
 });
@@ -1009,6 +1009,7 @@ socket.on("countdown-restart", (data)=>{
     }
 });
 
+// 自分がホストだったらサーバーに field を返す
 socket.on("need-field", (data)=>{
     if (isHostStr=="true" && data.value==roomName){
         socket.emit("need-field", {value: {
@@ -1116,7 +1117,7 @@ onkeydown=(e)=>{
             vote(paintedI, paintedJ, colorOneOrTwo);
         }
     }
-}
+};
 
 // キー入力の処理
 onkeyup=(e)=>{
@@ -1131,4 +1132,4 @@ onkeyup=(e)=>{
             dDown = false;
         }
     }
-}
+};

@@ -61,6 +61,10 @@ html{
         text-align: center;
         background-color: rgb(201, 46, 203);
         color: rgb(87, 251, 136);
+        .waiting-cnt-wrapper{
+            position: absolute;
+            margin-left: 100px;
+        }
     }
 
     .flex{

@@ -42,6 +42,10 @@ html {
     background-color: rgb(201, 46, 203);
     color: rgb(87, 251, 136);
   }
+  h1 .waiting-cnt-wrapper {
+    position: absolute;
+    margin-left: 100px;
+  }
   .flex {
     display: flex;
   }

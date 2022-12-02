@@ -18,7 +18,7 @@ html {
     text-align: center;
     color: #333;
   }
-  h1 .waiting-cnt-text {
+  h1 .waiting-cnt-wrapper {
     position: absolute;
     margin-left: 100px;
     margin-top: 20px;

@@ -360,7 +360,6 @@ io.on("connection", (socket)=>{
             io.sockets.emit("room-not-exist", {value: roomName});
         }
     });
-    // 工事中
     // 部屋の待機人数を更新する
     socket.on("update-waiting-cnt", (data)=>{
         let roomName = data.value;
@@ -426,6 +425,9 @@ io.on("connection", (socket)=>{
                         "rooms": rooms,
                         "users": users
                     }});
+                }
+                else {
+
                 }
             }
             // 部屋が見つからない場合はスタート画面に戻る
