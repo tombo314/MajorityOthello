@@ -10,7 +10,6 @@ samePageLoaded : 同じページを一度読み込んだかどうか
 let http = require("http");
 let fs = require("fs");
 let socket = require("socket.io");
-const { isPromise } = require("util/types");
 let server = http.createServer((req, res)=>{
     // main
     if (req.url=="/"){
