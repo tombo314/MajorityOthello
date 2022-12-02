@@ -44,9 +44,9 @@ html {
   }
   h1 .waiting-cnt-wrapper {
     position: absolute;
-    font-size: 20px;
-    color: #eee;
-    transform: translate(250px, 15px);
+    font-size: 22px;
+    color: #cfc;
+    transform: translate(250px, 13px);
   }
   .flex {
     display: flex;
