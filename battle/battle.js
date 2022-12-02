@@ -791,6 +791,7 @@ let nodesOpponent = document.getElementById("nodes-opponent");
 let othelloWrapper = document.getElementById("othello-wrapper");
 let startEndSheet = document.getElementById("start-end-sheet");
 let cntNotReady = document.getElementById("cnt-not-ready");
+let cntNotReadyWrapper = document.getElementById("cnt-not-ready-wrapper");
 // 部屋の turnDurationSec の値を取得する
 socket.emit("need-turn-duration-sec", {value: roomName});
 socket.on("need-turn-duration-sec", (data)=>{
@@ -870,6 +871,10 @@ socket.on("user-info-init", (data)=>{
         colorOneOrTwo = RED;
     } else if (color=="blue"){
         colorOneOrTwo = BLUE;
+    }
+    // 準備中の人数の表示を消す
+    while (cntNotReadyWrapper.firstChild){
+        cntNotReadyWrapper.remove(cntNotReadyWrapper.firstChild);
     }
 
     // バトル開始

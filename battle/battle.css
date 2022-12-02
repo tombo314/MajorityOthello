@@ -42,7 +42,7 @@ html {
     background-color: rgb(201, 46, 203);
     color: rgb(87, 251, 136);
   }
-  h1 .cnt-not-ready-wrapper {
+  h1 #cnt-not-ready-wrapper {
     position: absolute;
     font-size: 22px;
     color: #afa;
