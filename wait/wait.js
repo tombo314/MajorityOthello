@@ -31,7 +31,7 @@ socket.on("need-users-length", (data)=>{
         socket.emit("waiting-finished", {value: roomName});
     }
     // １人以下の場合
-    else {
+    else if(isHostStr=="true") {
         alert("２人以上いないと開始できません。");
     }
 });
