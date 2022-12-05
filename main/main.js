@@ -241,7 +241,7 @@ socket.on("need-users", (data)=>{
             sessionStorage.setItem("roomName", roomName);
         }
         sessionStorage.setItem("samePageLoaded", "false");
-        location.href = "/wait";
+        location.href = "/wait/";
     } else {
         alert("そのユーザー名はすでに使われています。");
     }
