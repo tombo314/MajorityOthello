@@ -14,53 +14,51 @@ let server = http.createServer((req, res)=>{
     // main
     if (req.url=="/"){
         res.writeHead(200, {"Content-Type": "text/html"});
-        res.end(fs.readFileSync("main/index.html"));
+        res.write(fs.readFileSync("main/index.html"));
     } else if (req.url=="/main/main.css"){
         res.writeHead(200, {"Content-Type": "text/css"});
-        res.end(fs.readFileSync("main/main.css"));
+        res.write(fs.readFileSync("main/main.css"));
     } else if (req.url=="/main/main.css.map"){
         res.writeHead(200, {"Content-Type": "application/json"});
-        res.end(fs.readFileSync("main/main.css.map"));
+        res.write(fs.readFileSync("main/main.css.map"));
     } else if (req.url=="/main/main.js"){
         res.writeHead(200, {"Content-Type": "application/javascript"});
-        res.end(fs.readFileSync("main/main.js"));
+        res.write(fs.readFileSync("main/main.js"));
     }
     // wait
     else if(req.url=="/wait"){
         res.writeHead(200, {"Content-Type": "text/html"});
-        res.end(fs.readFileSync("wait/wait.html"));
+        res.write(fs.readFileSync("wait/wait.html"));
     } else if(req.url=="/wait/wait.css"){
         res.writeHead(200, {"Content-Type": "text/css"});
-        res.end(fs.readFileSync("wait/wait.css"));
+        res.write(fs.readFileSync("wait/wait.css"));
     } else if (req.url=="/wait/wait.css.map"){
         res.writeHead(200, {"Content-Type": "application/json"});
-        res.end(fs.readFileSync("wait/wait.css.map"));
+        res.write(fs.readFileSync("wait/wait.css.map"));
     } else if(req.url=="/wait/wait.js"){
         res.writeHead(200, {"Content-Type": "application/javascript"});
-        res.end(fs.readFileSync("wait/wait.js"));
+        res.write(fs.readFileSync("wait/wait.js"));
     }
     // battle
     else if (req.url=="/battle"){
         res.writeHead(200, {"Content-Type": "text/html"});
-        res.end(fs.readFileSync("battle/battle.html"));
+        res.write(fs.readFileSync("battle/battle.html"));
     } else if(req.url=="/battle/battle.css"){
         res.writeHead(200, {"Content-Type": "text/css"});
-        res.end(fs.readFileSync("battle/battle.css"));
+        res.write(fs.readFileSync("battle/battle.css"));
     } else if (req.url=="/battle/battle.css.map"){
         res.writeHead(200, {"Content-Type": "application/json"});
-        res.end(fs.readFileSync("battle/battle.css.map"));
+        res.write(fs.readFileSync("battle/battle.css.map"));
     } else if(req.url=="/battle/battle.js"){
         res.writeHead(200, {"Content-Type": "application/javascript"});
-        res.end(fs.readFileSync("battle/battle.js"));
+        res.write(fs.readFileSync("battle/battle.js"));
     }
     // pictures
     else if (req.url=="/pictures/othello_field.png"){
         res.writeHead(200, {"Content-Type": "img/png"});
-        res.end(fs.readFileSync("pictures/othello_field.png"));
+        res.write(fs.readFileSync("pictures/othello_field.png"));
     }
-    else if (req.url=="/favicon.ico"){
-        res.end();
-    }
+    res.end();
 }).listen(process.env.PORT || 8000);
 let io = socket(server);
 
