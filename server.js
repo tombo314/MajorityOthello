@@ -408,8 +408,6 @@ io.on("connection", (socket)=>{
             cntRed = rooms[roomName]["cntRed"];
             cntBlue = rooms[roomName]["cntBlue"];
             rooms[roomName]["cntUsers"]++;
-            // debug
-            console.log(rooms[roomName]["cntUsers"]);
             if (cntRed<=cntBlue){
                 color = "red";
                 rooms[roomName]["cntRed"]++;

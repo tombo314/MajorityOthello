@@ -82,6 +82,8 @@ let start = ()=>{
                 startEndSheet.innerHTML = `<span style='color: ${COLOR_FIELD_RED}'>赤</span>が先手です`;
                 // 2 秒間「～が先手です」の文字を表示
                 setTimeout(()=>{
+                    // debug
+                    console.log(1);
                     let cnt = 3;
                     // ゲーム開始のカウントダウン
                     set = setInterval(() => {
@@ -1163,7 +1165,7 @@ onkeydown=(e)=>{
     }
 
     // 投票する
-    if (e.key=="Enter"){
+    if (e.key=="Enter" && keysValid){
         // その場所に石を置くことができる
         if (canPutStoneThere(paintedI, paintedJ, colorOneOrTwo)){
             vote(paintedI, paintedJ, colorOneOrTwo);
