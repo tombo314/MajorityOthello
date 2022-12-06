@@ -20,11 +20,11 @@ let opacity;
 let set;
 let color;
 let colorOneOrTwo;
-let keysValid;
 let x = 0;
 let y = 0;
 let cntStone = 4;
 let turnOneOrTwo = 1;
+let keysValid = false;
 let isFinished = false;
 
 // 定数の宣言
@@ -82,8 +82,6 @@ let start = ()=>{
                 startEndSheet.innerHTML = `<span style='color: ${COLOR_FIELD_RED}'>赤</span>が先手です`;
                 // 2 秒間「～が先手です」の文字を表示
                 setTimeout(()=>{
-                    // debug
-                    console.log(1);
                     let cnt = 3;
                     // ゲーム開始のカウントダウン
                     set = setInterval(() => {
