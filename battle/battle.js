@@ -756,7 +756,7 @@ let finish = ()=>{
             }
         }
     }
-    opacity = 0;
+    let opacity = 0;
     // 画面を暗転して勝敗のテキストを表示
     set = setInterval(()=>{
         opacity += 0.01;

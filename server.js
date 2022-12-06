@@ -285,7 +285,6 @@ io.on("connection", (socket)=>{
         let roomName = data.value["roomName"];
         delete rooms[roomName];
         delete users[username];
-        io.sockets.emit("delete-room", {value: roomName});
     });
     // 公開されている部屋を更新する
     socket.on("update-rooms", (data)=>{
@@ -409,6 +408,8 @@ io.on("connection", (socket)=>{
             cntRed = rooms[roomName]["cntRed"];
             cntBlue = rooms[roomName]["cntBlue"];
             rooms[roomName]["cntUsers"]++;
+            // debug
+            console.log(rooms[roomName]["cntUsers"]);
             if (cntRed<=cntBlue){
                 color = "red";
                 rooms[roomName]["cntRed"]++;
