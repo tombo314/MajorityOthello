@@ -935,43 +935,14 @@ for (let i=0; i<8; i++){
     }
     field.push(tmp)
 }
-// field[3][3] = RED;
-// field[4][4] = RED;
-// field[3][4] = BLUE;
-// field[4][3] = BLUE;
-// visualizeStone(3, 3, COLOR_FIELD_RED);
-// visualizeStone(4, 4, COLOR_FIELD_RED);
-// visualizeStone(3, 4, COLOR_FIELD_BLUE);
-// visualizeStone(4, 3, COLOR_FIELD_BLUE);
-
-// debug
-field[2][3] = BLUE;
-field[3][3] = BLUE;
-field[4][3] = BLUE;
-field[5][3] = BLUE;
-
-field[3][4] = BLUE;
+field[3][3] = RED;
 field[4][4] = RED;
-field[5][4] = BLUE;
-
-field[2][5] = BLUE;
-field[3][5] = BLUE;
-field[4][5] = BLUE;
-field[5][5] = BLUE;
-
-visualizeStone(2, 3, COLOR_FIELD_BLUE);
-visualizeStone(3, 3, COLOR_FIELD_BLUE);
-visualizeStone(4, 3, COLOR_FIELD_BLUE);
-visualizeStone(5, 3, COLOR_FIELD_BLUE);
-
-visualizeStone(3, 4, COLOR_FIELD_BLUE);
+field[3][4] = BLUE;
+field[4][3] = BLUE;
+visualizeStone(3, 3, COLOR_FIELD_RED);
 visualizeStone(4, 4, COLOR_FIELD_RED);
-visualizeStone(5, 4, COLOR_FIELD_BLUE);
-
-visualizeStone(2, 5, COLOR_FIELD_BLUE);
-visualizeStone(3, 5, COLOR_FIELD_BLUE);
-visualizeStone(4, 5, COLOR_FIELD_BLUE);
-visualizeStone(5, 5, COLOR_FIELD_BLUE);
+visualizeStone(3, 4, COLOR_FIELD_BLUE);
+visualizeStone(4, 3, COLOR_FIELD_BLUE);
 
 // 準備が完了していない人の数を表示
 socket.on("update-cnt-not-ready", (data)=>{
@@ -1214,16 +1185,3 @@ onkeyup=(e)=>{
         }
     }
 };
-
-// debug
-/*
---------
---------
----x-x--
----xxx--
----xox--
----xxx--
---------
---------
-
-*/
