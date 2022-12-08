@@ -6,7 +6,6 @@ let socket = io();
 let roomForRooms = document.getElementById("room-for-rooms");
 let blackSheet = document.getElementById("black-sheet");
 let btnMakeRoom = document.getElementById("btn-make-room");
-let btnEnterRoom = document.getElementById("btn-enter-room");
 let roomMakeWindow = document.getElementById("room-make-window");
 let roomNameElem = document.getElementById("room-name");
 let roomUsername = document.getElementById("username");
@@ -15,7 +14,7 @@ let design = document.getElementById("design");
 let turnDurationSecElem = document.getElementById("turn-duration-sec");
 let labelTurnDuration = document.getElementById("label-turn-duration");
 let wrapperForm = document.getElementById("wrapper-form");
-// 授業後に修正
+// 授業後に修正 消す
 wrapperForm.onclick=(e)=>{
     e.preventDefault();
 }
@@ -54,6 +53,7 @@ let makeRoom=(event)=>{
 
 // 周りの暗いところをクリックしてキャンセル
 blackSheet.onclick=()=>{
+    // 工事中
     blackSheet.style.visibility = "hidden";
     roomMakeWindow.style.visibility = "hidden";
 };
