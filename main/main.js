@@ -14,6 +14,11 @@ let btnSubmit = document.getElementById("btn-submit");
 let design = document.getElementById("design");
 let turnDurationSecElem = document.getElementById("turn-duration-sec");
 let labelTurnDuration = document.getElementById("label-turn-duration");
+let wrapperForm = document.getElementById("wrapper-form");
+// 授業後に修正
+wrapperForm.onclick=(e)=>{
+    e.preventDefault();
+}
 
 const BUTTON_ROOM_SELECT_WIDTH = 120;
 const RADIUS = 20;
@@ -48,12 +53,7 @@ let makeRoom=(event)=>{
 };
 
 // 周りの暗いところをクリックしてキャンセル
-    // 授業後に修正
-    // blackSheet.onclick=()=>{
-    //     blackSheet.style.visibility = "hidden";
-    //     roomMakeWindow.style.visibility = "hidden";
-    // };
-let funcForForm=()=>{
+blackSheet.onclick=()=>{
     blackSheet.style.visibility = "hidden";
     roomMakeWindow.style.visibility = "hidden";
 };

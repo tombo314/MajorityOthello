@@ -111,7 +111,7 @@ html{
         transform: translate(300px, 120px);
         visibility: hidden; // ここを消してデバッグ
         z-index: 999;
-        .wrapper{
+        #wrapper-form{
             margin-left: -330px;
             label{
                 font-size: 22px;
@@ -178,6 +178,9 @@ html{
     .too-large-width{
         display: none;
     }
+    #room-make-window{
+        display: none;
+    }
 }
 // 横幅が大きすぎる
 @media screen and (min-width: ($max-width+"px")) {
@@ -185,6 +188,9 @@ html{
         display: none;
     }
     .too-small-width{
+        display: none;
+    }
+    #room-make-window{
         display: none;
     }
 }
@@ -197,6 +203,9 @@ html{
     .too-large-height{
         display: none;
     }
+    #room-make-window{
+        display: none;
+    }
 }
 // 縦幅が大きすぎる
 @media screen and (min-height: ($max-height+"px")) {
@@ -204,6 +213,9 @@ html{
         display: none;
     }
     .too-small-height{
+        display: none;
+    }
+    #room-make-window{
         display: none;
     }
 }

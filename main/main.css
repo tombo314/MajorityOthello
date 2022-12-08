@@ -89,15 +89,15 @@ html {
     visibility: hidden;
     z-index: 999;
   }
-  #room-make-window .wrapper {
+  #room-make-window #wrapper-form {
     margin-left: -330px;
   }
-  #room-make-window .wrapper label {
+  #room-make-window #wrapper-form label {
     font-size: 22px;
     font-weight: bold;
     color: #222;
   }
-  #room-make-window .wrapper input {
+  #room-make-window #wrapper-form input {
     width: 300px;
     height: 30px;
     font-size: 18px;
@@ -106,7 +106,7 @@ html {
     outline: none;
     caret-color: #222;
   }
-  #room-make-window .wrapper #btn-submit {
+  #room-make-window #wrapper-form #btn-submit {
     width: 200px;
     height: 60px;
     font-size: 24px;
@@ -116,16 +116,16 @@ html {
     border-radius: 20px;
     outline: none;
   }
-  #room-make-window .wrapper #btn-submit:hover {
+  #room-make-window #wrapper-form #btn-submit:hover {
     opacity: 0.8;
   }
-  #room-make-window .wrapper #btn-submit:action {
+  #room-make-window #wrapper-form #btn-submit:action {
     opacity: 0.6;
   }
-  #room-make-window .wrapper #room-name, #room-make-window .wrapper #username, #room-make-window .wrapper #turn-duration-sec {
+  #room-make-window #wrapper-form #room-name, #room-make-window #wrapper-form #username, #room-make-window #wrapper-form #turn-duration-sec {
     margin-top: 50px;
   }
-  #room-make-window .wrapper #turn-duration-sec {
+  #room-make-window #wrapper-form #turn-duration-sec {
     width: 70px;
   }
   .too-small-width {
@@ -152,12 +152,18 @@ html {
   .too-large-width {
     display: none;
   }
+  #room-make-window {
+    display: none;
+  }
 }
 @media screen and (min-width: 1400px) {
   .wrapper {
     display: none;
   }
   .too-small-width {
+    display: none;
+  }
+  #room-make-window {
     display: none;
   }
 }
@@ -168,12 +174,18 @@ html {
   .too-large-height {
     display: none;
   }
+  #room-make-window {
+    display: none;
+  }
 }
 @media screen and (min-height: 650px) {
   .wrapper {
     display: none;
   }
   .too-small-height {
+    display: none;
+  }
+  #room-make-window {
     display: none;
   }
 }
