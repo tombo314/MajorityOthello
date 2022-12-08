@@ -90,7 +90,7 @@ html {
     z-index: 999;
   }
   #room-make-window #wrapper-form {
-    margin-left: -330px;
+    margin-left: 70px;
   }
   #room-make-window #wrapper-form label {
     font-size: 22px;
