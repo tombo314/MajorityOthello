@@ -13,6 +13,7 @@ let btnSubmit = document.getElementById("btn-submit");
 let design = document.getElementById("design");
 let turnDurationSecElem = document.getElementById("turn-duration-sec");
 let labelTurnDuration = document.getElementById("label-turn-duration");
+let musicCancel = document.getElementById("music-cancel");
 let wrapperForm = document.getElementById("wrapper-form");
 // 授業後に修正 消す
 wrapperForm.onclick=(e)=>{
@@ -53,7 +54,7 @@ let makeRoom=(event)=>{
 
 // 周りの暗いところをクリックしてキャンセル
 blackSheet.onclick=()=>{
-    // 工事中
+    musicCancel.play();
     blackSheet.style.visibility = "hidden";
     roomMakeWindow.style.visibility = "hidden";
 };
