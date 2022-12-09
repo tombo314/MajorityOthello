@@ -13,6 +13,7 @@ let btnSubmit = document.getElementById("btn-submit");
 let design = document.getElementById("design");
 let turnDurationSecElem = document.getElementById("turn-duration-sec");
 let labelTurnDuration = document.getElementById("label-turn-duration");
+let musicEnter = document.getElementById("music-enter");
 let musicCancel = document.getElementById("music-cancel");
 let wrapperForm = document.getElementById("wrapper-form");
 // 授業後に修正 消す
@@ -38,6 +39,7 @@ let getRandomInt=(min, max)=> {
 
 // ゲストが部屋に入るときにユーザーを登録する
 let registerUser=(rName)=>{
+    musicEnter.play();
     username = prompt("ユーザー名を入力してください...");
     roomName = rName;
     isHost = false;
@@ -46,6 +48,7 @@ let registerUser=(rName)=>{
 
 // ホストが部屋の作成を完了するとき
 let makeRoom=(event)=>{
+    musicEnter.play();
     isHost = true;
     onclickEvent = event;
     // 部屋名の重複を避ける
@@ -62,6 +65,7 @@ blackSheet.onclick=()=>{
 // Escキーを押してキャンセル
 onkeydown=(e)=>{
     if (e.key=="Escape"){
+        musicCancel.play();
         blackSheet.style.visibility = "hidden";
         roomMakeWindow.style.visibility = "hidden";
     }
@@ -69,6 +73,7 @@ onkeydown=(e)=>{
 
 // 「部屋を作る」を押してフォームを表示
 btnMakeRoom.onclick=()=>{
+    musicEnter.play();
     blackSheet.style.visibility = "visible";
     roomMakeWindow.style.visibility = "visible";
     roomNameElem.value = "部屋名を入力してください。";

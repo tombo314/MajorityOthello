@@ -499,6 +499,7 @@ let othello = (p, q, oneOrTwo)=>{
     return false;
 };
 let vote = (i, j, oneOrTwo)=>{
+    musicStone.play();
     socket.emit("voted", {value: {
         "roomName": roomName,
         "i": i,
@@ -742,6 +743,7 @@ let visualizeCanPutStoneAll = (n)=>{
     }
 };
 let finish = ()=>{
+    musicBattle.pause();
     isFinished = true;
     keysValid = false;
     let red = 0;
@@ -789,6 +791,12 @@ let finish = ()=>{
                         チームの勝利です
                     </span>
                 `;
+                // 勝利・敗北時のSE
+                if (colorOneOrTwo==RED && red>blue || colorOneOrTwo==BLUE && red<blue){
+                    musicWin.play();
+                } else {
+                    musicLose.play();
+                }
             }
             // 引き分け
             else {
@@ -820,6 +828,10 @@ let othelloWrapper = document.getElementById("othello-wrapper");
 let startEndSheet = document.getElementById("start-end-sheet");
 let cntNotReady = document.getElementById("cnt-not-ready");
 let cntNotReadyWrapper = document.getElementById("cnt-not-ready-wrapper");
+let musicBattle = document.getElementById("music-battle");
+let musicStone = document.getElementById("music-stone");
+let musicWin = document.getElementById("music-win");
+let musicLose = document.getElementById("music-lose");
 // 部屋の turnDurationSec の値を取得する
 socket.emit("need-turn-duration-sec", {value: roomName});
 socket.on("need-turn-duration-sec", (data)=>{

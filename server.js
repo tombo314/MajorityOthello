@@ -71,6 +71,24 @@ let server = http.createServer((req, res)=>{
     } else if (req.url=="/music/battle.mp3"){
         res.writeHead(200, {"Content-Type": "audio/mp3"});
         res.end(fs.readFileSync("music/battle.mp3"));
+    } else if (req.url=="/music/stone.mp3"){
+        res.writeHead(200, {"Content-Type": "audio/mp3"});
+        res.end(fs.readFileSync("music/stone.mp3"));
+    } else if (req.url=="/music/win.mp3"){
+        res.writeHead(200, {"Content-Type": "audio/mp3"});
+        res.end(fs.readFileSync("music/win.mp3"));
+    } else if (req.url=="/music/lose.mp3"){
+        res.writeHead(200, {"Content-Type": "audio/mp3"});
+        res.end(fs.readFileSync("music/lose.mp3"));
+    }
+    // favicon.ico
+    else if (req.url=="/favicon.ico"){
+        res.end();
+    }
+    // ファイルを返していない
+    else {
+        console.log("ファイルが存在しません。");
+        console.log("ファイル名：" + req.url);
     }
 }).listen(process.env.PORT || 8000);
 let io = socket(server);

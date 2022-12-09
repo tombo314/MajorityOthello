@@ -2,6 +2,8 @@ let socket = io();
 let btnStart = document.getElementById("btn-start");
 let btnToTop = document.getElementById("btn-to-top");
 let waitingCnt = document.getElementById("waiting-cnt");
+let musicEnter = document.getElementById("music-enter");
+let musicCancel = document.getElementById("music-cancel");
 let username = sessionStorage.getItem("username");
 let roomName = sessionStorage.getItem("roomName");
 let isHostStr = sessionStorage.getItem("isHostStr");
@@ -21,6 +23,7 @@ if (sessionStorage.getItem("isHostStr")=="true"){
 
 // マッチングを完了する
 btnStart.onclick=()=>{
+    musicEnter.play();
     // 部屋で待機中の人数を得る
     socket.emit("need-users-length", {value: roomName});
 }
@@ -38,6 +41,7 @@ socket.on("need-users-length", (data)=>{
 
 // トップに戻る
 btnToTop.onclick=()=>{
+    musicCancel.play();
     alert("トップに戻ります。");
     location.href = "/";
 }
