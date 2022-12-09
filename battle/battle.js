@@ -792,6 +792,7 @@ let finish = ()=>{
                     </span>
                 `;
                 // 勝利・敗北時のSE
+                console.log(colorOneOrTwo, red, " vs ", blue);
                 if (colorOneOrTwo==RED && red>blue || colorOneOrTwo==BLUE && red<blue){
                     musicWin.play();
                 } else {
